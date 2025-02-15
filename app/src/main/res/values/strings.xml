@@ -6,4 +6,7 @@
     <string name="job_title">Job Title</string>
     <string name="job_subtitle">Job Subtitle</string>
     <string name="employer">Employer</string>
+    <string name="add_job">Add Job</string>
+    <string name="color_hex_code">Color (Hex code)</string>
+    <string name="location">Location</string>
 </resources>
