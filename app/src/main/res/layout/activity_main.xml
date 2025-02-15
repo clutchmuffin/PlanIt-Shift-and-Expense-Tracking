@@ -32,9 +32,20 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/jobRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="578dp"
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="?attr/actionBarSize" />
+
+    <!-- Floating Action Button for adding a new Job -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddJob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/add_job"
+        android:src="@drawable/ic_add"
+        app:layout_anchor="@id/jobRecyclerView"
+        app:layout_anchorGravity="bottom|end" />
 
     <!-- Bottom Navigation Bar -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
