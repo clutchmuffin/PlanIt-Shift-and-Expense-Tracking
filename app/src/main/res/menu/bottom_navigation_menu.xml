@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_jobs"
+        android:enabled="true"
+        android:icon="@drawable/ic_jobs"
+        android:title="@string/text_jobs"/>
+    <item
+        android:id="@+id/nav_calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/text_calendar"/>
+</menu>
