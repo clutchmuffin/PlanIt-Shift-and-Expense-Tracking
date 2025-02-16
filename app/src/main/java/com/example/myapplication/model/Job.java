@@ -1,6 +1,8 @@
 package com.example.myapplication.model;
 
-public class Job {
+import java.io.Serializable;
+
+public class Job implements Serializable {
     private String title;
     private String subTitle;
     private String employer;
