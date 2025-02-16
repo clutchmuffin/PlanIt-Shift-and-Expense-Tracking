@@ -9,4 +9,5 @@
     <string name="add_job">Add Job</string>
     <string name="color_hex_code">Color (Hex code)</string>
     <string name="location">Location</string>
+    <string name="color">Color</string>
 </resources>
