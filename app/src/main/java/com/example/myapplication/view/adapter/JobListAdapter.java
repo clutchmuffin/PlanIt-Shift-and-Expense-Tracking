@@ -1,5 +1,6 @@
 package com.example.myapplication.view.adapter;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.controller.JobDetailActivity;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
@@ -40,6 +42,13 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
                                           Color.red(color),
                                           Color.green(color),
                                           Color.blue(color)));
+
+        // Set click listener to open JobDetailActivity.
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), JobDetailActivity.class);
+            intent.putExtra(JobDetailActivity.EXTRA_JOB, job);
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
