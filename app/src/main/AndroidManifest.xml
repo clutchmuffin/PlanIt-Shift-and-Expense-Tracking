@@ -21,5 +21,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".controller.JobDetailActivity"
+            android:exported="true">
+        </activity>
+
     </application>
 </manifest>
