@@ -60,6 +60,24 @@
                 android:layout_height="wrap_content"
                 android:text="@string/color"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <!-- RecyclerView for Shifts -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shiftRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"/>
         </LinearLayout>
     </ScrollView>
+
+    <!-- Floating Action Button for adding a new Shift -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddShift"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_anchor="@id/shiftRecyclerView"
+        app:layout_anchorGravity="bottom|end"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/add_shift"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
