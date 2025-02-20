@@ -46,6 +46,15 @@
             android:hint="@string/location"
             android:minHeight="48dp" />
 
+        <!-- Pay Rate -->
+        <EditText
+            android:id="@+id/editPayRate"
+            android:inputType="text"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/pay_rate"
+            android:minHeight="48dp" />
+
         <!-- Color (hex code, e.g., #6200EE) -->
         <EditText
             android:id="@+id/editJobColor"

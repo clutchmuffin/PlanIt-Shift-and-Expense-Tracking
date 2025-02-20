@@ -93,12 +93,14 @@ public class MainActivity extends AppCompatActivity {
                 EditText etEmployer = dialogView.findViewById(R.id.editJobEmployer);
                 EditText etLocation = dialogView.findViewById(R.id.editJobLocation);
                 EditText etColor = dialogView.findViewById(R.id.editJobColor);
+                EditText etPay = dialogView.findViewById(R.id.editPayRate);
 
                 String title = etTitle.getText().toString().trim();
                 String subtitle = etSubtitle.getText().toString().trim();
                 String employer = etEmployer.getText().toString().trim();
                 String location = etLocation.getText().toString().trim();
                 String colorInput = etColor.getText().toString().trim();
+                String pay_rate = etPay.getText().toString().trim();
 
                 // Validate required fields (at minimum, title).
                 if (TextUtils.isEmpty(title)) {
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Create a new Job object.
                 Job newJob = new Job(title, subtitle, employer, location, colorValue);
+                newJob.setPayRate(Integer.parseInt(pay_rate));
 
                 // Add the new job to the list.
                 dummyJobs.add(newJob);
