@@ -10,6 +10,7 @@ public class Job implements Serializable {
     private String employer;
     private String location;
     private int color;
+    private int pay_rate;
     private List<Shift> shifts;
 
     public Job(String title, String subTitle, String employer, String location, int color) {
@@ -50,5 +51,8 @@ public class Job implements Serializable {
     public void addShift(Shift shift) {
         shifts.add(shift);
     }
+
+    public int getPayRate() { return this.pay_rate; }
+    public void setPayRate(int pay) { pay_rate = pay; }
 }
 
