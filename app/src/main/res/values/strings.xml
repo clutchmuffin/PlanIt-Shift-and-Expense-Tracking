@@ -14,4 +14,5 @@
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="add_shift">Add Shift</string>
+    <string name="pay_rate">Pay Rate</string>
 </resources>
