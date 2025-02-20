@@ -38,6 +38,7 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvSubtitle = findViewById(R.id.detailJobSubtitle);
         TextView tvEmployer = findViewById(R.id.detailJobEmployer);
         TextView tvLocation = findViewById(R.id.detailJobLocation);
+        TextView tvPayRate = findViewById(R.id.detailJobPayRate);
         TextView tvColor = findViewById(R.id.detailJobColor);
         shiftRecyclerView = findViewById(R.id.shiftRecyclerView);
         fabAddShift = findViewById(R.id.fabAddShift);
@@ -51,6 +52,7 @@ public class JobDetailActivity extends AppCompatActivity {
             String colorHex = String.format("#%06X", (0xFFFFFF & job.getColor()));
             tvColor.setText("Color: " + colorHex);
             tvColor.setTextColor(job.getColor());
+            tvPayRate.setText("$" + job.getPayRate());
         }
 
         // Set up the RecyclerView.
