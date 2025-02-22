@@ -1,22 +1,28 @@
 package com.example.myapplication.controller;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.Shift;
 import com.example.myapplication.view.adapter.ShiftListAdapter;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 
 public class JobDetailActivity extends AppCompatActivity {
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
@@ -24,6 +30,13 @@ public class JobDetailActivity extends AppCompatActivity {
     private RecyclerView shiftRecyclerView;
     private ShiftListAdapter shiftListAdapter;
     private FloatingActionButton fabAddShift;
+
+    private LocalDate selectedDate;
+    private LocalTime selectedStartTime;
+    private LocalTime selectedEndTime;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,41 +88,73 @@ public class JobDetailActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
+        Button btnSelectDate = dialogView.findViewById(R.id.btnSelectDate);
+        Button btnSelectStartTime = dialogView.findViewById(R.id.btnSelectStartTime);
+        Button btnSelectEndTime = dialogView.findViewById(R.id.btnSelectEndTime);
+        TextView tvSelectedDate = dialogView.findViewById(R.id.tvSelectedDate);
+        TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
+        TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
+
+        btnSelectDate.setOnClickListener(v -> showDatePicker(tvSelectedDate));
+        btnSelectStartTime.setOnClickListener(v -> showTimePicker(tvSelectedStartTime, true));
+        btnSelectEndTime.setOnClickListener(v -> showTimePicker(tvSelectedEndTime, false));
+
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                EditText etDate = dialogView.findViewById(R.id.editShiftDate);
-                EditText etStartTime = dialogView.findViewById(R.id.editShiftStartTime);
-                EditText etEndTime = dialogView.findViewById(R.id.editShiftEndTime);
-
-                String date = etDate.getText().toString().trim();
-                String startTime = etStartTime.getText().toString().trim();
-                String endTime = etEndTime.getText().toString().trim();
-
-                // Minimal validation (e.g., date and time fields required).
-                if (TextUtils.isEmpty(date)) {
-                    etDate.setError("Date is required");
+                if (selectedDate == null) {
+                    tvSelectedDate.setError("Select a date");
                     return;
                 }
-                if (TextUtils.isEmpty(startTime)) {
-                    etStartTime.setError("Start time is required");
+                if (selectedStartTime == null) {
+                    tvSelectedStartTime.setError("Select a start time");
                     return;
                 }
-                if (TextUtils.isEmpty(endTime)) {
-                    etEndTime.setError("End time is required");
+                if (selectedEndTime == null) {
+                    tvSelectedEndTime.setError("Select an end time");
                     return;
                 }
 
-                // Create a new Shift.
-                Shift newShift = new Shift(date, startTime, endTime);
-
-                // Add the shift to the job.
+                // Create a new Shift object
+                Shift newShift = new Shift(selectedDate, selectedStartTime, selectedEndTime);
                 job.addShift(newShift);
 
-                // Notify the adapter to update the RecyclerView.
+                // Notify adapter
                 shiftListAdapter.notifyItemInserted(job.getShifts().size() - 1);
                 dialog.dismiss();
             });
         });
         dialog.show();
+    }
+
+    private void showDatePicker(TextView tvSelectedDate) {
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Date")
+                .build();
+
+        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            selectedDate = Instant.ofEpochMilli(selection)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            tvSelectedDate.setText(selectedDate.format(DATE_FORMATTER));
+        });
+    }
+
+    private void showTimePicker(TextView tvSelectedTime, boolean isStartTime) {
+        MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_12H)
+                .setTitleText(isStartTime ? "Select Start Time" : "Select End Time")
+                .build();
+
+        timePicker.show(getSupportFragmentManager(), isStartTime ? "START_TIME_PICKER" : "END_TIME_PICKER");
+        timePicker.addOnPositiveButtonClickListener(v -> {
+            LocalTime selectedTime = LocalTime.of(timePicker.getHour(), timePicker.getMinute());
+            if (isStartTime) {
+                selectedStartTime = selectedTime;
+            } else {
+                selectedEndTime = selectedTime;
+            }
+            tvSelectedTime.setText(selectedTime.format(TIME_FORMATTER));
+        });
     }
 }
