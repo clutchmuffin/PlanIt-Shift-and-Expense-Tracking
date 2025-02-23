@@ -1,6 +1,7 @@
 package com.example.myapplication.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class Job implements Serializable {
         this.location = location;
         this.color = color;
         this.shifts = new ArrayList<>();
+        this.pay_rate = 0;
     }
 
     public String getTitle() {
@@ -54,5 +56,12 @@ public class Job implements Serializable {
 
     public int getPayRate() { return this.pay_rate; }
     public void setPayRate(int pay) { pay_rate = pay; }
+
+    // Calculate net money earned (ignoring past shifts)
+    public int calculateNetEarnings() {
+        LocalDate today = LocalDate.now();
+        long futureShifts = shifts.stream().filter(shift -> shift.getLocalDate().isAfter(today)).count();
+        return (int) (futureShifts * pay_rate);  // Net earnings = Pay Rate * Future Shift Count
+    }
 }
 
