@@ -35,4 +35,6 @@ public class Shift implements Serializable {
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
+
+    public LocalDate getLocalDate() { return date; }
 }

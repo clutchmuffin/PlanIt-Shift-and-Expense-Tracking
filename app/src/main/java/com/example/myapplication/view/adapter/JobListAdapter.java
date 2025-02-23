@@ -39,9 +39,13 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
 
         int color = job.getColor();
         holder.jobCard.setBackgroundColor(Color.argb(128,
-                                          Color.red(color),
-                                          Color.green(color),
-                                          Color.blue(color)));
+                Color.red(color),
+                Color.green(color),
+                Color.blue(color)));
+
+        // Calculate and display net earnings
+        int netEarnings = job.calculateNetEarnings();
+        holder.jobEarnings.setText("$" + netEarnings);
 
         // Set click listener to open JobDetailActivity.
         holder.itemView.setOnClickListener(v -> {
@@ -51,13 +55,14 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         });
     }
 
+
     @Override
     public int getItemCount() {
         return jobs.size();
     }
 
     public static class JobViewHolder extends RecyclerView.ViewHolder {
-        TextView jobTitle, jobEmployer;
+        TextView jobTitle, jobEmployer, jobEarnings;
         MaterialCardView jobCard;
         View colorAccent;
 
@@ -67,7 +72,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
             jobEmployer = itemView.findViewById(R.id.jobEmployer);
             jobCard = itemView.findViewById(R.id.jobCard);
             colorAccent = itemView.findViewById(R.id.colorAccent);
-
+            jobEarnings = itemView.findViewById(R.id.netPay);
         }
     }
 }
