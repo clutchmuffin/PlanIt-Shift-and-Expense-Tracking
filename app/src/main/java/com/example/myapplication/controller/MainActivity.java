@@ -63,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_calendar) {
                 // Calendar view not implemented yet.
                 return true;
+            } else if (itemId == R.id.nav_budget) {
+                //Go to Budget Feature
+                return true;
             }
             return false;
         });
