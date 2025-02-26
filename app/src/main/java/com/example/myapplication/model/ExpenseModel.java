@@ -1,4 +1,4 @@
-package com.example.laststraw;
+package com.example.myapplication.model;
 
 public class ExpenseModel {
 
