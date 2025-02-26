@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_budget) {
                 //Go to Budget Feature
+                Intent intent = new Intent(MainActivity.this, BudgetMainActivity.class);
+                startActivity(intent);
                 return true;
             }
             return false;
