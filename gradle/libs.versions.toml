@@ -10,6 +10,7 @@ navigationFragment = "2.8.6"
 navigationUi = "2.8.6"
 recyclerview = "1.4.0"
 roomRuntime = "2.6.1"
+firebaseFirestore = "25.1.2"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -24,6 +25,7 @@ recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "r
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "roomRuntime" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

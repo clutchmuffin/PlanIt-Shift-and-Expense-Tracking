@@ -17,6 +17,8 @@ import com.example.myapplication.model.Job;
 import com.example.myapplication.model.Shift;
 import com.example.myapplication.view.adapter.ShiftListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class JobDetailActivity extends AppCompatActivity {
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
@@ -102,6 +104,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
                 // Add the shift to the job.
                 job.addShift(newShift);
+                db.collection("Jobs").document("Job A").collection("Shifts").document();
 
                 // Notify the adapter to update the RecyclerView.
                 shiftListAdapter.notifyItemInserted(job.getShifts().size() - 1);
