@@ -1,37 +1,22 @@
 package com.example.myapplication.model;
 
 import java.util.Date;
+// for monthly repeated events, which day should the event fall on
 
 public class DayEvent {
     private String name;
     private Date begin_date, end_date;
 
     // how often is the DayEvent repeated?
-    enum repeat_type {
-        NEVER,
-        DAILY,
-        WEEKLY,
-        MONTHLY,
-        ANNUALLY
-    }
-    private repeat_type repeated;
 
-    // for monthly repeated events, which day should the event fall on
-    enum repeat_monthly_type {
-        NEVER,
-        SAME_DAY, // eg every 25th
-        SAME_WEEKDAY // eg every second tuesday
-    }
-    private repeat_monthly_type repeated_monthly;
+    private RepeatType repeated;
+
+
+    private MonthlyRepeatType repeated_monthly;
 
     // for repeated events, how long does it keep repeating
-    enum repeated_until_type {
-        NEVER,
-        FOREVER,
-        UNTIL_DATE,
-        N_REPETITIONS
-    }
-    private repeated_until_type repeated_until;
+
+    private RepeatUntilType repeated_until;
 
     // for events repeated until a certain date
     private Date repeated_until_date;
@@ -47,21 +32,62 @@ public class DayEvent {
         this.begin_date = begin;
         this.end_date = end;
 
-        this.repeated = repeat_type.NEVER;
-        this.repeated_monthly = repeat_monthly_type.NEVER;
-        this.repeated_until = repeated_until_type.NEVER;
+        this.repeated = RepeatType.NEVER;
+        this.repeated_monthly = MonthlyRepeatType.NEVER;
+        this.repeated_until = RepeatUntilType.NEVER;
         this.repeated_until_date = end;
         this.repeated_reps = 0;
         this.repetition_step = 0;
 
     }
 
-    public DayEvent(String n, Date begin, Date end, int repeat, int monthly, int until, Date until_date, int reps, int step) {
+    public DayEvent(String n, Date begin, Date end, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, Date until_date, int reps, int step) {
         this.name = n;
         this.begin_date = begin;
         this.end_date = end;
 
         this.repeated = repeat;
+        this.repeated_monthly = monthly;
+        this.repeated_until = until;
+        this.repeated_until_date = until_date;
+        this.repeated_reps = reps;
+        this.repetition_step = step;
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Date getBegin_date() {
+        return begin_date;
+    }
+
+    public Date getEnd_date() {
+        return end_date;
+    }
+
+    public RepeatType getRepeated() {
+        return repeated;
+    }
+
+    public MonthlyRepeatType getRepeated_monthly() {
+        return repeated_monthly;
+    }
+
+    public RepeatUntilType getRepeated_until() {
+        return repeated_until;
+    }
+
+    public Date getRepeated_until_date() {
+        return repeated_until_date;
+    }
+
+    public int getRepeated_reps() {
+        return repeated_reps;
+    }
+
+    public int getRepetition_step() {
+        return repetition_step;
     }
 }
