@@ -2,7 +2,11 @@ package com.example.myapplication.model;
 
 import com.google.type.DateTime;
 
-public class TimeSlot {
+import java.io.Serializable;
+
+// For actual calendar rendering
+// A single CalendarEvent can correspond to multiple EventSlots, generated based on repetition fields
+public class EventSlot implements Serializable {
     private int event;
 
     private DateTime begin_local, end_local;
@@ -11,9 +15,9 @@ public class TimeSlot {
 
     private boolean skipped;
 
-    public TimeSlot() {}
+    public EventSlot() {}
 
-    public TimeSlot(int eid, DateTime begin, DateTime end, int btz, int etz, boolean skip) {
+    public EventSlot(int eid, DateTime begin, DateTime end, int btz, int etz, boolean skip) {
         this.event = eid;
         this.begin_local = begin;
         this.end_local = end;

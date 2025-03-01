@@ -1,50 +1,64 @@
 package com.example.myapplication.model;
 
-import java.util.Date;
-// for monthly repeated events, which day should the event fall on
+import com.google.type.DateTime;
 
-public class DayEvent {
+import java.util.ArrayList;
+
+
+
+public class CalendarEvent {
     private String name;
-    private Date begin_date, end_date;
+
+    private int user_id;
+
+    private DateTime begin_date, end_date;
+
+    private int begin_tz, end_tz;
 
     // how often is the DayEvent repeated?
-
     private RepeatType repeated;
 
-
+    // if repeated monthly, is it numerical or weekday relative
     private MonthlyRepeatType repeated_monthly;
 
-    // for repeated events, how long does it keep repeating
+    // if repeated weekly, which days of the week?
+    private ArrayList<String> repeated_dow;
 
+    // for repeated events, how long does it keep repeating
     private RepeatUntilType repeated_until;
 
     // for events repeated until a certain date
-    private Date repeated_until_date;
+    private DateTime repeated_until_date;
 
     // for repeated events, step = every n weeks/months/years
     // for events repeated a certain number of times, how many reps?
     private int repetition_step, repeated_reps;
 
-    public DayEvent() {}
+    public CalendarEvent() {}
 
-    public DayEvent(String n, Date begin, Date end) {
+    public CalendarEvent(String n, int uid, DateTime begin, DateTime end) {
         this.name = n;
+        this.user_id = uid;
         this.begin_date = begin;
         this.end_date = end;
 
+        this.begin_tz = 0;
+        this.end_tz = 0;
         this.repeated = RepeatType.NEVER;
         this.repeated_monthly = MonthlyRepeatType.NEVER;
         this.repeated_until = RepeatUntilType.NEVER;
         this.repeated_until_date = end;
         this.repeated_reps = 0;
         this.repetition_step = 0;
-
     }
 
-    public DayEvent(String n, Date begin, Date end, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, Date until_date, int reps, int step) {
+    public CalendarEvent(String n, int uid, DateTime begin, DateTime end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, DateTime until_date, int reps, int step) {
         this.name = n;
+        this.user_id = uid;
         this.begin_date = begin;
         this.end_date = end;
+        this.begin_tz = b_tz;
+        this.end_tz = e_tz;
 
         this.repeated = repeat;
         this.repeated_monthly = monthly;
@@ -59,11 +73,15 @@ public class DayEvent {
         return name;
     }
 
-    public Date getBegin_date() {
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public DateTime getBegin_date() {
         return begin_date;
     }
 
-    public Date getEnd_date() {
+    public DateTime getEnd_date() {
         return end_date;
     }
 
@@ -79,7 +97,7 @@ public class DayEvent {
         return repeated_until;
     }
 
-    public Date getRepeated_until_date() {
+    public DateTime getRepeated_until_date() {
         return repeated_until_date;
     }
 
