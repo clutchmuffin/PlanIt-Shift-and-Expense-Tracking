@@ -13,17 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.EventSlot;
 import com.example.myapplication.model.Job;
-import com.example.myapplication.view.adapter.ShiftListAdapter;
+import com.example.myapplication.view.adapter.EventListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class JobDetailActivity extends AppCompatActivity {
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
     private Job job;
-    private RecyclerView shiftRecyclerView;
-    private ShiftListAdapter shiftListAdapter;
-    private FloatingActionButton fabAddShift;
+    private RecyclerView eventRecyclerView;
+    private EventListAdapter eventListAdapter;
+    private FloatingActionButton fabAddButton;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,8 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvEmployer = findViewById(R.id.detailJobEmployer);
         TextView tvLocation = findViewById(R.id.detailJobLocation);
         TextView tvColor = findViewById(R.id.detailJobColor);
-        shiftRecyclerView = findViewById(R.id.shiftRecyclerView);
-        fabAddShift = findViewById(R.id.fabAddShift);
+        eventRecyclerView = findViewById(R.id.eventRecyclerView);
+        fabAddButton = findViewById(R.id.fabAdd);
 
         // Populate the UI with job details.
         if (job != null) {
@@ -54,17 +57,17 @@ public class JobDetailActivity extends AppCompatActivity {
         }
 
         // Set up the RecyclerView.
-        shiftRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        shiftListAdapter = new ShiftListAdapter(job.getShifts());
-        shiftRecyclerView.setAdapter(shiftListAdapter);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        eventListAdapter = new EventListAdapter(job.getEvents());
+        eventRecyclerView.setAdapter(eventListAdapter);
 
         // Set up the FAB to add a new shift.
-        fabAddShift.setOnClickListener(v -> showAddShiftDialog());
+        fabAddButton.setOnClickListener(v -> showAddShiftDialog());
     }
 
     private void showAddShiftDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_add_shift, null);
+        View dialogView = inflater.inflate(R.layout.dialog_add_event, null);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add New Shift")
@@ -75,21 +78,33 @@ public class JobDetailActivity extends AppCompatActivity {
 
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                EditText etDate = dialogView.findViewById(R.id.editShiftDate);
-                EditText etStartTime = dialogView.findViewById(R.id.editShiftStartTime);
-                EditText etEndTime = dialogView.findViewById(R.id.editShiftEndTime);
+                EditText etName = dialogView.findViewById(R.id.editEventName);
+                EditText etBeginDate = dialogView.findViewById(R.id.editBeginDate);
+                EditText etBeginTime = dialogView.findViewById(R.id.editBeginTime);
+                EditText etEndDate = dialogView.findViewById(R.id.editEndDate);
+                EditText etEndTime = dialogView.findViewById(R.id.editEndTime);
 
-                String date = etDate.getText().toString().trim();
-                String startTime = etStartTime.getText().toString().trim();
+                String name = etName.getText().toString().trim();
+                String beginDate = etBeginDate.getText().toString().trim();
+                String endDate = etEndDate.getText().toString().trim();
+                String beginTime = etBeginTime.getText().toString().trim();
                 String endTime = etEndTime.getText().toString().trim();
 
                 // Minimal validation (e.g., date and time fields required).
-                if (TextUtils.isEmpty(date)) {
-                    etDate.setError("Date is required");
+                if (TextUtils.isEmpty(name)) {
+                    etName.setError("Name is required");
                     return;
                 }
-                if (TextUtils.isEmpty(startTime)) {
-                    etStartTime.setError("Start time is required");
+                if (TextUtils.isEmpty(beginDate)) {
+                    etBeginDate.setError("Date is required");
+                    return;
+                }
+                if (TextUtils.isEmpty(endDate)) {
+                    etEndDate.setError("Date is required");
+                    return;
+                }
+                if (TextUtils.isEmpty(beginTime)) {
+                    etBeginTime.setError("Start time is required");
                     return;
                 }
                 if (TextUtils.isEmpty(endTime)) {
@@ -98,13 +113,14 @@ public class JobDetailActivity extends AppCompatActivity {
                 }
 
                 // Create a new Shift.
-                EventSlot newShift = new EventSlot();
+                CalendarEvent newEvent = new CalendarEvent(name, 0, beginDate, endDate);
 
                 // Add the shift to the job.
-                job.addShift(newShift);
+                db.collection("Jobs").document(job.getTitle()).collection("Events").document(newEvent.getName()).set(newEvent);
+                job.addEvent(newEvent);
 
                 // Notify the adapter to update the RecyclerView.
-                shiftListAdapter.notifyItemInserted(job.getShifts().size() - 1);
+                eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
                 dialog.dismiss();
             });
         });
