@@ -1,7 +1,5 @@
 package com.example.myapplication.model;
 
-import com.google.type.DateTime;
-
 import java.util.ArrayList;
 
 
@@ -11,7 +9,8 @@ public class CalendarEvent {
 
     private int user_id;
 
-    private DateTime begin_date, end_date;
+    private String begin_date;
+    private String end_date;
 
     private int begin_tz, end_tz;
 
@@ -28,7 +27,7 @@ public class CalendarEvent {
     private RepeatUntilType repeated_until;
 
     // for events repeated until a certain date
-    private DateTime repeated_until_date;
+    private String repeated_until_date;
 
     // for repeated events, step = every n weeks/months/years
     // for events repeated a certain number of times, how many reps?
@@ -36,7 +35,7 @@ public class CalendarEvent {
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, int uid, DateTime begin, DateTime end) {
+    public CalendarEvent(String n, int uid, String begin, String end) {
         this.name = n;
         this.user_id = uid;
         this.begin_date = begin;
@@ -52,7 +51,7 @@ public class CalendarEvent {
         this.repetition_step = 0;
     }
 
-    public CalendarEvent(String n, int uid, DateTime begin, DateTime end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, DateTime until_date, int reps, int step) {
+    public CalendarEvent(String n, int uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
         this.name = n;
         this.user_id = uid;
         this.begin_date = begin;
@@ -77,11 +76,11 @@ public class CalendarEvent {
         return user_id;
     }
 
-    public DateTime getBegin_date() {
+    public String getBegin_date() {
         return begin_date;
     }
 
-    public DateTime getEnd_date() {
+    public String getEnd_date() {
         return end_date;
     }
 
@@ -97,7 +96,7 @@ public class CalendarEvent {
         return repeated_until;
     }
 
-    public DateTime getRepeated_until_date() {
+    public String getRepeated_until_date() {
         return repeated_until_date;
     }
 
