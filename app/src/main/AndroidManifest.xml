@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShiftTracker">
         <activity
+            android:name=".controller.SetBudget"
+            android:exported="false" />
+        <activity
             android:name=".controller.AddActivity"
             android:exported="false" />
         <activity

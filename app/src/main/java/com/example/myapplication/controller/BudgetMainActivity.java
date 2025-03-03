@@ -92,6 +92,16 @@ public class BudgetMainActivity extends AppCompatActivity {
 
             }
         });
+
+        updateBudget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(BudgetMainActivity.this, Food.class));
+
+
+            }
+        });
 /*
         addExpense.setOnClickListener(new View.OnClickListener() {
             @Override
