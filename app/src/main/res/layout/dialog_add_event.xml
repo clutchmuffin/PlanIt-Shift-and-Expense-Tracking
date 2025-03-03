@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <!-- Event Name -->
+        <EditText
+            android:id="@+id/editEventName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Name"
+            android:inputType="text"
+            android:minHeight="48dp" />
+
+        <!-- Begin Date/Time -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Begin"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/editBeginDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Begin Date (YYYY-MM-DD)"
+            android:inputType="date"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/editBeginTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Begin Time (HH:MM)"
+            android:inputType="time"
+            android:minHeight="48dp" />
+
+        <!-- End Date/Time -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="End"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/editEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End Date (YYYY-MM-DD)"
+            android:inputType="date"
+            android:minHeight="48dp" />
+
+        <EditText
+            android:id="@+id/editEndTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End Time (HH:MM)"
+            android:inputType="time"
+            android:minHeight="48dp" />
+
+        <!-- Repeat Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Repeat"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerRepeatType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
+
+        <!-- Monthly Repeat Options -->
+        <LinearLayout
+            android:id="@+id/layoutMonthlyOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RadioGroup
+                android:id="@+id/radioGroupMonthlyType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/radioSameDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Same Day of Month"/>
+                <RadioButton
+                    android:id="@+id/radioSameWeekday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Same Weekday"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- Weekly Repeat Options -->
+        <LinearLayout
+            android:id="@+id/layoutWeeklyOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Repeat on:"/>
+
+            <CheckBox android:id="@+id/checkMonday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monday"/>
+            <CheckBox android:id="@+id/checkTuesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tuesday"/>
+            <!-- Add other weekdays -->
+        </LinearLayout>
+
+        <!-- Repeat Until Options -->
+        <LinearLayout
+            android:id="@+id/layoutRepeatOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/editRepeatStep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Repeat every X days/weeks/months/years"
+                android:inputType="number"
+                android:minHeight="48dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroupRepeatUntil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/radioUntilDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Until Date"/>
+                <RadioButton
+                    android:id="@+id/radioForOccurrences"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="For X Occurrences"/>
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/editUntilDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="End Date"
+                android:inputType="date"
+                android:visibility="gone"
+                android:minHeight="48dp" />
+
+            <EditText
+                android:id="@+id/editOccurrences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Number of Occurrences"
+                android:inputType="number"
+                android:visibility="gone"
+                android:minHeight="48dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
