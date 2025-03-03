@@ -2,7 +2,6 @@ package com.example.myapplication.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Job implements Serializable {
     private String title;
@@ -10,10 +9,12 @@ public class Job implements Serializable {
     private String employer;
     private String location;
     private int color;
-    private ArrayList<CalendarEvent> days;
-    private ArrayList<EventSlot> shifts;
+    private ArrayList<CalendarEvent> events;
+    private ArrayList<EventSlot> eventSlots;
 
-    public Job() { }
+    public Job() {
+        this.events = new ArrayList<>();
+    }
 
     public Job(String title, String subTitle, String employer, String location, int color) {
         this.title = title;
@@ -21,7 +22,7 @@ public class Job implements Serializable {
         this.employer = employer;
         this.location = location;
         this.color = color;
-        this.shifts = new ArrayList<EventSlot>();
+        this.events = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -47,11 +48,11 @@ public class Job implements Serializable {
     public int getColor() { return color; }
     public void setColor(int newColor) { color = newColor; }
 
-    public ArrayList<EventSlot> getShifts() {
-        return shifts;
+    public ArrayList<CalendarEvent> getEvents() {
+        return events;
     }
-    public void addShift(EventSlot shift) {
-        shifts.add(shift);
+    public void addEvent(CalendarEvent e) {
+        events.add(e);
     }
 }
 
