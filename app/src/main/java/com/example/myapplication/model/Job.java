@@ -13,6 +13,8 @@ public class Job implements Serializable {
     private ArrayList<CalendarEvent> days;
     private ArrayList<EventSlot> shifts;
 
+    public Job() { }
+
     public Job(String title, String subTitle, String employer, String location, int color) {
         this.title = title;
         this.subTitle = subTitle;
@@ -20,7 +22,6 @@ public class Job implements Serializable {
         this.location = location;
         this.color = color;
         this.shifts = new ArrayList<EventSlot>();
-
     }
 
     public String getTitle() {
