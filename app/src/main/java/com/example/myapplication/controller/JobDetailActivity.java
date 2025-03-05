@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.EventSlot;
 import com.example.myapplication.model.Job;
-import com.example.myapplication.model.Shift;
 import com.example.myapplication.view.adapter.ShiftListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -98,7 +98,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 }
 
                 // Create a new Shift.
-                Shift newShift = new Shift(date, startTime, endTime);
+                EventSlot newShift = new EventSlot();
 
                 // Add the shift to the job.
                 job.addShift(newShift);

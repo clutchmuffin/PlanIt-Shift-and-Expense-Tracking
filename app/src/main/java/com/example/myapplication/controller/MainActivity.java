@@ -17,6 +17,7 @@ import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabAddJob;
     List<Job> dummyJobs;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         dummyJobs.add(new Job("Job B", "Subhead B", "Employer B", "Location B", Color.parseColor("#6200EE")));
         dummyJobs.add(new Job("Job C", "Subhead C", "Employer C", "Location C", Color.parseColor("#3700B3")));
 
+        db.collection("Jobs").document("Job A").set(dummyJobs.get(0));
         // Set the adapter.
         jobListAdapter = new JobListAdapter(dummyJobs);
         jobRecyclerView.setAdapter(jobListAdapter);
@@ -122,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Add the new job to the list.
                 dummyJobs.add(newJob);
+                db.collection("Jobs").document(newJob.getTitle()).set(newJob);
 
                 // Notify the adapter that a new item was inserted.
                 jobListAdapter.notifyItemInserted(dummyJobs.size() - 1);

@@ -7,13 +7,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
-import com.example.myapplication.model.Shift;
+import com.example.myapplication.model.EventSlot;
+
 import java.util.List;
 
 public class ShiftListAdapter extends RecyclerView.Adapter<ShiftListAdapter.ShiftViewHolder> {
-    private List<Shift> shifts;
+    private List<EventSlot> shifts;
 
-    public ShiftListAdapter(List<Shift> shifts) {
+    public ShiftListAdapter(List<EventSlot> shifts) {
         this.shifts = shifts;
     }
 
@@ -26,10 +27,10 @@ public class ShiftListAdapter extends RecyclerView.Adapter<ShiftListAdapter.Shif
 
     @Override
     public void onBindViewHolder(@NonNull ShiftViewHolder holder, int position) {
-        Shift shift = shifts.get(position);
-        holder.tvDate.setText(shift.getDate());
-        holder.tvStartTime.setText(shift.getStartTime());
-        holder.tvEndTime.setText(shift.getEndTime());
+        EventSlot shift = shifts.get(position);
+        holder.tvDate.setText(shift.getBegin_local().getDay());
+        holder.tvStartTime.setText(shift.getBegin_local().getHours());
+        holder.tvEndTime.setText(shift.getEnd_local().getHours());
     }
 
     @Override
