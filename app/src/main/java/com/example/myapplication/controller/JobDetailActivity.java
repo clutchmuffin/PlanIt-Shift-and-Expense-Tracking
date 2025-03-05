@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
-import com.example.myapplication.model.Shift;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
