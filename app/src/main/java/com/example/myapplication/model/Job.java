@@ -64,7 +64,7 @@ public class Job implements Serializable {
     // Calculate net money earned (ignoring past shifts)
     public int calculateNetEarnings() {
         LocalDate today = LocalDate.now();
-        long futureShifts = shifts.stream().filter(shift -> shift.getLocalDate().isAfter(today)).count();
+        long futureShifts = events.stream().filter(event -> event.getBegin_date().isAfter(today)).count();
         return (int) (futureShifts * pay_rate);  // Net earnings = Pay Rate * Future Shift Count
     }
 }
