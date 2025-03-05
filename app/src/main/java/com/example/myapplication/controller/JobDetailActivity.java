@@ -1,18 +1,21 @@
 package com.example.myapplication.controller;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.Shift;
-import com.example.myapplication.view.adapter.ShiftListAdapter;
+import com.example.myapplication.view.adapter.EventListAdapter;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -22,16 +25,19 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class JobDetailActivity extends AppCompatActivity {
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
     private Job job;
-    private RecyclerView shiftRecyclerView;
-    private ShiftListAdapter shiftListAdapter;
-    private FloatingActionButton fabAddShift;
+    private RecyclerView eventRecyclerView;
+    private EventListAdapter eventListAdapter;
+    private FloatingActionButton fabAddButton;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private LocalDate selectedDate;
+    private LocalDate beginDate;
+    private LocalDate endDate;
     private LocalTime selectedStartTime;
     private LocalTime selectedEndTime;
 
@@ -53,8 +59,8 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvLocation = findViewById(R.id.detailJobLocation);
         TextView tvPayRate = findViewById(R.id.detailJobPayRate);
         TextView tvColor = findViewById(R.id.detailJobColor);
-        shiftRecyclerView = findViewById(R.id.shiftRecyclerView);
-        fabAddShift = findViewById(R.id.fabAddShift);
+        eventRecyclerView = findViewById(R.id.eventRecyclerView);
+        fabAddButton = findViewById(R.id.fabAdd);
 
         // Populate the UI with job details.
         if (job != null) {
@@ -69,17 +75,17 @@ public class JobDetailActivity extends AppCompatActivity {
         }
 
         // Set up the RecyclerView.
-        shiftRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        shiftListAdapter = new ShiftListAdapter(job.getShifts());
-        shiftRecyclerView.setAdapter(shiftListAdapter);
+        eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        eventListAdapter = new EventListAdapter(job.getEvents());
+        eventRecyclerView.setAdapter(eventListAdapter);
 
         // Set up the FAB to add a new shift.
-        fabAddShift.setOnClickListener(v -> showAddShiftDialog());
+        fabAddButton.setOnClickListener(v -> showAddShiftDialog());
     }
 
     private void showAddShiftDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_add_shift, null);
+        View dialogView = inflater.inflate(R.layout.dialog_add_event, null);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add New Shift")
@@ -88,21 +94,36 @@ public class JobDetailActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
-        Button btnSelectDate = dialogView.findViewById(R.id.btnSelectDate);
+        EditText etName = dialogView.findViewById(R.id.editEventName);
+        Button btnSelectBeginDate = dialogView.findViewById(R.id.btnSelectBeginDate);
+        Button btnSelectEndDate = dialogView.findViewById(R.id.btnSelectEndDate);
         Button btnSelectStartTime = dialogView.findViewById(R.id.btnSelectStartTime);
         Button btnSelectEndTime = dialogView.findViewById(R.id.btnSelectEndTime);
-        TextView tvSelectedDate = dialogView.findViewById(R.id.tvSelectedDate);
+        TextView tvBeginDate = dialogView.findViewById(R.id.tvBeginDate);
+        TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
         TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
         TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
 
-        btnSelectDate.setOnClickListener(v -> showDatePicker(tvSelectedDate));
+        btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
+        btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
         btnSelectStartTime.setOnClickListener(v -> showTimePicker(tvSelectedStartTime, true));
         btnSelectEndTime.setOnClickListener(v -> showTimePicker(tvSelectedEndTime, false));
 
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                if (selectedDate == null) {
-                    tvSelectedDate.setError("Select a date");
+
+                String name = etName.getText().toString().trim();
+                if (TextUtils.isEmpty(name)) {
+                    etName.setError("Name is required");
+                    return;
+                }
+
+                if (beginDate == null) {
+                    tvEndDate.setError("Select a date");
+                    return;
+                }
+                if (endDate == null) {
+                    tvEndDate.setError("Select a date");
                     return;
                 }
                 if (selectedStartTime == null) {
@@ -114,47 +135,63 @@ public class JobDetailActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Create a new Shift object
-                Shift newShift = new Shift(selectedDate, selectedStartTime, selectedEndTime);
-                job.addShift(newShift);
+                // Create a new Shift.
+                CalendarEvent newEvent = new CalendarEvent(name, 0, beginDate, endDate, selectedStartTime, selectedEndTime);
 
-                // Notify adapter
-                shiftListAdapter.notifyItemInserted(job.getShifts().size() - 1);
+                // Add the shift to the job.
+                db.collection("Jobs").document(job.getTitle()).collection("Events").document(newEvent.getName()).set(newEvent);
+                job.addEvent(newEvent);
+
+                // Notify the adapter to update the RecyclerView.
+                eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
                 dialog.dismiss();
             });
         });
         dialog.show();
     }
 
-    private void showDatePicker(TextView tvSelectedDate) {
+    private void showDatePicker(TextView tvDate, boolean isBeginDate) {
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Select Date")
                 .build();
 
-        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+        datePicker.show(getSupportFragmentManager(), isBeginDate ? "BEGIN_DATE_PICKER" : "END_DATE_PICKER");
+
         datePicker.addOnPositiveButtonClickListener(selection -> {
-            selectedDate = Instant.ofEpochMilli(selection)
+            LocalDate selectedDate = Instant.ofEpochMilli(selection)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
-            tvSelectedDate.setText(selectedDate.format(DATE_FORMATTER));
+
+            if (isBeginDate) {
+                beginDate = selectedDate;
+            } else {
+                endDate = selectedDate;
+            }
+            tvDate.setText(selectedDate.format(DATE_FORMATTER));
         });
     }
 
-    private void showTimePicker(TextView tvSelectedTime, boolean isStartTime) {
+
+    private void showTimePicker(TextView tvTime, boolean isStartTime) {
         MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_12H)
+                .setHour(12)
+                .setMinute(0)
                 .setTitleText(isStartTime ? "Select Start Time" : "Select End Time")
                 .build();
 
         timePicker.show(getSupportFragmentManager(), isStartTime ? "START_TIME_PICKER" : "END_TIME_PICKER");
+
         timePicker.addOnPositiveButtonClickListener(v -> {
             LocalTime selectedTime = LocalTime.of(timePicker.getHour(), timePicker.getMinute());
+
             if (isStartTime) {
                 selectedStartTime = selectedTime;
             } else {
                 selectedEndTime = selectedTime;
             }
-            tvSelectedTime.setText(selectedTime.format(TIME_FORMATTER));
+            tvTime.setText(selectedTime.format(TIME_FORMATTER));
         });
     }
+
 }

@@ -3,7 +3,6 @@ package com.example.myapplication.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Job implements Serializable {
     private String title;
@@ -12,7 +11,12 @@ public class Job implements Serializable {
     private String location;
     private int color;
     private int pay_rate;
-    private List<Shift> shifts;
+    private ArrayList<CalendarEvent> events;
+    private ArrayList<EventSlot> eventSlots;
+
+    public Job() {
+        this.events = new ArrayList<>();
+    }
 
     public Job(String title, String subTitle, String employer, String location, int color) {
         this.title = title;
@@ -20,8 +24,8 @@ public class Job implements Serializable {
         this.employer = employer;
         this.location = location;
         this.color = color;
-        this.shifts = new ArrayList<>();
         this.pay_rate = 0;
+        this.events = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -47,11 +51,11 @@ public class Job implements Serializable {
     public int getColor() { return color; }
     public void setColor(int newColor) { color = newColor; }
 
-    public List<Shift> getShifts() {
-        return shifts;
+    public ArrayList<CalendarEvent> getEvents() {
+        return events;
     }
-    public void addShift(Shift shift) {
-        shifts.add(shift);
+    public void addEvent(CalendarEvent e) {
+        events.add(e);
     }
 
     public int getPayRate() { return this.pay_rate; }
