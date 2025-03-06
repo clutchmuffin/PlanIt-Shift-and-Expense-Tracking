@@ -3,6 +3,7 @@ package com.example.myapplication.controller;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +18,8 @@ import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private JobListAdapter jobListAdapter;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabAddJob;
-    List<Job> dummyJobs;
+    private List<Job> jobs;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +47,24 @@ public class MainActivity extends AppCompatActivity {
         // Set up the RecyclerView.
         jobRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Create some dummy job data.
-        dummyJobs = new ArrayList<>();
-        dummyJobs.add(new Job("Job A", "Subhead A", "Employer A", "Location A", Color.parseColor("#BB86FC")));
-        dummyJobs.add(new Job("Job B", "Subhead B", "Employer B", "Location B", Color.parseColor("#6200EE")));
-        dummyJobs.add(new Job("Job C", "Subhead C", "Employer C", "Location C", Color.parseColor("#3700B3")));
+        // Create a local list jobs.
+        jobs = new ArrayList<>();
+
+        // Get the list of jobs from Firestore. TODO: Implement this.
+        db.collection("Jobs").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Job job = document.toObject(Job.class);
+                    jobs.add(job);
+                }
+                jobListAdapter.notifyDataSetChanged();
+            } else {
+                Log.e("MainActivity", "Error getting documents: ", task.getException());
+            }
+        });
 
         // Set the adapter.
-        jobListAdapter = new JobListAdapter(dummyJobs);
+        jobListAdapter = new JobListAdapter(jobs);
         jobRecyclerView.setAdapter(jobListAdapter);
 
         // Set up the bottom navigation.
@@ -93,12 +107,14 @@ public class MainActivity extends AppCompatActivity {
                 EditText etEmployer = dialogView.findViewById(R.id.editJobEmployer);
                 EditText etLocation = dialogView.findViewById(R.id.editJobLocation);
                 EditText etColor = dialogView.findViewById(R.id.editJobColor);
+                EditText etPay = dialogView.findViewById(R.id.editPayRate);
 
                 String title = etTitle.getText().toString().trim();
                 String subtitle = etSubtitle.getText().toString().trim();
                 String employer = etEmployer.getText().toString().trim();
                 String location = etLocation.getText().toString().trim();
                 String colorInput = etColor.getText().toString().trim();
+                String pay_rate = etPay.getText().toString().trim();
 
                 // Validate required fields (at minimum, title).
                 if (TextUtils.isEmpty(title)) {
@@ -119,12 +135,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // Create a new Job object.
                 Job newJob = new Job(title, subtitle, employer, location, colorValue);
+                newJob.setPayRate(Integer.parseInt(pay_rate));
 
                 // Add the new job to the list.
-                dummyJobs.add(newJob);
+                jobs.add(newJob);
+                db.collection("Jobs").document(newJob.getTitle()).set(newJob);
 
                 // Notify the adapter that a new item was inserted.
-                jobListAdapter.notifyItemInserted(dummyJobs.size() - 1);
+                jobListAdapter.notifyItemInserted(jobs.size() - 1);
 
                 // Dismiss the dialog.
                 dialog.dismiss();
