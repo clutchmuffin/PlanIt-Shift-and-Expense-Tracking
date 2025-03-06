@@ -1,8 +1,8 @@
 package com.example.myapplication.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Job implements Serializable {
     private String title;
@@ -10,8 +10,15 @@ public class Job implements Serializable {
     private String employer;
     private String location;
     private int color;
-    private ArrayList<CalendarEvent> days;
-    private ArrayList<EventSlot> shifts;
+    private int pay_rate;
+    private ArrayList<CalendarEvent> events;
+    private ArrayList<EventSlot> eventSlots;
+    private ArrayList<Expense> expense_list;
+
+    public Job() {
+        this.events = new ArrayList<>();
+        this.expense_list = new ArrayList<>();
+    }
 
     public Job(String title, String subTitle, String employer, String location, int color) {
         this.title = title;
@@ -19,8 +26,9 @@ public class Job implements Serializable {
         this.employer = employer;
         this.location = location;
         this.color = color;
-        this.shifts = new ArrayList<EventSlot>();
-
+        this.pay_rate = 0;
+        this.events = new ArrayList<>();
+        this.expense_list = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -46,11 +54,29 @@ public class Job implements Serializable {
     public int getColor() { return color; }
     public void setColor(int newColor) { color = newColor; }
 
-    public ArrayList<EventSlot> getShifts() {
-        return shifts;
+    public ArrayList<CalendarEvent> getEvents() {
+        return events;
     }
-    public void addShift(EventSlot shift) {
-        shifts.add(shift);
+    public void addEvent(CalendarEvent e) {
+        events.add(e);
+    }
+
+    public int getPayRate() { return this.pay_rate; }
+    public void setPayRate(int pay) { pay_rate = pay; }
+
+    public ArrayList<Expense> getExpenses() {
+        return this.expense_list;
+    }
+
+    public void addExpense(Expense exp) {
+        expense_list.add(exp);
+    }
+
+    // Calculate net money earned (ignoring past shifts)
+    public int calculateNetEarnings() {
+        LocalDate today = LocalDate.now();
+        long futureShifts = events.stream().filter(event -> event.getBegin_date().isAfter(today)).count();
+        return (int) (futureShifts * pay_rate);  // Net earnings = Pay Rate * Future Shift Count
     }
 }
 

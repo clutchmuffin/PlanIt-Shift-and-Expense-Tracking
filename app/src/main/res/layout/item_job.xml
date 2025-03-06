@@ -26,9 +26,11 @@
 
         <!-- Job Title and Subtitle -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="1">
+
 
             <TextView
                 android:id="@+id/jobTitle"
@@ -46,5 +48,17 @@
                 android:text="@string/employer"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
+
+        <!-- Net Pay -->
+        <TextView
+            android:id="@+id/netPay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dollar"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:gravity="end"
+            android:layout_gravity="center_vertical"/>
+
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
