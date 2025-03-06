@@ -11,11 +11,11 @@ public class CalendarEvent {
 
     private int user_id;
 
-    private LocalDate begin_date;
-    private LocalDate end_date;
+    private String begin_date;
+    private String end_date;
 
-    private LocalTime begin_time;
-    private LocalTime end_time;
+    private String begin_time;
+    private String end_time;
 
     private int begin_tz, end_tz;
 
@@ -40,7 +40,7 @@ public class CalendarEvent {
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, int uid, LocalDate begin, LocalDate end, LocalTime begin_time, LocalTime end_time) {
+    public CalendarEvent(String n, int uid, String begin, String end, String begin_time, String end_time) {
         this.name = n;
         this.user_id = uid;
         this.begin_date = begin;
@@ -53,12 +53,12 @@ public class CalendarEvent {
         this.repeated = RepeatType.NEVER;
         this.repeated_monthly = MonthlyRepeatType.NEVER;
         this.repeated_until = RepeatUntilType.NEVER;
-        this.repeated_until_date = end.toString();
+        this.repeated_until_date = end;
         this.repeated_reps = 0;
         this.repetition_step = 0;
     }
 
-    public CalendarEvent(String n, int uid, LocalDate begin, LocalDate end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
+    public CalendarEvent(String n, int uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
         this.name = n;
         this.user_id = uid;
         this.begin_date = begin;
@@ -83,12 +83,20 @@ public class CalendarEvent {
         return user_id;
     }
 
-    public LocalDate getBegin_date() {
+    public String getBegin_date() {
         return begin_date;
     }
 
-    public LocalDate getEnd_date() {
+    public String getEnd_date() {
         return end_date;
+    }
+
+    public String getBegin_time() {
+        return begin_time;
+    }
+
+    public String getEnd_time() {
+        return end_time;
     }
 
     public RepeatType getRepeated() {

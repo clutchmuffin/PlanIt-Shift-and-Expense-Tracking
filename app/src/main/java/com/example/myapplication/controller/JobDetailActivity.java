@@ -42,11 +42,11 @@ public class JobDetailActivity extends AppCompatActivity {
 
     private LocalDate beginDate;
     private LocalDate endDate;
-    private LocalTime selectedStartTime;
-    private LocalTime selectedEndTime;
+    private LocalTime beginTime;
+    private LocalTime endTime;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,17 +138,20 @@ public class JobDetailActivity extends AppCompatActivity {
                     tvEndDate.setError("Select a date");
                     return;
                 }
-                if (selectedStartTime == null) {
+                if (beginTime == null) {
                     tvSelectedStartTime.setError("Select a start time");
                     return;
                 }
-                if (selectedEndTime == null) {
+                if (endTime == null) {
                     tvSelectedEndTime.setError("Select an end time");
                     return;
                 }
 
                 // Create a new Shift.
-                CalendarEvent newEvent = new CalendarEvent(name, 0, beginDate, endDate, selectedStartTime, selectedEndTime);
+                CalendarEvent newEvent = new CalendarEvent(name, 0, beginDate.format(DATE_FORMATTER),
+                                                                        endDate.format(DATE_FORMATTER),
+                                                                        beginTime.format(TIME_FORMATTER),
+                                                                        endTime.format(TIME_FORMATTER));
 
                 // Add the shift to the job.
                 db.collection("Jobs").document(job.getTitle()).collection("Events").document(newEvent.getName()).set(newEvent);
@@ -242,9 +245,9 @@ public class JobDetailActivity extends AppCompatActivity {
             LocalTime selectedTime = LocalTime.of(timePicker.getHour(), timePicker.getMinute());
 
             if (isStartTime) {
-                selectedStartTime = selectedTime;
+                beginTime = selectedTime;
             } else {
-                selectedEndTime = selectedTime;
+                endTime = selectedTime;
             }
             tvTime.setText(selectedTime.format(TIME_FORMATTER));
         });
