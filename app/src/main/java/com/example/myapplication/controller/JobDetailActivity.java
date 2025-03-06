@@ -203,13 +203,41 @@ public class JobDetailActivity extends AppCompatActivity {
                                                             endTime.format(TIME_FORMATTER),
                                                             repeatType);
 
-                // Add the shift to the job.
-                db.collection("Jobs").document(job.getTitle()).collection("Events").document(newEvent.getName()).set(newEvent);
-                job.addEvent(newEvent);
+                // Check for conflicts across all jobs, and only add if no conflict.
+                db.collection("Jobs").get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        boolean hasConflict = false;
+                        String conflictingJobTitle = "";
 
-                // Notify the adapter to update the RecyclerView.
-                eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
-                dialog.dismiss();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Job otherJob = document.toObject(Job.class);
+                            if (otherJob.hasConflictingEvent(newEvent)) {
+                                hasConflict = true;
+                                conflictingJobTitle = otherJob.getTitle();
+                                break;
+                            }
+                        }
+
+                        if (hasConflict) {
+                            // Show conflict alert
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Scheduling Conflict")
+                                    .setMessage("This shift overlaps with an existing shift in job: " + conflictingJobTitle)
+                                    .setPositiveButton("Edit", (d, which) -> d.dismiss())
+                                    .show();
+                        } else {
+                            // No conflict - save the event
+                            db.collection("Jobs").document(job.getTitle())
+                                    .collection("Events")
+                                    .document(newEvent.getName())
+                                    .set(newEvent);
+
+                            job.addEvent(newEvent);
+                            eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
+                            dialog.dismiss();
+                        }
+                    }
+                });
             });
         });
         dialog.show();

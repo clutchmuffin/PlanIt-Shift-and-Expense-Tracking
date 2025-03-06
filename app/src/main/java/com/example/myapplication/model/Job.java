@@ -61,6 +61,13 @@ public class Job implements Serializable {
         events.add(e);
     }
 
+    public boolean hasConflictingEvent(CalendarEvent newEvent) {
+        for (CalendarEvent existingEvent : events) {
+            //TODO: Add logic
+        }
+        return false;
+    }
+
     public int getPayRate() { return this.pay_rate; }
     public void setPayRate(int pay) { pay_rate = pay; }
 
