@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
+import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.view.adapter.EventListAdapter;
+import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -31,8 +33,11 @@ public class JobDetailActivity extends AppCompatActivity {
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
     private Job job;
     private RecyclerView eventRecyclerView;
+    private RecyclerView expenseRecyclerView;
     private EventListAdapter eventListAdapter;
+    private ExpenseListAdapter expenseListAdapter;
     private FloatingActionButton fabAddButton;
+    private FloatingActionButton fabAddExpense;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private LocalDate beginDate;
@@ -59,7 +64,9 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvPayRate = findViewById(R.id.detailJobPayRate);
         TextView tvColor = findViewById(R.id.detailJobColor);
         eventRecyclerView = findViewById(R.id.eventRecyclerView);
+        expenseRecyclerView = findViewById(R.id.expenseRecyclerView);
         fabAddButton = findViewById(R.id.fabAdd);
+        fabAddExpense = findViewById(R.id.fabAddExp);
 
         // Populate the UI with job details.
         if (job != null) {
@@ -73,13 +80,19 @@ public class JobDetailActivity extends AppCompatActivity {
             tvPayRate.setText("$" + job.getPayRate());
         }
 
-        // Set up the RecyclerView.
+        // Set up the  Event RecyclerView.
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventListAdapter = new EventListAdapter(job.getEvents());
         eventRecyclerView.setAdapter(eventListAdapter);
 
+        // Set up the Expenses RecyclerViews
+        expenseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
+        expenseRecyclerView.setAdapter(expenseListAdapter);
+
         // Set up the FAB to add a new shift.
         fabAddButton.setOnClickListener(v -> showAddShiftDialog());
+        fabAddExpense.setOnClickListener(v -> showAddExpenseDialog());
     }
 
     private void showAddShiftDialog() {
@@ -143,6 +156,50 @@ public class JobDetailActivity extends AppCompatActivity {
 
                 // Notify the adapter to update the RecyclerView.
                 eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
+                dialog.dismiss();
+            });
+        });
+        dialog.show();
+    }
+
+    private void showAddExpenseDialog() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_add_expense, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Add New Expense")
+                .setView(dialogView)
+                .setPositiveButton("Add", null)
+                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
+                .create();
+
+        EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
+        EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
+
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+
+                String description = etDescription.getText().toString().trim();
+                if (TextUtils.isEmpty(description)) {
+                    etDescription.setError("Description is required");
+                    return;
+                }
+
+                String amount = etAmount.getText().toString().trim();
+                if (TextUtils.isEmpty(amount)) {
+                    etAmount.setError("Amount is required");
+                    return;
+                }
+
+                // Create a new Expense.
+                Expense newExpense = new Expense(description, Integer.parseInt(amount));
+
+                // Add the expense to the job.
+                db.collection("Jobs").document(job.getTitle()).collection("Expenses").document(newExpense.getDescription()).set(newExpense);
+                job.addExpense(newExpense);
+
+                // Notify the adapter to update the RecyclerView.
+                expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
                 dialog.dismiss();
             });
         });
