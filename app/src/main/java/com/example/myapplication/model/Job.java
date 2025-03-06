@@ -13,9 +13,11 @@ public class Job implements Serializable {
     private int pay_rate;
     private ArrayList<CalendarEvent> events;
     private ArrayList<EventSlot> eventSlots;
+    private ArrayList<Expense> expense_list;
 
     public Job() {
         this.events = new ArrayList<>();
+        this.expense_list = new ArrayList<>();
     }
 
     public Job(String title, String subTitle, String employer, String location, int color) {
@@ -26,6 +28,7 @@ public class Job implements Serializable {
         this.color = color;
         this.pay_rate = 0;
         this.events = new ArrayList<>();
+        this.expense_list = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -60,6 +63,14 @@ public class Job implements Serializable {
 
     public int getPayRate() { return this.pay_rate; }
     public void setPayRate(int pay) { pay_rate = pay; }
+
+    public ArrayList<Expense> getExpenses() {
+        return this.expense_list;
+    }
+
+    public void addExpense(Expense exp) {
+        expense_list.add(exp);
+    }
 
     // Calculate net money earned (ignoring past shifts)
     public int calculateNetEarnings() {
