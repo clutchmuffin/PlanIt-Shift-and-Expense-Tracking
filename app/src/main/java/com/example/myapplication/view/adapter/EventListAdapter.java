@@ -29,8 +29,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         CalendarEvent event = events.get(position);
-        holder.tvDateRange.setText(event.getBegin_date() + " - " + event.getEnd_date());
+        holder.tvDateRange.setText(event.getBegin_date().substring(5) + " to " + event.getEnd_date().substring(5));
         holder.tvName.setText(event.getName());
+        holder.tvTimeRange.setText(event.getBegin_time().substring(0,5) + " - " + event.getEnd_time().substring(0,5));
+        holder.tvRepeatType.setText(event.getRepeated().toString());
     }
 
     @Override
@@ -39,12 +41,14 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDateRange, tvName;
+        TextView tvDateRange, tvName, tvTimeRange, tvRepeatType;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDateRange = itemView.findViewById(R.id.eventDateRange);
             tvName = itemView.findViewById(R.id.eventName);
+            tvTimeRange = itemView.findViewById(R.id.eventTimeRange);
+            tvRepeatType = itemView.findViewById(R.id.eventRepeatInfo);
         }
     }
 }

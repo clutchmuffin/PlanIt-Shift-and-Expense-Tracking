@@ -40,17 +40,17 @@ public class CalendarEvent {
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, int uid, String begin, String end, String begin_time, String end_time) {
+    public CalendarEvent(String n, int uid, String begin, String end, String begin_time, String end_time, RepeatType repeated) {
         this.name = n;
         this.user_id = uid;
         this.begin_date = begin;
         this.end_date = end;
         this.begin_time = begin_time;
         this.end_time = end_time;
+        this.repeated = repeated;
 
         this.begin_tz = 0;
         this.end_tz = 0;
-        this.repeated = RepeatType.NEVER;
         this.repeated_monthly = MonthlyRepeatType.NEVER;
         this.repeated_until = RepeatUntilType.NEVER;
         this.repeated_until_date = end;

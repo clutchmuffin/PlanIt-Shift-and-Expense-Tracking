@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.RepeatType;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -142,6 +144,7 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
         TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
         TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
+        RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
 
         btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
         btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
@@ -174,11 +177,30 @@ public class JobDetailActivity extends AppCompatActivity {
                     return;
                 }
 
+                // Determine the selected repeat type
+                RepeatType repeatType = RepeatType.NEVER; // Default value
+                int selectedRadioButtonId = radioGroupRepeatType.getCheckedRadioButtonId();
+
+                if (selectedRadioButtonId == R.id.radioNeverRepeat) {
+                    repeatType = RepeatType.NEVER;
+                } else if (selectedRadioButtonId == R.id.radioDaily) {
+                    repeatType = RepeatType.DAILY;
+                } else if (selectedRadioButtonId == R.id.radioWeekly) {
+                    repeatType = RepeatType.WEEKLY;
+                } else if (selectedRadioButtonId == R.id.radioMonthly) {
+                    repeatType = RepeatType.MONTHLY;
+                } else if (selectedRadioButtonId == R.id.radioYearly) {
+                    repeatType = RepeatType.ANNUALLY;
+                }
+
                 // Create a new Shift.
-                CalendarEvent newEvent = new CalendarEvent(name, 0, beginDate.format(DATE_FORMATTER),
-                                                                        endDate.format(DATE_FORMATTER),
-                                                                        beginTime.format(TIME_FORMATTER),
-                                                                        endTime.format(TIME_FORMATTER));
+                CalendarEvent newEvent = new CalendarEvent(name,
+                                                        0,
+                                                            beginDate.format(DATE_FORMATTER),
+                                                            endDate.format(DATE_FORMATTER),
+                                                            beginTime.format(TIME_FORMATTER),
+                                                            endTime.format(TIME_FORMATTER),
+                                                            repeatType);
 
                 // Add the shift to the job.
                 db.collection("Jobs").document(job.getTitle()).collection("Events").document(newEvent.getName()).set(newEvent);

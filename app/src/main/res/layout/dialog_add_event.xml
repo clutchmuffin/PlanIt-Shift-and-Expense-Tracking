@@ -111,110 +111,42 @@
             android:textStyle="bold"
             android:layout_marginTop="16dp"/>
 
-        <Spinner
-            android:id="@+id/spinnerRepeatType"
+        <!-- Repeat Type Options -->
+        <RadioGroup
+            android:id="@+id/radioGroupRepeatType"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp" />
+            android:layout_height="wrap_content">
 
-        <!-- Monthly Repeat Options -->
-        <LinearLayout
-            android:id="@+id/layoutMonthlyOptions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <RadioGroup
-                android:id="@+id/radioGroupMonthlyType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:id="@+id/radioSameDay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Same Day of Month"/>
-                <RadioButton
-                    android:id="@+id/radioSameWeekday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Same Weekday"/>
-            </RadioGroup>
-        </LinearLayout>
-
-        <!-- Weekly Repeat Options -->
-        <LinearLayout
-            android:id="@+id/layoutWeeklyOptions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
+            <RadioButton
+                android:id="@+id/radioNeverRepeat"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Repeat on:"/>
+                android:layout_height="35dp"
+                android:checked="true"
+                android:text="No repeat" />
 
-            <CheckBox android:id="@+id/checkMonday"
+            <RadioButton
+                android:id="@+id/radioDaily"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Monday"/>
-            <CheckBox android:id="@+id/checkTuesday"
+                android:layout_height="35dp"
+                android:text="Daily"/>
+
+            <RadioButton
+                android:id="@+id/radioWeekly"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tuesday"/>
-            <!-- Add other weekdays -->
-        </LinearLayout>
+                android:layout_height="35dp"
+                android:text="Weekly"/>
 
-        <!-- Repeat Until Options -->
-        <LinearLayout
-            android:id="@+id/layoutRepeatOptions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            <RadioButton
+                android:id="@+id/radioMonthly"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Monthly"/>
 
-            <EditText
-                android:id="@+id/editRepeatStep"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Repeat every X days/weeks/months/years"
-                android:inputType="number"
-                android:minHeight="48dp" />
-
-            <RadioGroup
-                android:id="@+id/radioGroupRepeatUntil"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:id="@+id/radioUntilDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Until Date"/>
-                <RadioButton
-                    android:id="@+id/radioForOccurrences"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="For X Occurrences"/>
-            </RadioGroup>
-
-            <EditText
-                android:id="@+id/editUntilDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="End Date"
-                android:inputType="date"
-                android:visibility="gone"
-                android:minHeight="48dp" />
-
-            <EditText
-                android:id="@+id/editOccurrences"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Number of Occurrences"
-                android:inputType="number"
-                android:visibility="gone"
-                android:minHeight="48dp" />
-        </LinearLayout>
+            <RadioButton
+                android:id="@+id/radioYearly"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Yearly"/>
+        </RadioGroup>
     </LinearLayout>
 </ScrollView>
