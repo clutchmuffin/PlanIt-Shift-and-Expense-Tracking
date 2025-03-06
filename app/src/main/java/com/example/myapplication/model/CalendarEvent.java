@@ -48,12 +48,12 @@ public class CalendarEvent {
         this.name = n;
         this.user_id = uid;
         this.pay_rate = pay_rate;
-        this.net_pay = calculatePay();
         this.begin_date = begin;
         this.end_date = end;
         this.begin_time = begin_time;
         this.end_time = end_time;
         this.repeated = repeated;
+        this.net_pay = calculatePay();
 
         this.begin_tz = 0;
         this.end_tz = 0;
