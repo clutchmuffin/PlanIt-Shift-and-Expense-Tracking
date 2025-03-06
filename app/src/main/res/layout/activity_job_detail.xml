@@ -68,16 +68,24 @@
                 android:text="@string/color"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <!-- RecyclerView for Shifts -->
+            <!-- RecyclerView for Events -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/eventRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- RecyclerView for Expenses -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/expenseRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"/>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Floating Action Button for adding a new Shift -->
+    <!-- Floating Action Button for adding a new Event -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
@@ -87,4 +95,15 @@
         app:layout_anchorGravity="bottom|end"
         android:src="@drawable/ic_add"
         android:contentDescription="@string/add_shift"/>
+
+    <!-- Floating Action Button for adding a new Expense -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddExp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_anchor="@id/expenseRecyclerView"
+        app:layout_anchorGravity="bottom|end"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/add_expense"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
