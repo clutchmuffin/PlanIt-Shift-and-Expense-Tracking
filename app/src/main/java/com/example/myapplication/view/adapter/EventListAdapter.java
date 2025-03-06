@@ -33,6 +33,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         holder.tvName.setText(event.getName());
         holder.tvTimeRange.setText(event.getBegin_time().substring(0,5) + " - " + event.getEnd_time().substring(0,5));
         holder.tvRepeatType.setText(event.getRepeated().toString());
+        holder.tvNetPay.setText("$" + event.calculatePay());
     }
 
     @Override
@@ -41,7 +42,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDateRange, tvName, tvTimeRange, tvRepeatType;
+        TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -49,6 +50,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             tvName = itemView.findViewById(R.id.eventName);
             tvTimeRange = itemView.findViewById(R.id.eventTimeRange);
             tvRepeatType = itemView.findViewById(R.id.eventRepeatInfo);
+            tvNetPay = itemView.findViewById(R.id.netPay);
         }
     }
 }

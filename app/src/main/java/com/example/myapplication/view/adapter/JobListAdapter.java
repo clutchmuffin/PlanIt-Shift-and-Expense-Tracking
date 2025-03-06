@@ -43,10 +43,6 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
                 Color.green(color),
                 Color.blue(color)));
 
-        // Calculate and display net earnings
-        int netEarnings = job.calculateNetEarnings();
-        holder.jobEarnings.setText("$" + netEarnings);
-
         // Set click listener to open JobDetailActivity.
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), JobDetailActivity.class);
@@ -62,7 +58,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
     }
 
     public static class JobViewHolder extends RecyclerView.ViewHolder {
-        TextView jobTitle, jobEmployer, jobEarnings;
+        TextView jobTitle, jobEmployer;
         MaterialCardView jobCard;
         View colorAccent;
 
@@ -72,7 +68,6 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
             jobEmployer = itemView.findViewById(R.id.jobEmployer);
             jobCard = itemView.findViewById(R.id.jobCard);
             colorAccent = itemView.findViewById(R.id.colorAccent);
-            jobEarnings = itemView.findViewById(R.id.netPay);
         }
     }
 }

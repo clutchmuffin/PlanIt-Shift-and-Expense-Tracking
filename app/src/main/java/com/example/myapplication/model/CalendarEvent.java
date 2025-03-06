@@ -9,6 +9,10 @@ import java.util.ArrayList;
 public class CalendarEvent {
     private String name;
 
+    private int pay_rate;
+
+    private int net_pay;
+
     private int user_id;
 
     private String begin_date;
@@ -40,9 +44,11 @@ public class CalendarEvent {
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, int uid, String begin, String end, String begin_time, String end_time, RepeatType repeated) {
+    public CalendarEvent(String n, int uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated) {
         this.name = n;
         this.user_id = uid;
+        this.pay_rate = pay_rate;
+        this.net_pay = calculatePay();
         this.begin_date = begin;
         this.end_date = end;
         this.begin_time = begin_time;
@@ -99,6 +105,14 @@ public class CalendarEvent {
         return end_time;
     }
 
+    public int getPayRate() {
+        return pay_rate;
+    }
+
+    public int getNetPay() {
+        return net_pay;
+    }
+
     public RepeatType getRepeated() {
         return repeated;
     }
@@ -121,5 +135,37 @@ public class CalendarEvent {
 
     public int getRepetition_step() {
         return repetition_step;
+    }
+
+    public int calculatePay() {
+        LocalDate startDate = LocalDate.parse(begin_date);
+        LocalDate endDate = LocalDate.parse(end_date);
+        LocalTime startTime = LocalTime.parse(begin_time);
+        LocalTime endTime = LocalTime.parse(end_time);
+
+        // Calculate days between dates (inclusive)
+        long days = endDate.toEpochDay() - startDate.toEpochDay() + 1;
+
+        // Calculate total duration in hours
+        double totalHours;
+
+        if (days == 1) {
+            // Same day: just calculate hours between times
+            double hours = (endTime.toSecondOfDay() - startTime.toSecondOfDay()) / 3600.0;
+            totalHours = hours;
+        } else {
+            // Multiple days
+            // First day: hours from start time to midnight
+            double firstDayHours = (24 * 3600 - startTime.toSecondOfDay()) / 3600.0;
+            // Last day: hours from midnight to end time
+            double lastDayHours = endTime.toSecondOfDay() / 3600.0;
+            // Middle days (if any): full 24 hours each
+            double middleDaysHours = (days - 2) * 24;
+
+            totalHours = firstDayHours + middleDaysHours + lastDayHours;
+        }
+
+        // Calculate pay (round to nearest integer)
+        return (int) Math.round(totalHours * pay_rate);
     }
 }

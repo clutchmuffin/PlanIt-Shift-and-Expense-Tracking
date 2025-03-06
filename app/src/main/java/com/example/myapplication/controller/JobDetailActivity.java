@@ -195,7 +195,8 @@ public class JobDetailActivity extends AppCompatActivity {
 
                 // Create a new Shift.
                 CalendarEvent newEvent = new CalendarEvent(name,
-                                                        0,
+                                                            0,
+                                                            job.getPayRate(),
                                                             beginDate.format(DATE_FORMATTER),
                                                             endDate.format(DATE_FORMATTER),
                                                             beginTime.format(TIME_FORMATTER),
@@ -267,7 +268,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         datePicker.addOnPositiveButtonClickListener(selection -> {
             LocalDate selectedDate = Instant.ofEpochMilli(selection)
-                    .atZone(ZoneId.systemDefault())
+                    .atZone(ZoneId.of("UTC"))
                     .toLocalDate();
 
             if (isBeginDate) {
