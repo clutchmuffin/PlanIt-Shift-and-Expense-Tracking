@@ -2,6 +2,7 @@ package com.example.myapplication.controller;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class JobDetailActivity extends AppCompatActivity {
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
@@ -82,11 +84,36 @@ public class JobDetailActivity extends AppCompatActivity {
 
         // Set up the  Event RecyclerView.
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Get the list of events from Firestore.
+        db.collection("Jobs").document(job.getTitle()).collection("Events")
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            CalendarEvent event = document.toObject(CalendarEvent.class);
+                            job.addEvent(event);
+                        }
+                        eventListAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("JobDetailActivity", "Error getting documents: ", task.getException());
+                    }
+                });
         eventListAdapter = new EventListAdapter(job.getEvents());
         eventRecyclerView.setAdapter(eventListAdapter);
 
         // Set up the Expenses RecyclerViews
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        db.collection("Jobs").document(job.getTitle()).collection("Expenses")
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Expense expense = document.toObject(Expense.class);
+                            job.addExpense(expense);
+                        }
+                        expenseListAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("JobDetailActivity", "Error getting documents: ", task.getException());
+                    }
+                });
         expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
         expenseRecyclerView.setAdapter(expenseListAdapter);
 
