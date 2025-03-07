@@ -39,9 +39,9 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
 
         int color = job.getColor();
         holder.jobCard.setBackgroundColor(Color.argb(128,
-                                          Color.red(color),
-                                          Color.green(color),
-                                          Color.blue(color)));
+                Color.red(color),
+                Color.green(color),
+                Color.blue(color)));
 
         // Set click listener to open JobDetailActivity.
         holder.itemView.setOnClickListener(v -> {
@@ -50,6 +50,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
             v.getContext().startActivity(intent);
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -67,7 +68,6 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
             jobEmployer = itemView.findViewById(R.id.jobEmployer);
             jobCard = itemView.findViewById(R.id.jobCard);
             colorAccent = itemView.findViewById(R.id.colorAccent);
-
         }
     }
 }
