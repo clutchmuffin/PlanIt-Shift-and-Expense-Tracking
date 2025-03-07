@@ -1,7 +1,6 @@
 package com.example.myapplication.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Job implements Serializable {
@@ -59,13 +58,6 @@ public class Job implements Serializable {
     }
     public void addEvent(CalendarEvent e) {
         events.add(e);
-    }
-
-    public boolean hasConflictingEvent(CalendarEvent newEvent) {
-        for (CalendarEvent existingEvent : events) {
-            //TODO: Add logic
-        }
-        return false;
     }
 
     public int getPayRate() { return this.pay_rate; }
