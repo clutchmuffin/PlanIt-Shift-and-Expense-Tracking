@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".Entertainment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -162,5 +162,13 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!-- RecyclerView for displaying food expenses -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:scrollbars="vertical"/>
 
 </LinearLayout>

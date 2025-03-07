@@ -9,19 +9,19 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.model.Entertainment;
-import com.example.myapplication.model.ExpenseSqlite;
 import com.example.myapplication.model.Food;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Shopping;
-import com.example.myapplication.model.Traveling;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BudgetMainActivity extends AppCompatActivity {
 
     TextView mainBalance;
 
     Button traveling, food, shopping, entertainment, updateBudget;
-    ExpenseSqlite sqlite;
+    //ExpenseSqlite sqlite;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     @Override
@@ -30,7 +30,7 @@ public class BudgetMainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_budgetmain);
 
-        sqlite = new ExpenseSqlite(this);
+        //sqlite = new ExpenseSqlite(this); // get an instance of firestore database
 
         mainBalance = findViewById(R.id.mainBalance);
         //totalExpense = findViewById(R.id.totalExpense);
@@ -45,13 +45,14 @@ public class BudgetMainActivity extends AppCompatActivity {
         // showIncome = findViewById(R.id.incomeShow);
         //totalIncome = findViewById(R.id.totalIncome);
 
-
+/*
         updateBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(BudgetMainActivity.this,AddActivity.class));
             }
         });
+        */
 
         food.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +93,7 @@ public class BudgetMainActivity extends AppCompatActivity {
 
             }
         });
-
+/*
         updateBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +103,7 @@ public class BudgetMainActivity extends AppCompatActivity {
 
             }
         });
-/*
+*//*
         addExpense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

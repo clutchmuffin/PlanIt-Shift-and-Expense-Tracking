@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myapplication">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,13 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShiftTracker">
         <activity
+            android:name=".controller.Traveling"
+            android:exported="false" />
+        <activity
+            android:name=".controller.Entertainment"
+            android:exported="false" />
+        <activity
             android:name=".controller.SetBudget"
-            android:exported="false" />
-        <activity
-            android:name=".controller.AddActivity"
-            android:exported="false" />
-        <activity
-            android:name=".controller.RecyclerViewActivity"
             android:exported="false" />
         <activity
             android:name=".model.Shopping"
