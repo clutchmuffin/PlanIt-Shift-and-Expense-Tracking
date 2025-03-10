@@ -13,6 +13,7 @@ import com.example.myapplication.model.Expense;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -42,73 +43,77 @@ public class Entertainment extends AppCompatActivity {
         adapter = new ExpenseListAdapter(entertainmentExpenses);
         recyclerView.setAdapter(adapter);
 
+        //load expense amount when activty starts
+        loadEntertainmentExpenses();
+
         // Load expenses when "Show All Data" is clicked
         findViewById(R.id.expenseEntertainmentShow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFoodExpenses();
+                loadEntertainmentExpenses();
             }
         });
     }
 
-    private void loadFoodExpenses() {
-        db.collection("Jobs")  // Access the 'jobs' collection
+
+    private void loadEntertainmentExpenses() {
+        db.collection("Jobs")  // Access the 'Jobs' collection
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // Use final array to hold total food expense amount
-                            final double[] totalEntertainmentExpenseAmount = {0.0}; // Using an array to hold the total
-                            entertainmentExpenses.clear(); // Clear old data
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        final double[] totalEntertainmentExpenseAmount = {0.0}; // Using an array to hold the total
+                        entertainmentExpenses.clear(); // Clear old data
 
-                            // Iterate through each job document
-                            for (DocumentSnapshot jobDocument : task.getResult()) {
-                                String jobId = jobDocument.getId();
+                        // List to keep track of tasks for parallel execution
+                        List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
 
-                                // Access the 'expenses' subcollection for each job
-                                db.collection("Jobs")
-                                        .document(jobId)
-                                        .collection("Expenses") // Expenses subcollection
-                                        .whereEqualTo("description", "Entertainment")  // Filter for "Food" expenses
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    double jobFoodExpense = 0.0;
+                        // Iterate through each job document and trigger parallel requests for expenses
+                        for (DocumentSnapshot jobDocument : task.getResult()) {
+                            String jobId = jobDocument.getId(); // Get the job ID
 
-                                                    // Iterate through each food expense document
-                                                    for (DocumentSnapshot expenseDocument : task.getResult()) {
-                                                        Expense expense = expenseDocument.toObject(Expense.class);
-                                                        if (expense != null) {
-                                                            entertainmentExpenses.add(expense);
-                                                            jobFoodExpense += expense.getAmount(); // Add to the total for this job
-                                                        }
-                                                    }
+                            // Fetch expenses for this job in parallel
+                            Task<QuerySnapshot> expenseTask = db.collection("Jobs")
+                                    .document(jobId)
+                                    .collection("Expenses")
+                                    .whereEqualTo("description", "Entertainment")
+                                    .get();
 
-                                                    // Add this job's total food expense to the overall total
-                                                    totalEntertainmentExpenseAmount[0] += jobFoodExpense;
+                            expenseFetchTasks.add(expenseTask);
+                        }
 
-                                                    // Update the RecyclerView after processing each job
-                                                    adapter.notifyDataSetChanged();
+                        // When all expense fetch operations are completed, process the results
+                        Tasks.whenAllComplete(expenseFetchTasks)
+                                .addOnCompleteListener(allTask -> {
+                                    for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
+                                        if (expenseTask.isSuccessful()) {
+                                            double jobEntertainmentExpense = 0.0;
 
-                                                    // Update the total food expense UI
-                                                    totalEntertainmentExpense.setText("BDT: " + totalEntertainmentExpenseAmount[0]);
-                                                } else {
-                                                    Log.e(TAG, "Error fetching expenses for job " + jobId, task.getException());
+                                            // Iterate through each food expense document
+                                            for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
+                                                Expense expense = expenseDocument.toObject(Expense.class);
+                                                if (expense != null) {
+                                                    entertainmentExpenses.add(expense);
+                                                    jobEntertainmentExpense += expense.getAmount(); // Add to the total for this job
                                                 }
                                             }
-                                        });
-                            }
 
-                            if (entertainmentExpenses.isEmpty()) {
-                                Log.d(TAG, "No Entertainment expenses found.");
-                            }
-                        } else {
-                            Log.e(TAG, "Error fetching jobs", task.getException());
-                        }
+                                            // Add this job's total food expense to the overall total
+                                            totalEntertainmentExpenseAmount[0] += jobEntertainmentExpense;
+                                        } else {
+                                            Log.e(TAG, "Error fetching expenses", expenseTask.getException());
+                                        }
+                                    }
+
+                                    // Update the RecyclerView and total only after all tasks are completed
+                                    adapter.notifyDataSetChanged();
+                                    totalEntertainmentExpense.setText("BDT: " + totalEntertainmentExpenseAmount[0]);
+                                });
+                    } else {
+                        Log.e(TAG, "Error fetching jobs", task.getException());
                     }
                 });
     }
+
+
+
 }

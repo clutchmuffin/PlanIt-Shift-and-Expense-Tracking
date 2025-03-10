@@ -12,6 +12,7 @@ import com.example.myapplication.model.Expense;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -53,64 +54,61 @@ public class Traveling extends AppCompatActivity {
         });
     }
 
+
     private void loadTravelingExpenses() {
-        db.collection("Jobs")  // Fix collection name to lowercase
+        db.collection("Jobs")  // Access the 'Jobs' collection
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            final double[] totalTravelingExpenseAmount = {0.0}; // Array for total amount
-                            travelingExpenses.clear(); // Clear previous data
-                            final int[] jobsProcessed = {0}; // Track processed jobs
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        final double[] totalTravelingExpenseAmount = {0.0}; // Using an array to hold the total
+                        travelingExpenses.clear(); // Clear old data
 
-                            List<DocumentSnapshot> jobDocuments = task.getResult().getDocuments();
-                            if (jobDocuments.isEmpty()) {
-                                Log.d(TAG, "No jobs found.");
-                                totalTravelingExpense.setText("BDT: 0.0");
-                                return;
-                            }
+                        // List to keep track of tasks for parallel execution
+                        List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
 
-                            for (DocumentSnapshot jobDocument : jobDocuments) {
-                                String jobId = jobDocument.getId();
+                        // Iterate through each job document and trigger parallel requests for expenses
+                        for (DocumentSnapshot jobDocument : task.getResult()) {
+                            String jobId = jobDocument.getId(); // Get the job ID
 
-                                // Access the 'expenses' subcollection for each job
-                                db.collection("Jobs")  // Fix collection name to lowercase
-                                        .document(jobId)
-                                        .collection("Expenses")  // Fix collection name to lowercase
-                                        .whereEqualTo("description", "Traveling")
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    double jobTravelingExpense = 0.0;
+                            // Fetch expenses for this job in parallel
+                            Task<QuerySnapshot> expenseTask = db.collection("Jobs")
+                                    .document(jobId)
+                                    .collection("Expenses")
+                                    .whereEqualTo("description", "Traveling")
+                                    .get();
 
-                                                    for (DocumentSnapshot expenseDocument : task.getResult()) {
-                                                        Expense expense = expenseDocument.toObject(Expense.class);
-                                                        if (expense != null) {
-                                                            travelingExpenses.add(expense);
-                                                            jobTravelingExpense += expense.getAmount();
-                                                        }
-                                                    }
+                            expenseFetchTasks.add(expenseTask);
+                        }
 
-                                                    totalTravelingExpenseAmount[0] += jobTravelingExpense;
-                                                    jobsProcessed[0]++;
+                        // When all expense fetch operations are completed, process the results
+                        Tasks.whenAllComplete(expenseFetchTasks)
+                                .addOnCompleteListener(allTask -> {
+                                    for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
+                                        if (expenseTask.isSuccessful()) {
+                                            double jobFoodExpense = 0.0;
 
-                                                    // Check if all jobs have been processed before updating UI
-                                                    if (jobsProcessed[0] == jobDocuments.size()) {
-                                                        adapter.notifyDataSetChanged();
-                                                        totalTravelingExpense.setText("BDT: " + totalTravelingExpenseAmount[0]);
-                                                    }
-                                                } else {
-                                                    Log.e(TAG, "Error fetching expenses for job " + jobId, task.getException());
+                                            // Iterate through each food expense document
+                                            for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
+                                                Expense expense = expenseDocument.toObject(Expense.class);
+                                                if (expense != null) {
+                                                    travelingExpenses.add(expense);
+                                                    jobFoodExpense += expense.getAmount(); // Add to the total for this job
                                                 }
                                             }
-                                        });
-                            }
-                        } else {
-                            Log.e(TAG, "Error fetching jobs", task.getException());
-                        }
+
+                                            // Add this job's total food expense to the overall total
+                                            totalTravelingExpenseAmount[0] += jobFoodExpense;
+                                        } else {
+                                            Log.e(TAG, "Error fetching expenses", expenseTask.getException());
+                                        }
+                                    }
+
+                                    // Update the RecyclerView and total only after all tasks are completed
+                                    adapter.notifyDataSetChanged();
+                                    totalTravelingExpense.setText("BDT: " + totalTravelingExpenseAmount[0]);
+                                });
+                    } else {
+                        Log.e(TAG, "Error fetching jobs", task.getException());
                     }
                 });
     }
