@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 // Already displaying the job list.
                 return true;
             } else if (itemId == R.id.nav_calendar) {
-                // Calendar view not implemented yet.
+                startActivity(new Intent(this, CalendarActivity.class));
                 return true;
             }
             return false;
