@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_calendar) {
                 // Calendar view not implemented yet.
                 return true;
+            } else if (itemId == R.id.nav_shared) {
+                // Calendar view not implemented yet.
+                return true;
             }
             return false;
         });

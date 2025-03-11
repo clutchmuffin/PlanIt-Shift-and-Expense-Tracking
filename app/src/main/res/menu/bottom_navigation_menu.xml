@@ -9,4 +9,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_calendar"
         android:title="@string/text_calendar"/>
+    <item
+        android:id="@+id/nav_shared"
+        android:enabled="true"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/shared"/>
 </menu>

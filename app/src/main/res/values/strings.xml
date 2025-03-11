@@ -17,4 +17,7 @@
     <string name="add_expense">Add Expense</string>
     <string name="pay_rate">Pay Rate</string>
     <string name="dollar">$</string>
+    <string name="shared">Shared</string>
+    <string name="shared_title">Shared Title</string>
+    <string name="sharedPeople">X members</string>
 </resources>
