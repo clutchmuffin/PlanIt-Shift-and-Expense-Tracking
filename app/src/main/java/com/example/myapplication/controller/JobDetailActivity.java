@@ -26,6 +26,7 @@ import com.google.android.material.timepicker.TimeFormat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -104,7 +105,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         // Set up the Expenses RecyclerViews
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        db.collection("Jobs").document(job.getTitle()).collection("Expenses")
+        db.collection("Jobs").document(job.getTitle()).collection("EXP")
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -204,16 +205,14 @@ public class JobDetailActivity extends AppCompatActivity {
                                                             repeatType);
 
                 // Check for conflicts across all jobs, and only add if no conflict.
-                db.collection("Jobs").get().addOnCompleteListener(task -> {
+                db.collectionGroup("Events").get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         boolean hasConflict = false;
-                        String conflictingJobTitle = "";
-
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Job otherJob = document.toObject(Job.class);
-                            if (otherJob.hasConflictingEvent(newEvent)) {
+                            CalendarEvent otherEvent = document.toObject(CalendarEvent.class);
+                            Log.i("JobDetailActivity", "Checking for overlap with " + otherEvent.getName());
+                            if (hasConflict(newEvent, otherEvent)) {
                                 hasConflict = true;
-                                conflictingJobTitle = otherJob.getTitle();
                                 break;
                             }
                         }
@@ -222,7 +221,7 @@ public class JobDetailActivity extends AppCompatActivity {
                             // Show conflict alert
                             new AlertDialog.Builder(this)
                                     .setTitle("Scheduling Conflict")
-                                    .setMessage("This shift overlaps with an existing shift in job: " + conflictingJobTitle)
+                                    .setMessage("This shift overlaps with an existing shift")
                                     .setPositiveButton("Edit", (d, which) -> d.dismiss())
                                     .show();
                         } else {
@@ -276,7 +275,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 Expense newExpense = new Expense(description, Integer.parseInt(amount));
 
                 // Add the expense to the job.
-                db.collection("Jobs").document(job.getTitle()).collection("Expenses").document(newExpense.getDescription()).set(newExpense);
+                db.collection("Jobs").document(job.getTitle()).collection("EXP").document().set(newExpense);
                 job.addExpense(newExpense);
 
                 // Notify the adapter to update the RecyclerView.
@@ -329,6 +328,37 @@ public class JobDetailActivity extends AppCompatActivity {
             }
             tvTime.setText(selectedTime.format(TIME_FORMATTER));
         });
+    }
+
+    private boolean hasConflict(CalendarEvent newEvent, CalendarEvent existingEvent) {
+        // Convert new event date and time into LocalDateTime objects.
+        LocalDateTime newStart = LocalDateTime.of(
+                LocalDate.parse(newEvent.getBegin_date(), DATE_FORMATTER),
+                LocalTime.parse(newEvent.getBegin_time(), TIME_FORMATTER)
+        );
+        LocalDateTime newEnd = LocalDateTime.of(
+                LocalDate.parse(newEvent.getEnd_date(), DATE_FORMATTER),
+                LocalTime.parse(newEvent.getEnd_time(), TIME_FORMATTER)
+        );
+
+        // Convert existing event date and time into LocalDateTime objects.
+        LocalDateTime existingStart = LocalDateTime.of(
+                LocalDate.parse(existingEvent.getBegin_date(), DATE_FORMATTER),
+                LocalTime.parse(existingEvent.getBegin_time(), TIME_FORMATTER)
+        );
+        LocalDateTime existingEnd = LocalDateTime.of(
+                LocalDate.parse(existingEvent.getEnd_date(), DATE_FORMATTER),
+                LocalTime.parse(existingEvent.getEnd_time(), TIME_FORMATTER)
+        );
+
+        // Validate that event intervals are valid.
+        if (!newEnd.isAfter(newStart) || !existingEnd.isAfter(existingStart)) {
+            throw new IllegalArgumentException("Event end time must be after start time.");
+        }
+
+        // Check for overlap: an overlap exists if new event starts before the existing event ends
+        // and new event ends after the existing event starts.
+        return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
     }
 
 }

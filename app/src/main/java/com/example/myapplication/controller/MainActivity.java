@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -31,7 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabAddJob;
     private List<Job> jobs;
+
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_calendar) {
                 // Calendar view not implemented yet.
+                return true;
+            } else if (itemId == R.id.nav_budget) {
+                //Go to Budget Feature
+                Intent intent = new Intent(MainActivity.this, BudgetMainActivity.class);
+                startActivity(intent);
                 return true;
             }
             return false;
