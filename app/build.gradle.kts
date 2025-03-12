@@ -60,4 +60,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.google.firebase.firestore)
+
+    //import NotificationCompat
+    implementation("androidx.core:core-ktx:1.15.0")
 }
