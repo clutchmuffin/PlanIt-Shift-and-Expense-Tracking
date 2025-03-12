@@ -19,6 +19,7 @@ import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -32,7 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabAddJob;
     private List<Job> jobs;
+
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

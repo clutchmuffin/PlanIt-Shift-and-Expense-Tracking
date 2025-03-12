@@ -45,6 +45,7 @@ public class Food extends AppCompatActivity {
 
         //Immediately show Food Expenses
         loadFoodExpenses();
+        showMainBalance();
 
         // Load expenses when "Show All Data" is clicked
         findViewById(R.id.expenseFoodShow).setOnClickListener(new View.OnClickListener() {
@@ -106,12 +107,47 @@ private void loadFoodExpenses() {
                                 // Update the RecyclerView and total only after all tasks are completed
                                 adapter.notifyDataSetChanged();
                                 totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
+                                // Update the budget total for "Food"
+                                updateBudgetTotal(totalFoodExpenseAmount[0]);
                             });
                 } else {
                     Log.e(TAG, "Error fetching jobs", task.getException());
                 }
             });
 }
+
+    private void updateBudgetTotal(double totalExp) {
+        // Reference the "Food" document in the "Budgy" collection
+        db.collection("Budgy").document("Food")
+                .update("totalExpenses", totalExp) // Update the "totalExp" field
+                .addOnSuccessListener(aVoid -> {
+                    // You can log success or do anything else here
+                    Log.d(TAG, "Successfully updated the total expense in Budgy.");
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure if any
+                    Log.e(TAG, "Error updating total expense in Budgy.", e);
+                });
+    }
+
+    private void showMainBalance() {
+        db.collection("Budgy").document("Food")
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, "Error fetching budget data", error);
+                        return;
+                    }
+
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        double budget = documentSnapshot.contains("budget") ? documentSnapshot.getDouble("budget") : 0.0;
+                        double totalExp = documentSnapshot.contains("totalExpenses") ? documentSnapshot.getDouble("totalExpenses") : 0.0;
+                        double mainBalanceAmount = budget - totalExp;
+
+                        TextView mainBalanceText = findViewById(R.id.mainBalance);
+                        mainBalanceText.setText("BDT: " + mainBalanceAmount);
+                    }
+                });
+    }
 
 
 }
