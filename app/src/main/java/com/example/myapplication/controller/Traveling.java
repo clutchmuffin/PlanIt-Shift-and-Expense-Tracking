@@ -44,6 +44,7 @@ public class Traveling extends AppCompatActivity {
 
         // Load expenses immediately when this activity opens
         loadTravelingExpenses();
+        showMainBalance();
 
         // Load expenses when "Show All Data" is clicked
         findViewById(R.id.expenseTravelingShow).setOnClickListener(new View.OnClickListener() {
@@ -73,7 +74,7 @@ public class Traveling extends AppCompatActivity {
                             // Fetch expenses for this job in parallel
                             Task<QuerySnapshot> expenseTask = db.collection("Jobs")
                                     .document(jobId)
-                                    .collection("Expenses")
+                                    .collection("EXP")
                                     .whereEqualTo("description", "Traveling")
                                     .get();
 
@@ -106,10 +107,48 @@ public class Traveling extends AppCompatActivity {
                                     // Update the RecyclerView and total only after all tasks are completed
                                     adapter.notifyDataSetChanged();
                                     totalTravelingExpense.setText("BDT: " + totalTravelingExpenseAmount[0]);
+                                    updateBudgetTotal(totalTravelingExpenseAmount[0]);
+
                                 });
                     } else {
                         Log.e(TAG, "Error fetching jobs", task.getException());
                     }
                 });
     }
+
+    private void updateBudgetTotal(double totalExp) {
+        // Reference the "Food" document in the "Budgy" collection
+        db.collection("Budgy").document("Traveling")
+                .update("totalExpenses", totalExp) // Update the "totalExp" field
+                .addOnSuccessListener(aVoid -> {
+                    // You can log success or do anything else here
+                    Log.d(TAG, "Successfully updated the total expense in Budgy.");
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure if any
+                    Log.e(TAG, "Error updating total expense in Budgy.", e);
+                });
+    }
+
+    private void showMainBalance() {
+        db.collection("Budgy").document("Traveling")
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, "Error fetching budget data", error);
+                        return;
+                    }
+
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        double budget = documentSnapshot.contains("budget") ? documentSnapshot.getDouble("budget") : 0.0;
+                        double totalExp = documentSnapshot.contains("totalExpenses") ? documentSnapshot.getDouble("totalExpenses") : 0.0;
+                        double mainBalanceAmount = budget - totalExp;
+
+                        TextView mainBalanceText = findViewById(R.id.mainBalance);
+                        mainBalanceText.setText("BDT: " + mainBalanceAmount);
+                    }
+                });
+    }
+
+
+
 }

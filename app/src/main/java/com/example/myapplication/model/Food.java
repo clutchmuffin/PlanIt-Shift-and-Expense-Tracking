@@ -74,7 +74,7 @@ private void loadFoodExpenses() {
                         // Fetch expenses for this job in parallel
                         Task<QuerySnapshot> expenseTask = db.collection("Jobs")
                                 .document(jobId)
-                                .collection("Expenses")
+                                .collection("EXP")
                                 .whereEqualTo("description", "Food")
                                 .get();
 
