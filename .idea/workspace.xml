@@ -9,10 +9,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b59ee2f4-6ba2-4cd6-932d-4934ad16d273" name="Changes" comment="imported notification compatibility and needed runtime permission">
+    <list default="true" id="b59ee2f4-6ba2-4cd6-932d-4934ad16d273" name="Changes" comment="started implementing daily notifications">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,6 +72,7 @@
         <option value="UML Sequence" />
         <option value="CMakeLists.txt" />
         <option value="UML Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -264,7 +265,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741806279841</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="started implementing daily notifications">
+      <option name="closed" value="true" />
+      <created>1741811338765</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1741811338765</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -283,7 +292,8 @@
     <MESSAGE value="pulled from main" />
     <MESSAGE value="pulling from main" />
     <MESSAGE value="imported notification compatibility and needed runtime permission" />
-    <option name="LAST_COMMIT_MESSAGE" value="imported notification compatibility and needed runtime permission" />
+    <MESSAGE value="started implementing daily notifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="started implementing daily notifications" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

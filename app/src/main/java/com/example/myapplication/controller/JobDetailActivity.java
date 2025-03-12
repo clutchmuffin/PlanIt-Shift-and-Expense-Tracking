@@ -1,18 +1,5 @@
 package com.example.myapplication.controller;
 
-import android.Manifest;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationManagerCompat;
-
-import android.app.PendingIntent;
-import android.content.Context;
-
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,14 +11,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.Notification;
 import com.example.myapplication.model.RepeatType;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
@@ -64,6 +50,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private LocalDate endDate;
     private LocalTime beginTime;
     private LocalTime endTime;
+    private Notification notif;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -138,7 +125,6 @@ public class JobDetailActivity extends AppCompatActivity {
         // Set up the FAB to add a new shift.
         fabAddButton.setOnClickListener(v -> showAddShiftDialog());
         fabAddExpense.setOnClickListener(v -> showAddExpenseDialog());
-        createNotificationChannel();
     }
 
     private void showAddShiftDialog() {
@@ -250,7 +236,8 @@ public class JobDetailActivity extends AppCompatActivity {
                             job.addEvent(newEvent);
                             eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
                             dialog.dismiss();
-                            addDailyNotification(newEvent, this);
+                            notif = new Notification(this);
+                            notif.addDailyNotification(newEvent, this);
                         }
                     }
                 });
@@ -378,39 +365,5 @@ public class JobDetailActivity extends AppCompatActivity {
         return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
     }
 
-    private void addDailyNotification(CalendarEvent event, Context context){
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "dailyNotif")
-                .setContentTitle("Shift at " + event.getName())
-                .setContentText("Start at " + event.getBegin_time() + ", ends at " + event.getEnd_time())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
-            }
-        // Create a notification manager
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
-        // Create an intent to open an activity when the notification is clicked (optional)
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is not in the Support Library.'
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("dailyNotif", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this.
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
 }
