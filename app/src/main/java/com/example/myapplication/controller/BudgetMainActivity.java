@@ -45,14 +45,14 @@ public class BudgetMainActivity extends AppCompatActivity {
         // showIncome = findViewById(R.id.incomeShow);
         //totalIncome = findViewById(R.id.totalIncome);
 
-/*
+
         updateBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(BudgetMainActivity.this,AddActivity.class));
+                startActivity(new Intent(BudgetMainActivity.this,SetBudget.class));
             }
         });
-        */
+
 
         food.setOnClickListener(new View.OnClickListener() {
             @Override
