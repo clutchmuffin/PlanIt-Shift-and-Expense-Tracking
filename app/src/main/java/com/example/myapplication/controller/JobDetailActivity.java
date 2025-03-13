@@ -105,7 +105,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         // Set up the Expenses RecyclerViews
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        db.collection("Jobs").document(job.getTitle()).collection("Expenses")
+        db.collection("Jobs").document(job.getTitle()).collection("EXP")
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -275,7 +275,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 Expense newExpense = new Expense(description, Integer.parseInt(amount));
 
                 // Add the expense to the job.
-                db.collection("Jobs").document(job.getTitle()).collection("Expenses").document(newExpense.getDescription()).set(newExpense);
+                db.collection("Jobs").document(job.getTitle()).collection("EXP").document().set(newExpense);
                 job.addExpense(newExpense);
 
                 // Notify the adapter to update the RecyclerView.
