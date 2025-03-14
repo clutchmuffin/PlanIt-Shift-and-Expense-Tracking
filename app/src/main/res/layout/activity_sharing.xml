@@ -5,34 +5,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/shared_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar2"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/barColor"
+        app:contentInsetStartWithNavigation="0dp"
+        app:title="Shared Calendars"
+        app:titleCentered="false">
+        <!-- Optional user avatar on the right side -->
+        <ImageView
+            android:id="@+id/userAvatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/user_avatar"
+            android:src="@drawable/ic_avatar_placeholder" />
+    </com.google.android.material.appbar.MaterialToolbar>
 
-    </androidx.cardview.widget.CardView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/jobRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="578dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewShared"
+        android:id="@+id/fabAddJob2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_add"
-        tools:visibility="visible" />
+        android:layout_margin="16dp"
+        android:contentDescription="@string/add_job"
+        android:src="@drawable/ic_add"
+        app:layout_anchor="@id/jobRecyclerView"
+        app:layout_anchorGravity="bottom|end"
+        tools:layout_editor_absoluteX="339dp"
+        tools:layout_editor_absoluteY="599dp" />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/barColor"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:menu="@menu/bottom_navigation_menu"
+        tools:ignore="VisualLintBottomNav"
+        tools:layout_editor_absoluteX="-56dp"
+        tools:layout_editor_absoluteY="673dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
