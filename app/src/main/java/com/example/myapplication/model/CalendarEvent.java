@@ -41,10 +41,11 @@ public class CalendarEvent {
     // for repeated events, step = every n weeks/months/years
     // for events repeated a certain number of times, how many reps?
     private int repetition_step, repeated_reps;
+    private int ID;
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, int uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated) {
+    public CalendarEvent(String n, int uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int ID) {
         this.name = n;
         this.user_id = uid;
         this.pay_rate = pay_rate;
@@ -62,6 +63,8 @@ public class CalendarEvent {
         this.repeated_until_date = end;
         this.repeated_reps = 0;
         this.repetition_step = 0;
+
+        this.ID = ID;
     }
 
     public CalendarEvent(String n, int uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
@@ -167,5 +170,9 @@ public class CalendarEvent {
 
         // Calculate pay (round to nearest integer)
         return (int) Math.round(totalHours * pay_rate);
+    }
+
+    public int getID() {
+        return ID;
     }
 }

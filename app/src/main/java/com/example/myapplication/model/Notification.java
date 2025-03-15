@@ -21,19 +21,17 @@ import com.example.myapplication.controller.MainActivity;
 
 public class Notification {
     private Context context;
+    private String channel_name = "dailyNotif";
+    private String channel_desc = "a notification channel that gets sent for every shift";
 
     public Notification(Context context) {
         this.context = context;
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is not in the Support Library.'
+        // Create the NotificationChannel, but only on API 26+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = context.getString(R.string.channel_name);
-            String description = context.getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("my_channel_id", description, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this.
+            NotificationChannel channel = new NotificationChannel(channel_name, channel_desc, importance);
+            channel.setDescription(channel_desc);
+            // Register the channel with the system
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -44,25 +42,27 @@ public class Notification {
                     .setSmallIcon(R.drawable.baseline_add_alert_24)
                     .setContentTitle("Shift at " + event.getName())
                     .setContentText("Start at " + event.getBegin_time() + ", ends at " + event.getEnd_time())
+                    .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            System.out.println(event.getID());
 
-            // Create a notification manager
+            // Create a notification manager and check for permission to post notifications
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    notificationManager.notify(1, builder.build());
+                    notificationManager.notify(event.getID(), builder.build());
                 }
                 else{
                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    notificationManager.notify(1, builder.build());
+                    notificationManager.notify(event.getID(), builder.build());
                 }
 
 
-//            // Create an intent to open an activity when the notification is clicked (optional)
-//            Intent intent = new Intent(context, MainActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            // Create an intent to open an activity when the notification is clicked (optional)
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
             }
 

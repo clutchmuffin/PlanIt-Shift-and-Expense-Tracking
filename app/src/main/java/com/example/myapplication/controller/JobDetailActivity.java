@@ -1,5 +1,9 @@
 package com.example.myapplication.controller;
 
+import static androidx.core.app.PendingIntentCompat.getActivity;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -196,6 +200,14 @@ public class JobDetailActivity extends AppCompatActivity {
                     repeatType = RepeatType.ANNUALLY;
                 }
 
+                // Find a notificaton ID for the new shift to be added
+                SharedPreferences sharedPref = this.getPreferences(MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                if(sharedPref.getAll().isEmpty()){
+                    editor.putInt("dailyNotif", 1);
+                    editor.apply();
+                }
+                int newID = sharedPref.getInt("dailyNotif", 1);
                 // Create a new Shift.
                 CalendarEvent newEvent = new CalendarEvent(name,
                                                             0,
@@ -204,7 +216,10 @@ public class JobDetailActivity extends AppCompatActivity {
                                                             endDate.format(DATE_FORMATTER),
                                                             beginTime.format(TIME_FORMATTER),
                                                             endTime.format(TIME_FORMATTER),
-                                                            repeatType);
+                                                            repeatType,
+                                                            newID);
+                editor.putInt("dailyNotif", newID + 1);
+                editor.apply();
 
                 // Check for conflicts across all jobs, and only add if no conflict.
                 db.collectionGroup("Events").get().addOnCompleteListener(task -> {
