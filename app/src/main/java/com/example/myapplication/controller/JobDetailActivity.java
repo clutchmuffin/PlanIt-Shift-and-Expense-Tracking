@@ -220,6 +220,7 @@ public class JobDetailActivity extends AppCompatActivity {
                                                             newID);
                 editor.putInt("dailyNotif", newID + 1);
                 editor.apply();
+                System.out.println(newID);
 
                 // Check for conflicts across all jobs, and only add if no conflict.
                 db.collectionGroup("Events").get().addOnCompleteListener(task -> {
@@ -251,8 +252,9 @@ public class JobDetailActivity extends AppCompatActivity {
                             job.addEvent(newEvent);
                             eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
                             dialog.dismiss();
+
                             notif = new Notification(this);
-                            notif.addDailyNotification(newEvent, this);
+                            notif.showNotification(newEvent);
                         }
                     }
                 });

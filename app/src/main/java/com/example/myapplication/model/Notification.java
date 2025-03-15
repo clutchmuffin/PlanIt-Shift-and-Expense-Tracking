@@ -1,6 +1,7 @@
 package com.example.myapplication.model;
 
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,56 +16,44 @@ import androidx.core.content.ContextCompat;
 import androidx.core.app.ActivityCompat;
 import android.content.pm.PackageManager;
 import android.Manifest;
+import android.os.Parcelable;
 
 import com.example.myapplication.R;
 import com.example.myapplication.controller.MainActivity;
 
+import java.io.Serializable;
+
 public class Notification {
     private Context context;
-    private String channel_name = "dailyNotif";
-    private String channel_desc = "a notification channel that gets sent for every shift";
+    public static String channel_name = "dailyNotif";
+    public static String channel_desc = "a notification channel that gets sent for every shift";
 
     public Notification(Context context) {
         this.context = context;
-        // Create the NotificationChannel, but only on API 26+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(channel_name, channel_desc, importance);
-            channel.setDescription(channel_desc);
-            // Register the channel with the system
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
-        public void addDailyNotification (CalendarEvent event, AppCompatActivity activity){
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "my_channel_id")
-                    .setSmallIcon(R.drawable.baseline_add_alert_24)
-                    .setContentTitle("Shift at " + event.getName())
-                    .setContentText("Start at " + event.getBegin_time() + ", ends at " + event.getEnd_time())
-                    .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            System.out.println(event.getID());
+    public void showNotification(CalendarEvent event){
+        String name = event.getName();
+        String startTime = event.getBegin_time();
+        String endTime = event.getEnd_time();
+        int ID = event.getID();
 
-            // Create a notification manager and check for permission to post notifications
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    notificationManager.notify(event.getID(), builder.build());
-                }
-                else{
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                    notificationManager.notify(event.getID(), builder.build());
-                }
+        Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.putExtra("name", name);
+        intent.putExtra("startTime", startTime);
+        intent.putExtra("endTime", endTime);
+        intent.putExtra("ID", ID);
 
+        PendingIntent pendintent = PendingIntent.getBroadcast(context,
+                2,
+                intent
+                ,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-            // Create an intent to open an activity when the notification is clicked (optional)
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-            }
-
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        manager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 5000,
+                pendintent);
     }
 }

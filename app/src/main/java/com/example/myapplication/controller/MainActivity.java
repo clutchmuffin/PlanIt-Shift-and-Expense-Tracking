@@ -1,7 +1,15 @@
 package com.example.myapplication.controller;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,10 +19,14 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.Notification;
+import com.example.myapplication.model.NotificationReceiver;
 import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -34,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabAddJob;
     private List<Job> jobs;
 
+    private NotificationReceiver reciever = new NotificationReceiver();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -41,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        createNotificationChannel();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -94,6 +108,24 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up Floating Action Button to add a new job.
         fabAddJob.setOnClickListener(v -> showAddJobDialog());
+    }
+
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(Notification.channel_name,
+                    "dailyNotif",
+                    importance);
+            channel.setDescription(Notification.channel_desc);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
     }
 
     private void showAddJobDialog() {

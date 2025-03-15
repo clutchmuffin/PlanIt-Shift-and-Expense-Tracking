@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -40,12 +41,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- BudgetMainActivity declaration -->
+        <receiver android:name=".model.NotificationReceiver" />
         <activity
             android:name=".controller.BudgetMainActivity"
             android:exported="true" />
         <activity
             android:name=".controller.JobDetailActivity"
             android:exported="true" />
+        <receiver android:name=".model.NotificationReceiver"/>
     </application>
 
 </manifest>
