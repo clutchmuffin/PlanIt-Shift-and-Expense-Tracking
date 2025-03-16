@@ -25,7 +25,7 @@
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/jobRecyclerView"
+        android:id="@+id/sharedRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="578dp" />
 
@@ -36,7 +36,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/add_job"
         android:src="@drawable/ic_add"
-        app:layout_anchor="@id/jobRecyclerView"
+        app:layout_anchor="@id/sharedRecyclerView"
         app:layout_anchorGravity="bottom|end"
         tools:layout_editor_absoluteX="339dp"
         tools:layout_editor_absoluteY="599dp" />
