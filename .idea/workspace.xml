@@ -36,12 +36,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="figured out issues with scheduling new shifts, and notifications now have distinct IDs">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/MainActivity.java" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing">
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -223,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742070183994</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing">
+      <option name="closed" value="true" />
+      <created>1742083172315</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742083172315</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -241,7 +244,8 @@
     <MESSAGE value="Initial commit" />
     <MESSAGE value="got some notifications to show, but having a problem with scheduling new shifts" />
     <MESSAGE value="figured out issues with scheduling new shifts, and notifications now have distinct IDs" />
-    <option name="LAST_COMMIT_MESSAGE" value="figured out issues with scheduling new shifts, and notifications now have distinct IDs" />
+    <MESSAGE value="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing" />
+    <option name="LAST_COMMIT_MESSAGE" value="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -263,12 +267,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java</url>
-          <line>52</line>
+          <line>36</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java</url>
-          <line>34</line>
+          <line>19</line>
           <properties class="com.example.myapplication.model.Notification" method="showNotification">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

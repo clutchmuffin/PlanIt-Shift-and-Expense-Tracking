@@ -2,26 +2,11 @@ package com.example.myapplication.model;
 
 
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.app.ActivityCompat;
-import android.content.pm.PackageManager;
-import android.Manifest;
-import android.os.Parcelable;
-
-import com.example.myapplication.R;
-import com.example.myapplication.controller.MainActivity;
-
-import java.io.Serializable;
 
 public class Notification {
     private Context context;
@@ -45,9 +30,8 @@ public class Notification {
         intent.putExtra("ID", ID);
 
         PendingIntent pendintent = PendingIntent.getBroadcast(context,
-                2,
-                intent
-                ,
+                ID,
+                intent,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
