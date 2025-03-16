@@ -200,14 +200,14 @@ public class JobDetailActivity extends AppCompatActivity {
                     repeatType = RepeatType.ANNUALLY;
                 }
 
-                // Find a notificaton ID for the new shift to be added
+                // Find a notification ID for the new shift to be added
                 SharedPreferences sharedPref = this.getPreferences(MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 if(sharedPref.getAll().isEmpty()){
-                    editor.putInt("dailyNotif", 1);
+                    editor.putInt("dailyNotif", 3);
                     editor.apply();
                 }
-                int newID = sharedPref.getInt("dailyNotif", 1);
+                int newID = sharedPref.getInt("dailyNotif", 3);
                 // Create a new Shift.
                 CalendarEvent newEvent = new CalendarEvent(name,
                                                             0,
@@ -220,7 +220,6 @@ public class JobDetailActivity extends AppCompatActivity {
                                                             newID);
                 editor.putInt("dailyNotif", newID + 1);
                 editor.apply();
-                System.out.println(newID);
 
                 // Check for conflicts across all jobs, and only add if no conflict.
                 db.collectionGroup("Events").get().addOnCompleteListener(task -> {
@@ -254,7 +253,7 @@ public class JobDetailActivity extends AppCompatActivity {
                             dialog.dismiss();
 
                             notif = new Notification(this);
-                            notif.showNotification(newEvent);
+                            notif.scheduleNotification(newEvent);
                         }
                     }
                 });
