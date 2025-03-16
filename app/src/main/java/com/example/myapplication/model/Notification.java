@@ -25,7 +25,7 @@ public class Notification {
         this.context = context;
     }
 
-    public void scheduleNotification(CalendarEvent event) {
+    public void scheduleNotification(CalendarEvent event, String job) {
         String name = event.getName();
         String startTime = event.getBegin_time();
         String endTime = event.getEnd_time();
@@ -34,6 +34,7 @@ public class Notification {
         // Information that will be needed in the notification
         Intent intent = new Intent(context, NotificationReceiver.class);
         intent.putExtra("name", name);
+        intent.putExtra("job", job);
         intent.putExtra("startTime", startTime);
         intent.putExtra("endTime", endTime);
         intent.putExtra("startDate", event.getBegin_date());

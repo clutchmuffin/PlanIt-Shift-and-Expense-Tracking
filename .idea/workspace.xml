@@ -36,13 +36,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="getting notifications to be sent using alarm manager and they are no longer overwriting eachother">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/Notification.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationReceiver.java" afterDir="false" />
-    </list>
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="notifications are now successfully scheduled on the day shifts are." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -238,7 +232,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742084061328</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="notifications are now successfully scheduled on the day shifts are.">
+      <option name="closed" value="true" />
+      <created>1742165795436</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742165795436</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -258,7 +260,8 @@
     <MESSAGE value="figured out issues with scheduling new shifts, and notifications now have distinct IDs" />
     <MESSAGE value="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing" />
     <MESSAGE value="getting notifications to be sent using alarm manager and they are no longer overwriting eachother" />
-    <option name="LAST_COMMIT_MESSAGE" value="getting notifications to be sent using alarm manager and they are no longer overwriting eachother" />
+    <MESSAGE value="notifications are now successfully scheduled on the day shifts are." />
+    <option name="LAST_COMMIT_MESSAGE" value="notifications are now successfully scheduled on the day shifts are." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

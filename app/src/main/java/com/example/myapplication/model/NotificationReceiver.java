@@ -24,6 +24,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String name = intent.getStringExtra("name");
+        String job = intent.getStringExtra("job");
         String startTime = intent.getStringExtra("startTime");
         String endTime = intent.getStringExtra("endTime");
         String startDate = intent.getStringExtra("startDate");
@@ -43,16 +44,17 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Notification.channel_name)
                 .setSmallIcon(R.drawable.baseline_add_alert_24)
                 .setContentIntent(pendingIntent)
-                .setContentTitle("Shift at " + name)
+                .setContentTitle("Shift at " + job)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // Check if today's shift starts and ends on the same day
         if(startDate.equals(endDate)){
-                    builder.setContentText("Start at: " + startTime + "\nEnds at: " + endTime);
+                    builder.setContentText(name + "\nStart at: " + startTime +
+                                            "\nEnds at: " + endTime);
         }
         else{
-            builder.setContentText("Starts at: " + startDate + ", " + startTime +
+            builder.setContentText(name + "\nStarts at: " + startDate + ", " + startTime +
                                     "\nEnds at: " + endDate + ", " + endTime);
         }
 

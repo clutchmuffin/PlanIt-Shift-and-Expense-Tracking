@@ -253,7 +253,7 @@ public class JobDetailActivity extends AppCompatActivity {
                             dialog.dismiss();
 
                             notif = new Notification(this);
-                            notif.scheduleNotification(newEvent);
+                            notif.scheduleNotification(newEvent, job.getEmployer());
                         }
                     }
                 });
