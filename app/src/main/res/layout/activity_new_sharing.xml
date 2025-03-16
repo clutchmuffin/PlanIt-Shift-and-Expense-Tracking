@@ -48,7 +48,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="hint" />
+                android:hint="Name" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -58,10 +58,9 @@
             android:text="TextView"
             tools:text="Add Events" />
 
-        <Spinner
-            android:id="@+id/spinner"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
