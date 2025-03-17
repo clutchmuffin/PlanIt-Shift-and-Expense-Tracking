@@ -49,6 +49,7 @@
             android:name=".controller.JobDetailActivity"
             android:exported="true" />
         <receiver android:name=".model.NotificationReceiver"/>
+        <receiver android:name=".model.WeeklyNotificationReceiver"/>
     </application>
 
 </manifest>

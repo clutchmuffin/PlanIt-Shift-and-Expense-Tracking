@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        createNotificationChannel();
+        createNotificationChannels();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -108,16 +108,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void createNotificationChannel() {
+    private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(NotificationSender.channel_name,
+
+            // Create a notification channel for notifications that get sent every shift
+            NotificationChannel dailyChannel = new NotificationChannel(NotificationSender.daily_channel_name,
                     "dailyNotif",
                     importance);
-            channel.setDescription(NotificationSender.channel_desc);
+            dailyChannel.setDescription(NotificationSender.daily_channel_desc);
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.createNotificationChannel(channel);
+            manager.createNotificationChannel(dailyChannel);
+
+            // Create a notification channel for notifications that get sent every Sunday
+            NotificationChannel weeklyChannel = new NotificationChannel(NotificationSender.weekly_channel_name,
+                    "weeklyNotif",
+                    importance);
+            dailyChannel.setDescription(NotificationSender.weekly_channel_desc);
+            manager.createNotificationChannel(weeklyChannel);
         }
+
         if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);

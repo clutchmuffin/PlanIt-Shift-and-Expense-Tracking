@@ -39,7 +39,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
         // Build notification for daily shift
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationSender.channel_name)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationSender.daily_channel_name)
                 .setSmallIcon(R.drawable.baseline_add_alert_24)
                 .setContentIntent(pendingIntent)
                 .setContentTitle("Shift at " + job)

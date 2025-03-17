@@ -14,6 +14,10 @@ import com.example.myapplication.controller.MainActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import org.checkerframework.checker.units.qual.C;
+
+import java.util.Calendar;
+
 public class WeeklyNotificationReceiver extends BroadcastReceiver {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -47,4 +51,7 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
             }
         });
     }
+
+
 }
+

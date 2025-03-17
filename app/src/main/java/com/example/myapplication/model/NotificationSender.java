@@ -10,19 +10,22 @@ import android.os.Build;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.TimeZone;
 
 
 public class NotificationSender {
     private Context context;
-    public static String channel_name = "dailyNotif";
-    public static String channel_desc = "a notification channel that gets sent for every shift";
+    public static String daily_channel_name = "dailyNotif";
+    public static String daily_channel_desc = "a notification channel that gets used to send notifications for every shift";
+    public static String weekly_channel_name = "weeklyNotif";
+    public static String weekly_channel_desc = "a notification that gets used to send weekly notifications";
 
     public NotificationSender(Context context) {
         this.context = context;
     }
 
-    public void scheduleNotification(CalendarEvent event, String job) {
+    public void scheduleDailyNotification(CalendarEvent event, String job) {
         String name = event.getName();
         String startTime = event.getBegin_time();
         String endTime = event.getEnd_time();
@@ -64,12 +67,47 @@ public class NotificationSender {
      * @param minute --> the minute to convert
      * @return The time in millisecond from epoch to date, time:hour
      */
-    private long getMilliDateTime(String date, int hour, int minute){
+    public long getMilliDateTime(String date, int hour, int minute){
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, dateFormatter);
         ZonedDateTime dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
 
         return dateTime.toInstant().toEpochMilli();
+    }
+
+    public Calendar findNextSunday(){
+        Calendar currTime = Calendar.getInstance();
+        Calendar nextSunday = Calendar.getInstance();
+        nextSunday.set(Calendar.SECOND, 0);
+        nextSunday.set(Calendar.MINUTE,0);
+        nextSunday.set(Calendar.HOUR, 6);
+        nextSunday.set(Calendar.AM_PM, Calendar.AM);
+        nextSunday.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+
+        if(!currTime.before(nextSunday)){
+            int dayDiff = (7 + nextSunday.get(Calendar.DAY_OF_WEEK) - currTime.get(Calendar.DAY_OF_WEEK)) % 7;
+
+            if(dayDiff == 0){
+                dayDiff = 7;
+            }
+            nextSunday.add(Calendar.DAY_OF_MONTH, dayDiff);
+        }
+        return nextSunday;
+    }
+
+    public void updateWeeklyNotif(){
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
+        long nextSunday = findNextSunday().getTimeInMillis();
+        long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
+
+        PendingIntent pendintent = PendingIntent.getBroadcast(context,
+                2,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, nextSunday, weeklyInterval, pendintent);
     }
 
     /**
