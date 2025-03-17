@@ -67,7 +67,7 @@ public class NotificationSender {
      * @param minute --> the minute to convert
      * @return The time in millisecond from epoch to date, time:hour
      */
-    public long getMilliDateTime(String date, int hour, int minute){
+    private long getMilliDateTime(String date, int hour, int minute){
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, dateFormatter);
         ZonedDateTime dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
@@ -75,7 +75,7 @@ public class NotificationSender {
         return dateTime.toInstant().toEpochMilli();
     }
 
-    public Calendar findNextSunday(){
+    private Calendar findNextSunday(){
         Calendar currTime = Calendar.getInstance();
         Calendar nextSunday = Calendar.getInstance();
         nextSunday.set(Calendar.SECOND, 0);
@@ -92,22 +92,46 @@ public class NotificationSender {
             }
             nextSunday.add(Calendar.DAY_OF_MONTH, dayDiff);
         }
+        System.out.println(nextSunday);
         return nextSunday;
+    }
+
+    private Calendar findLastSunday(){
+        Calendar currTime = Calendar.getInstance();
+        Calendar lastSunday = Calendar.getInstance();
+        lastSunday.set(Calendar.SECOND, 0);
+        lastSunday.set(Calendar.MINUTE,0);
+        lastSunday.set(Calendar.HOUR, 6);
+        lastSunday.set(Calendar.AM_PM, Calendar.AM);
+        lastSunday.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+
+        if(!currTime.after(lastSunday)){
+            int dayDiff = (7 + currTime.get(Calendar.DAY_OF_WEEK) - lastSunday.get(Calendar.DAY_OF_WEEK)) % 7;
+
+            if(dayDiff == 0){
+                dayDiff = -7;
+            }
+            lastSunday.add(Calendar.DAY_OF_MONTH, dayDiff);
+        }
+        return lastSunday;
     }
 
     public void updateWeeklyNotif(){
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
+//        Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
+
         long nextSunday = findNextSunday().getTimeInMillis();
         long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
+//        intent.putExtra("nextSunday",nextSunday);
+//        intent.putExtra("interval", weeklyInterval);
 
-        PendingIntent pendintent = PendingIntent.getBroadcast(context,
-                2,
-                intent,
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+//        PendingIntent pendintent = PendingIntent.getBroadcast(context,
+//                2,
+//                intent,
+//                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, nextSunday, weeklyInterval, pendintent);
+//        manager.setRepeating(AlarmManager.RTC_WAKEUP, nextSunday, weeklyInterval, pendintent);
     }
 
     /**

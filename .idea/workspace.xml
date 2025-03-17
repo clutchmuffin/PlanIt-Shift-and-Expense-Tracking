@@ -36,10 +36,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="adding weekly notification receiver that sends a notification with info on next week's shifts">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="set up notification channels and first implementation to figure out when to send weekly notifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" afterDir="false" />
     </list>
@@ -262,7 +260,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742237147385</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="set up notification channels and first implementation to figure out when to send weekly notifications">
+      <option name="closed" value="true" />
+      <created>1742238843757</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1742238843757</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -285,34 +291,16 @@
     <MESSAGE value="notifications are now successfully scheduled on the day shifts are." />
     <MESSAGE value="added extra shift information" />
     <MESSAGE value="adding weekly notification receiver that sends a notification with info on next week's shifts" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding weekly notification receiver that sends a notification with info on next week's shifts" />
+    <MESSAGE value="set up notification channels and first implementation to figure out when to send weekly notifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="set up notification channels and first implementation to figure out when to send weekly notifications" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java</url>
-          <line>202</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java</url>
-          <line>208</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java</url>
-          <line>219</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java</url>
-          <line>24</line>
-          <properties class="com.example.myapplication.model.NotificationSender">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="5" />
+          <line>79</line>
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
