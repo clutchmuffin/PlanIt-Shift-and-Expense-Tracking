@@ -8,20 +8,17 @@ import android.content.Intent;
 import android.os.Build;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 
-public class Notification {
+public class NotificationSender {
     private Context context;
     public static String channel_name = "dailyNotif";
     public static String channel_desc = "a notification channel that gets sent for every shift";
 
-    public Notification(Context context) {
+    public NotificationSender(Context context) {
         this.context = context;
     }
 
@@ -76,7 +73,7 @@ public class Notification {
     }
 
     /**
-     * Schedules a daily notification on startDate
+     * Schedules a daily notification on startDate at hour:minute
      * @param pendIntent --> what should be scheduled
      * @param startDate --> the date to schedule the notification
      * @param manager --> the alarm manager that schedules the notification

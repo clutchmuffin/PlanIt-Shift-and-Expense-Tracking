@@ -2,7 +2,6 @@ package com.example.myapplication.controller;
 
 import static androidx.core.app.PendingIntentCompat.getActivity;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,7 +20,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
-import com.example.myapplication.model.Notification;
+import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.model.RepeatType;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
@@ -54,7 +53,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private LocalDate endDate;
     private LocalTime beginTime;
     private LocalTime endTime;
-    private Notification notif;
+    private NotificationSender notif;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -252,7 +251,7 @@ public class JobDetailActivity extends AppCompatActivity {
                             eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
                             dialog.dismiss();
 
-                            notif = new Notification(this);
+                            notif = new NotificationSender(this);
                             notif.scheduleNotification(newEvent, job.getEmployer());
                         }
                     }

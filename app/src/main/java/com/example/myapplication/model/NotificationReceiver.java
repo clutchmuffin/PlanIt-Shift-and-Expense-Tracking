@@ -17,8 +17,6 @@ import androidx.core.content.ContextCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.controller.MainActivity;
 
-import org.checkerframework.checker.units.qual.N;
-
 public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
@@ -41,7 +39,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
         // Build notification for daily shift
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Notification.channel_name)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationSender.channel_name)
                 .setSmallIcon(R.drawable.baseline_add_alert_24)
                 .setContentIntent(pendingIntent)
                 .setContentTitle("Shift at " + job)
