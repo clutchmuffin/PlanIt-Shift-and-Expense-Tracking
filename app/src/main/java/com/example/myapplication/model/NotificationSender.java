@@ -119,17 +119,19 @@ public class NotificationSender {
     public void updateWeeklyNotif(){
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-//        Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
+        Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
 
         long nextSunday = findNextSunday().getTimeInMillis();
         long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
-//        intent.putExtra("nextSunday",nextSunday);
-//        intent.putExtra("interval", weeklyInterval);
+        intent.putExtra("nextSunday",nextSunday);
+        intent.putExtra("interval", weeklyInterval);
 
-//        PendingIntent pendintent = PendingIntent.getBroadcast(context,
-//                2,
-//                intent,
-//                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+        PendingIntent pendintent = PendingIntent.getBroadcast(context,
+                2,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+
+        manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, pendintent);
 
 //        manager.setRepeating(AlarmManager.RTC_WAKEUP, nextSunday, weeklyInterval, pendintent);
     }

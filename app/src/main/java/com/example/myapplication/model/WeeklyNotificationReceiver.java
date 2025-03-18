@@ -48,7 +48,8 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
 
         long nextSunday = intent.getLongExtra("nextSunday",0);
         long twoWeekSunday = nextSunday + intent.getLongExtra("interval", 0);
-        List<CalendarEvent> fallNextWeek = new ArrayList<>();
+        ArrayList<CalendarEvent> fallNextWeek = new ArrayList<>();
+
 
         if(nextSunday!= 0) {
             db.collectionGroup("Events").get().addOnCompleteListener(task -> {
@@ -56,11 +57,23 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         CalendarEvent event = document.toObject(CalendarEvent.class);
                         Log.i("WeeklyNotificationReceiver", "Checking if " + event.getName() + " falls within next two weeks");
-                        if(fallsWithinWeeks(event, nextSunday, twoWeekSunday))
+                        if(fallsWithinWeeks(event, nextSunday, twoWeekSunday)) {
+                            System.out.println("true");
                             fallNextWeek.add(event);
+                        }
                     }
                 }
             });
+        }
+
+        if(fallNextWeek.isEmpty()) {
+            System.out.println("no shifts");
+            System.out.println(fallNextWeek.size());
+        }
+        else{
+            for(CalendarEvent event : fallNextWeek){
+                System.out.println(event.getName());
+            }
         }
 
 
@@ -74,15 +87,16 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
     }
 
     private boolean fallsWithinWeeks(CalendarEvent event, long firstWeek, long secondWeek){
-        LocalTime time = LocalTime.parse(event.getBegin_time(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime time = LocalTime.parse(event.getBegin_time(), DateTimeFormatter.ofPattern("HH:mm:ss"));
 
         String date = event.getBegin_date();
         int hour = time.getHour();
         int minute = time.getMinute();
         long milliDate = getMilliDateTime(date,hour,minute);
 
-        if(firstWeek <= milliDate && milliDate <= secondWeek)
+        if(firstWeek <= milliDate && secondWeek >= milliDate){
             return true;
+        }
         else
             return false;
     }
