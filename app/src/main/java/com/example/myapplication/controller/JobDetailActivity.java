@@ -35,7 +35,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class JobDetailActivity extends AppCompatActivity {
+    private static final String TAG = "JobDetailActivity";
     public static final String EXTRA_JOB = "com.example.myapplication.JOB";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+
     private Job job;
     private RecyclerView eventRecyclerView;
     private RecyclerView expenseRecyclerView;
@@ -43,50 +47,61 @@ public class JobDetailActivity extends AppCompatActivity {
     private ExpenseListAdapter expenseListAdapter;
     private FloatingActionButton fabAddButton;
     private FloatingActionButton fabAddExpense;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private LocalDate beginDate;
     private LocalDate endDate;
     private LocalTime beginTime;
     private LocalTime endTime;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job_detail);
 
-        // Retrieve the Job object passed in the intent.
         job = getIntent().getSerializableExtra(EXTRA_JOB, Job.class);
 
-        // Get references to the UI elements.
+        initializeViews();
+        populateJobDetails();
+        setupEventRecyclerView();
+        setupExpenseRecyclerView();
+        setupActionButtons();
+    }
+
+    private void initializeViews() {
+        eventRecyclerView = findViewById(R.id.eventRecyclerView);
+        expenseRecyclerView = findViewById(R.id.expenseRecyclerView);
+        fabAddButton = findViewById(R.id.fabAdd);
+        fabAddExpense = findViewById(R.id.fabAddExp);
+    }
+
+    private void populateJobDetails() {
+        if (job == null) {
+            return;
+        }
+
         TextView tvTitle = findViewById(R.id.detailJobTitle);
         TextView tvSubtitle = findViewById(R.id.detailJobSubtitle);
         TextView tvEmployer = findViewById(R.id.detailJobEmployer);
         TextView tvLocation = findViewById(R.id.detailJobLocation);
         TextView tvPayRate = findViewById(R.id.detailJobPayRate);
         TextView tvColor = findViewById(R.id.detailJobColor);
-        eventRecyclerView = findViewById(R.id.eventRecyclerView);
-        expenseRecyclerView = findViewById(R.id.expenseRecyclerView);
-        fabAddButton = findViewById(R.id.fabAdd);
-        fabAddExpense = findViewById(R.id.fabAddExp);
 
-        // Populate the UI with job details.
-        if (job != null) {
-            tvTitle.setText(job.getTitle());
-            tvSubtitle.setText(job.getSubTitle());
-            tvEmployer.setText("Employer: " + job.getEmployer());
-            tvLocation.setText("Location: " + job.getLocation());
-            String colorHex = String.format("#%06X", (0xFFFFFF & job.getColor()));
-            tvColor.setText("Color: " + colorHex);
-            tvColor.setTextColor(job.getColor());
-            tvPayRate.setText("$" + job.getPayRate());
-        }
+        tvTitle.setText(job.getTitle());
+        tvSubtitle.setText(job.getSubTitle());
+        tvEmployer.setText("Employer: " + job.getEmployer());
+        tvLocation.setText("Location: " + job.getLocation());
+        String colorHex = String.format("#%06X", (0xFFFFFF & job.getColor()));
+        tvColor.setText("Color: " + colorHex);
+        tvColor.setTextColor(job.getColor());
+        tvPayRate.setText("$" + job.getPayRate());
+    }
 
-        // Set up the  Event RecyclerView.
+    private void setupEventRecyclerView() {
+
+        // Set up the RecyclerView.
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         // Get the list of events from Firestore.
         db.collection("Jobs").document(job.getTitle()).collection("Events")
                 .get().addOnCompleteListener(task -> {
@@ -97,14 +112,22 @@ public class JobDetailActivity extends AppCompatActivity {
                         }
                         eventListAdapter.notifyDataSetChanged();
                     } else {
-                        Log.e("JobDetailActivity", "Error getting documents: ", task.getException());
+                        Log.e(TAG, "Error getting events: ", task.getException());
                     }
                 });
+
+        // Set the adapter.
         eventListAdapter = new EventListAdapter(job.getEvents());
         eventRecyclerView.setAdapter(eventListAdapter);
+    }
 
-        // Set up the Expenses RecyclerViews
+
+    private void setupExpenseRecyclerView() {
+
+        // Set up the RecyclerView.
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Get the list of expenses from Firestore.
         db.collection("Jobs").document(job.getTitle()).collection("EXP")
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -114,21 +137,31 @@ public class JobDetailActivity extends AppCompatActivity {
                         }
                         expenseListAdapter.notifyDataSetChanged();
                     } else {
-                        Log.e("JobDetailActivity", "Error getting documents: ", task.getException());
+                        Log.e(TAG, "Error getting expenses: ", task.getException());
                     }
                 });
+
+        // Set the adapter.
         expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
         expenseRecyclerView.setAdapter(expenseListAdapter);
+    }
 
-        // Set up the FAB to add a new shift.
-        fabAddButton.setOnClickListener(v -> showAddShiftDialog());
+    private void setupActionButtons() {
+        fabAddButton.setOnClickListener(v -> showAddEventDialog());
         fabAddExpense.setOnClickListener(v -> showAddExpenseDialog());
     }
 
-    private void showAddShiftDialog() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_add_event, null);
 
+    /** EVENTS **/
+    private void showAddEventDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_event, null);
+        AlertDialog dialog = createEventDialog(dialogView);
+        dialog.show();
+    }
+
+    private AlertDialog createEventDialog(View dialogView) {
+
+        // Create an AlertDialog.
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add New Shift")
                 .setView(dialogView)
@@ -136,7 +169,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
-        EditText etName = dialogView.findViewById(R.id.editEventName);
+        // Find and set up the dialog controls.
         Button btnSelectBeginDate = dialogView.findViewById(R.id.btnSelectBeginDate);
         Button btnSelectEndDate = dialogView.findViewById(R.id.btnSelectEndDate);
         Button btnSelectStartTime = dialogView.findViewById(R.id.btnSelectStartTime);
@@ -145,107 +178,144 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
         TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
         TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
-        RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
 
         btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
         btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
         btnSelectStartTime.setOnClickListener(v -> showTimePicker(tvSelectedStartTime, true));
         btnSelectEndTime.setOnClickListener(v -> showTimePicker(tvSelectedEndTime, false));
 
+        // Dialog Button Listeners
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-
-                String name = etName.getText().toString().trim();
-                if (TextUtils.isEmpty(name)) {
-                    etName.setError("Name is required");
-                    return;
+                if (validateEventInput(dialogView)) {
+                    createAndSaveEvent(dialogView, dialog);
                 }
-
-                if (beginDate == null) {
-                    tvEndDate.setError("Select a date");
-                    return;
-                }
-                if (endDate == null) {
-                    tvEndDate.setError("Select a date");
-                    return;
-                }
-                if (beginTime == null) {
-                    tvSelectedStartTime.setError("Select a start time");
-                    return;
-                }
-                if (endTime == null) {
-                    tvSelectedEndTime.setError("Select an end time");
-                    return;
-                }
-
-                // Determine the selected repeat type
-                RepeatType repeatType = RepeatType.NEVER; // Default value
-                int selectedRadioButtonId = radioGroupRepeatType.getCheckedRadioButtonId();
-
-                if (selectedRadioButtonId == R.id.radioNeverRepeat) {
-                    repeatType = RepeatType.NEVER;
-                } else if (selectedRadioButtonId == R.id.radioDaily) {
-                    repeatType = RepeatType.DAILY;
-                } else if (selectedRadioButtonId == R.id.radioWeekly) {
-                    repeatType = RepeatType.WEEKLY;
-                } else if (selectedRadioButtonId == R.id.radioMonthly) {
-                    repeatType = RepeatType.MONTHLY;
-                } else if (selectedRadioButtonId == R.id.radioYearly) {
-                    repeatType = RepeatType.ANNUALLY;
-                }
-
-                // Create a new Shift.
-                CalendarEvent newEvent = new CalendarEvent(name,
-                                                            0,
-                                                            job.getPayRate(),
-                                                            beginDate.format(DATE_FORMATTER),
-                                                            endDate.format(DATE_FORMATTER),
-                                                            beginTime.format(TIME_FORMATTER),
-                                                            endTime.format(TIME_FORMATTER),
-                                                            repeatType);
-
-                // Check for conflicts across all jobs, and only add if no conflict.
-                db.collectionGroup("Events").get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        boolean hasConflict = false;
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            CalendarEvent otherEvent = document.toObject(CalendarEvent.class);
-                            Log.i("JobDetailActivity", "Checking for overlap with " + otherEvent.getName());
-                            if (hasConflict(newEvent, otherEvent)) {
-                                hasConflict = true;
-                                break;
-                            }
-                        }
-
-                        if (hasConflict) {
-                            // Show conflict alert
-                            new AlertDialog.Builder(this)
-                                    .setTitle("Scheduling Conflict")
-                                    .setMessage("This shift overlaps with an existing shift")
-                                    .setPositiveButton("Edit", (d, which) -> d.dismiss())
-                                    .show();
-                        } else {
-                            // No conflict - save the event
-                            db.collection("Jobs").document(job.getTitle())
-                                    .collection("Events")
-                                    .document(newEvent.getName())
-                                    .set(newEvent);
-
-                            job.addEvent(newEvent);
-                            eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
-                            dialog.dismiss();
-                        }
-                    }
-                });
             });
         });
+
+        return dialog;
+    }
+
+    private boolean validateEventInput(View dialogView) {
+        EditText etName = dialogView.findViewById(R.id.editEventName);
+        TextView tvBeginDate = dialogView.findViewById(R.id.tvBeginDate);
+        TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
+        TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
+        TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
+
+        String name = etName.getText().toString().trim();
+        if (TextUtils.isEmpty(name)) {
+            etName.setError("Name is required");
+            return false;
+        }
+
+        if (beginDate == null) {
+            tvBeginDate.setError("Select a date");
+            return false;
+        }
+        if (endDate == null) {
+            tvEndDate.setError("Select a date");
+            return false;
+        }
+        if (beginTime == null) {
+            tvSelectedStartTime.setError("Select a start time");
+            return false;
+        }
+        if (endTime == null) {
+            tvSelectedEndTime.setError("Select an end time");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void createAndSaveEvent(View dialogView, AlertDialog dialog) {
+        EditText etName = dialogView.findViewById(R.id.editEventName);
+        RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
+
+        String name = etName.getText().toString().trim();
+        RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
+
+        CalendarEvent newEvent = new CalendarEvent(
+                name,
+                0,
+                job.getPayRate(),
+                beginDate.format(DATE_FORMATTER),
+                endDate.format(DATE_FORMATTER),
+                beginTime.format(TIME_FORMATTER),
+                endTime.format(TIME_FORMATTER),
+                repeatType
+        );
+
+        checkForConflictsAndSaveEvent(newEvent, dialog);
+    }
+
+    private RepeatType getSelectedRepeatType(RadioGroup radioGroupRepeatType) {
+        int selectedRadioButtonId = radioGroupRepeatType.getCheckedRadioButtonId();
+
+        if (selectedRadioButtonId == R.id.radioNeverRepeat) {
+            return RepeatType.NEVER;
+        } else if (selectedRadioButtonId == R.id.radioDaily) {
+            return RepeatType.DAILY;
+        } else if (selectedRadioButtonId == R.id.radioWeekly) {
+            return RepeatType.WEEKLY;
+        } else if (selectedRadioButtonId == R.id.radioMonthly) {
+            return RepeatType.MONTHLY;
+        } else if (selectedRadioButtonId == R.id.radioYearly) {
+            return RepeatType.ANNUALLY;
+        }
+
+        return RepeatType.NEVER; // Default value
+    }
+
+    private void checkForConflictsAndSaveEvent(CalendarEvent newEvent, AlertDialog dialog) {
+        db.collectionGroup("Events").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean conflict = false;
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    CalendarEvent otherEvent = document.toObject(CalendarEvent.class);
+                    Log.i("JobDetailActivity", "Checking for overlap with " + otherEvent.getName());
+                    if (hasConflict(newEvent, otherEvent)) {
+                        conflict = true;
+                        break;
+                    }
+                }
+
+                if (conflict) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Scheduling Conflict")
+                            .setMessage("This shift overlaps with an existing shift")
+                            .setPositiveButton("Edit", (d, which) -> d.dismiss())
+                            .show();
+                } else {
+                    job.addEvent(newEvent);
+                    eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
+                    saveEventToFirestore(newEvent);
+                    dialog.dismiss();
+                }
+            }
+        });
+    }
+
+
+    private void saveEventToFirestore(CalendarEvent event) {
+        db.collection("Jobs").document(job.getTitle())
+                .collection("Events")
+                .document(event.getName())
+                .set(event)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
+                .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
+    }
+
+
+    /** EXPENSES **/
+    private void showAddExpenseDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_expense, null);
+        AlertDialog dialog = createExpenseDialog(dialogView);
         dialog.show();
     }
 
-    private void showAddExpenseDialog() {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_add_expense, null);
-
+    private AlertDialog createExpenseDialog(View dialogView) {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add New Expense")
                 .setView(dialogView)
@@ -253,37 +323,65 @@ public class JobDetailActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                if (validateExpenseInput(dialogView)) {
+                    createAndSaveExpense(dialogView, dialog);
+                }
+            });
+        });
+
+        return dialog;
+    }
+
+
+    private boolean validateExpenseInput(View dialogView) {
         EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
         EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
 
-        dialog.setOnShowListener(dialogInterface -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+        String description = etDescription.getText().toString().trim();
+        if (TextUtils.isEmpty(description)) {
+            etDescription.setError("Description is required");
+            return false;
+        }
 
-                String description = etDescription.getText().toString().trim();
-                if (TextUtils.isEmpty(description)) {
-                    etDescription.setError("Description is required");
-                    return;
-                }
+        String amount = etAmount.getText().toString().trim();
+        if (TextUtils.isEmpty(amount)) {
+            etAmount.setError("Amount is required");
+            return false;
+        }
 
-                String amount = etAmount.getText().toString().trim();
-                if (TextUtils.isEmpty(amount)) {
-                    etAmount.setError("Amount is required");
-                    return;
-                }
+        return true;
+    }
 
-                // Create a new Expense.
-                Expense newExpense = new Expense(description, Integer.parseInt(amount));
+    private void createAndSaveExpense(View dialogView, AlertDialog dialog) {
+        EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
+        EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
 
-                // Add the expense to the job.
-                db.collection("Jobs").document(job.getTitle()).collection("EXP").document().set(newExpense);
-                job.addExpense(newExpense);
+        String description = etDescription.getText().toString().trim();
+        int amount = 0;
 
-                // Notify the adapter to update the RecyclerView.
-                expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
-                dialog.dismiss();
-            });
-        });
-        dialog.show();
+        try {
+            amount = Integer.parseInt(etAmount.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            etAmount.setError("Invalid amount");
+            return;
+        }
+
+        Expense newExpense = new Expense(description, amount);
+        job.addExpense(newExpense);
+        expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
+        saveExpenseToFirestore(newExpense);
+        dialog.dismiss();
+    }
+
+    private void saveExpenseToFirestore(Expense expense) {
+        db.collection("Jobs").document(job.getTitle())
+                .collection("EXP")
+                .document()
+                .set(expense)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Expense saved successfully"))
+                .addOnFailureListener(e -> Log.e(TAG, "Error saving expense", e));
     }
 
     private void showDatePicker(TextView tvDate, boolean isBeginDate) {
@@ -307,7 +405,6 @@ public class JobDetailActivity extends AppCompatActivity {
         });
     }
 
-
     private void showTimePicker(TextView tvTime, boolean isStartTime) {
         MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -330,35 +427,38 @@ public class JobDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if two events overlap in time
+     */
     private boolean hasConflict(CalendarEvent newEvent, CalendarEvent existingEvent) {
-        // Convert new event date and time into LocalDateTime objects.
-        LocalDateTime newStart = LocalDateTime.of(
-                LocalDate.parse(newEvent.getBegin_date(), DATE_FORMATTER),
-                LocalTime.parse(newEvent.getBegin_time(), TIME_FORMATTER)
-        );
-        LocalDateTime newEnd = LocalDateTime.of(
-                LocalDate.parse(newEvent.getEnd_date(), DATE_FORMATTER),
-                LocalTime.parse(newEvent.getEnd_time(), TIME_FORMATTER)
-        );
+        LocalDateTime newStart = parseEventDateTime(newEvent, true);
+        LocalDateTime newEnd = parseEventDateTime(newEvent, false);
+        LocalDateTime existingStart = parseEventDateTime(existingEvent, true);
+        LocalDateTime existingEnd = parseEventDateTime(existingEvent, false);
 
-        // Convert existing event date and time into LocalDateTime objects.
-        LocalDateTime existingStart = LocalDateTime.of(
-                LocalDate.parse(existingEvent.getBegin_date(), DATE_FORMATTER),
-                LocalTime.parse(existingEvent.getBegin_time(), TIME_FORMATTER)
-        );
-        LocalDateTime existingEnd = LocalDateTime.of(
-                LocalDate.parse(existingEvent.getEnd_date(), DATE_FORMATTER),
-                LocalTime.parse(existingEvent.getEnd_time(), TIME_FORMATTER)
-        );
-
-        // Validate that event intervals are valid.
         if (!newEnd.isAfter(newStart) || !existingEnd.isAfter(existingStart)) {
             throw new IllegalArgumentException("Event end time must be after start time.");
         }
-
         // Check for overlap: an overlap exists if new event starts before the existing event ends
         // and new event ends after the existing event starts.
         return newStart.isBefore(existingEnd) && newEnd.isAfter(existingStart);
+    }
+
+    /**
+     * Parses event date and time into a LocalDateTime object
+     */
+    private LocalDateTime parseEventDateTime(CalendarEvent event, boolean isStartTime) {
+        if (isStartTime) {
+            return LocalDateTime.of(
+                    LocalDate.parse(event.getBegin_date(), DATE_FORMATTER),
+                    LocalTime.parse(event.getBegin_time(), TIME_FORMATTER)
+            );
+        } else {
+            return LocalDateTime.of(
+                    LocalDate.parse(event.getEnd_date(), DATE_FORMATTER),
+                    LocalTime.parse(event.getEnd_time(), TIME_FORMATTER)
+            );
+        }
     }
 
 }

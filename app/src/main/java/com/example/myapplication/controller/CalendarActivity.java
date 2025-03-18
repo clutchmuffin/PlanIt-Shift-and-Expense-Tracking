@@ -26,56 +26,70 @@ import com.kizitonwose.calendar.view.ViewContainer;
 
 import java.time.DayOfWeek;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 public class CalendarActivity extends AppCompatActivity {
 
+    private static final String TAG = "CalendarActivity";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     private CalendarView calendarView;
-    private static List<CalendarEvent> events = new ArrayList<>();
-    private static RecyclerView dailyEventRecyclerView;
-    private static dailyEventListAdapter dailyEventListAdapter;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private RecyclerView dailyEventRecyclerView;
+    private dailyEventListAdapter dailyEventListAdapter;
+    private List<CalendarEvent> allEvents = new ArrayList<>();
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        // Find the CalendarView defined in activity_calendar.xml
-        calendarView = findViewById(R.id.calendarView);
+        initializeViews();
+        setupCalendarDateRange();
+        setupDayOfWeekHeaders();
+        setupCalendarDayBinder();
+        setupDailyEventsRecyclerView();
+        loadEventsFromFirestore();
+    }
 
-        // Define the calendar's date range.
+    private void initializeViews() {
+        calendarView = findViewById(R.id.calendarView);
+        dailyEventRecyclerView = findViewById(R.id.dailyEventsRecyclerView);
+    }
+
+    private void setupCalendarDateRange() {
         YearMonth currentMonth = YearMonth.now();
         YearMonth startMonth = currentMonth.minusMonths(12);
         YearMonth endMonth = currentMonth.plusMonths(12);
+        DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
 
-        // Define the first day of the week.
-        // For simplicity, we use Monday; alternatively, you could determine this from Locale.
-        DayOfWeek firstDay = DayOfWeek.MONDAY;
-
-        // Setup the CalendarView with the start and end dates.
-        calendarView.setup(startMonth, endMonth, firstDay);
+        calendarView.setup(startMonth, endMonth, firstDayOfWeek);
         calendarView.scrollToMonth(currentMonth);
+    }
 
-        List<DayOfWeek> daysOfWeek = java.util.Arrays.asList(DayOfWeek.values());
+    private void setupDayOfWeekHeaders() {
+        List<DayOfWeek> daysOfWeek = Arrays.asList(DayOfWeek.values());
         ViewGroup titlesContainer = findViewById(R.id.titlesContainer);
+
         int childCount = titlesContainer.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = titlesContainer.getChildAt(i);
             if (child instanceof TextView) {
                 TextView textView = (TextView) child;
-                DayOfWeek dayOfWeek = daysOfWeek.get(i);
-                String title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault());
+                String title = daysOfWeek.get(i).getDisplayName(TextStyle.SHORT, Locale.getDefault());
                 textView.setText(title);
             }
         }
+    }
 
-        // Set the day binder to create and bind each day cell.
+    private void setupCalendarDayBinder() {
         calendarView.setDayBinder(new MonthDayBinder<DayViewContainer>() {
-
             @NonNull
             @Override
             public DayViewContainer create(@NonNull View view) {
@@ -83,13 +97,11 @@ public class CalendarActivity extends AppCompatActivity {
             }
 
             @Override
-            public void bind(@NonNull DayViewContainer container, CalendarDay data) {
-                // Store the day data in the container.
-                container.day = data;
-                // Set the day number in the TextView.
-                container.textView.setText(String.valueOf(data.getDate().getDayOfMonth()));
-                // Only show days that belong to the current month.
-                if (data.getPosition() == DayPosition.MonthDate) {
+            public void bind(@NonNull DayViewContainer container, CalendarDay day) {
+                container.day = day;
+                container.textView.setText(String.valueOf(day.getDate().getDayOfMonth()));
+
+                if (day.getPosition() == DayPosition.MonthDate) {
                     container.textView.setVisibility(View.VISIBLE);
                     container.textView.setTextColor(Color.BLACK);
                 } else {
@@ -97,21 +109,31 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        dailyEventRecyclerView = findViewById(R.id.dailyEventsRecyclerView);
+    private void setupDailyEventsRecyclerView() {
         dailyEventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        dailyEventListAdapter = new dailyEventListAdapter(new ArrayList<>());
+        dailyEventRecyclerView.setAdapter(dailyEventListAdapter);
+    }
+
+    private void loadEventsFromFirestore() {
         db.collectionGroup("Events").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    events.add(document.toObject(CalendarEvent.class));
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    CalendarEvent event = document.toObject(CalendarEvent.class);
+                    allEvents.add(event);
                 }
+            } else {
+                Log.e(TAG, "Error loading events", task.getException());
             }
         });
     }
 
-    // A simple ViewContainer subclass to hold our day cell view.
-    public static class DayViewContainer extends ViewContainer {
+
+    // ViewContainer for calendar day cells
+    public class DayViewContainer extends ViewContainer {
         public CalendarDay day;
         public TextView textView;
 
@@ -119,26 +141,19 @@ public class CalendarActivity extends AppCompatActivity {
             super(view);
             textView = view.findViewById(R.id.calendarDayText);
 
-            // Set the click listener on the entire container view.
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (day != null) {
-                        // Format the day as a full date string
-                        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        String selectedDate = day.getDate().format(formatter);
+            view.setOnClickListener(v -> {
+                if (day != null) {
+                    String selectedDate = day.getDate().format(DATE_FORMATTER);
 
-                        List<CalendarEvent> dailyEvents = new ArrayList<>();
-                        for (CalendarEvent event : events) {
-                            if (event.getBegin_date().equals(selectedDate)) {
-                                dailyEvents.add(event);
-                            }
+                    List<CalendarEvent> dailyEvents = new ArrayList<>();
+                    for (CalendarEvent event : allEvents) {
+                        if (event.getBegin_date().equals(selectedDate)) {
+                            dailyEvents.add(event);
                         }
-
-                        // Then update the adapter for the daily events RecyclerView with dailyEvents
-                        dailyEventListAdapter = new dailyEventListAdapter(dailyEvents);
-                        dailyEventRecyclerView.setAdapter(dailyEventListAdapter);
                     }
+
+                    dailyEventListAdapter = new dailyEventListAdapter(dailyEvents);
+                    dailyEventRecyclerView.setAdapter(dailyEventListAdapter);
                 }
             });
         }
