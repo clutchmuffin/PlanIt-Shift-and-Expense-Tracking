@@ -25,67 +25,115 @@
             android:padding="16dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/detailJobTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/job_title"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/detailJobSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/job_subtitle"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/detailJobEmployer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/employer"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/detailJobLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/location"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/detailJobPayRate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pay_rate"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/detailJobColor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/color"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <!-- RecyclerView for Events -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/eventRecyclerView"
+            <!-- Job Details Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"/>
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
 
-            <!-- RecyclerView for Expenses -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/expenseRecyclerView"
-                android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/detailJobTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/job_title"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/detailJobSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/job_subtitle"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/detailJobEmployer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/employer"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/detailJobLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/detailJobPayRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pay_rate"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/detailJobColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/color"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
+
+                        <!-- Events Section -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"/>
+                android:text="Events"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="24dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/eventRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:clipToPadding="false"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Expenses Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expenses"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="16dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/expenseRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:clipToPadding="false"/>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Floating Action Button for adding a new Event -->
+    <!-- FABs remain unchanged -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
@@ -96,7 +144,6 @@
         android:src="@drawable/ic_add"
         android:contentDescription="@string/add_shift"/>
 
-    <!-- Floating Action Button for adding a new Expense -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddExp"
         android:layout_width="wrap_content"
