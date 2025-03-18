@@ -131,9 +131,7 @@ public class NotificationSender {
                 intent,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-        manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, pendintent);
-
-//        manager.setRepeating(AlarmManager.RTC_WAKEUP, nextSunday, weeklyInterval, pendintent);
+        manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextSunday, pendintent);
     }
 
     /**

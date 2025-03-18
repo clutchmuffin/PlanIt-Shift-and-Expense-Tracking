@@ -1,13 +1,19 @@
 package com.example.myapplication.model;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
 import com.example.myapplication.controller.MainActivity;
@@ -38,7 +44,7 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
 
-        // Build notification for daily shift
+        // Build notification for weekly notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationSender.weekly_channel_name)
                 .setSmallIcon(R.drawable.baseline_add_alert_24)
                 .setContentIntent(pendingIntent)
@@ -46,34 +52,44 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        long nextSunday = intent.getLongExtra("nextSunday",0);
+        long nextSunday = intent.getLongExtra("nextSunday", 0);
         long twoWeekSunday = nextSunday + intent.getLongExtra("interval", 0);
-        ArrayList<CalendarEvent> fallNextWeek = new ArrayList<>();
+        ArrayList<CalendarEvent> fallNextWeek;
 
 
-        if(nextSunday!= 0) {
+
+        if (nextSunday != 0) {
+            fallNextWeek = new ArrayList<>();
+            StringBuilder content = new StringBuilder("");
             db.collectionGroup("Events").get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         CalendarEvent event = document.toObject(CalendarEvent.class);
                         Log.i("WeeklyNotificationReceiver", "Checking if " + event.getName() + " falls within next two weeks");
-                        if(fallsWithinWeeks(event, nextSunday, twoWeekSunday)) {
-                            System.out.println("true");
-                            fallNextWeek.add(event);
+                        if (fallsWithinWeeks(event, nextSunday, twoWeekSunday)) {
+                            content.append(event.getName() + "\nOn: "+ event.getBegin_date() + " " + event.getBegin_time() + "\nUntil: " + event.getEnd_date() + " " + event.getEnd_time() + "\n");
+                      }
+                    }
+                }
+                if(task.isComplete()){
+                    if(content.isEmpty())
+                        builder.setContentText("No shifts this week");
+                    else {
+                        builder.setContentText("Here are your shifts for the next week");
+                        builder.setStyle((new NotificationCompat.BigTextStyle()).bigText(content));
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                            notificationManager.notify(2, builder.build());
+                        } else {
+                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                            notificationManager.notify(2, builder.build());
                         }
                     }
                 }
             });
-        }
-
-        if(fallNextWeek.isEmpty()) {
-            System.out.println("no shifts");
-            System.out.println(fallNextWeek.size());
-        }
-        else{
-            for(CalendarEvent event : fallNextWeek){
-                System.out.println(event.getName());
-            }
         }
 
 
