@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AddActivity">
+
+
+    <androidx.cardview.widget.CardView
+        app:cardBackgroundColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <TextView
+            android:id="@+id/addTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="SET BUDGET"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+
+
+
+
+
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp">
+
+        <TextView
+            android:id="@+id/buyDisplay"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity=""
+            android:text="Set a budget for the following categories: "
+            android:textSize="20sp"
+            />
+
+        <EditText
+            android:id="@+id/foodBudget"
+            android:layout_width="match_parent"
+            android:clickable="true"
+            android:hint="Food"
+            android:textColorHint="@color/black"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ed_shape"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="16dp">
+
+        <EditText
+            android:id="@+id/travelingBudget"
+            android:layout_width="match_parent"
+            android:hint="Traveling"
+            android:clickable="true"
+            android:textColorHint="@color/black"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ed_shape"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp">
+
+        <EditText
+            android:id="@+id/entertainmentBudget"
+            android:layout_width="match_parent"
+            android:clickable="true"
+            android:hint="Entertainment"
+            android:textColorHint="@color/black"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ed_shape"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="16dp">
+
+        <EditText
+            android:id="@+id/shoppingBudget"
+            android:layout_width="match_parent"
+            android:hint="Shopping"
+            android:clickable="true"
+            android:textColorHint="@color/black"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:inputType="numberDecimal"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ed_shape"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/addBudget"
+        android:layout_width="232dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/round"
+        android:gravity="center"
+        android:text="Update"
+        android:textColor="@color/white" />
+
+</LinearLayout>

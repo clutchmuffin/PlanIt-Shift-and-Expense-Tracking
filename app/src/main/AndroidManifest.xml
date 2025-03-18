@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myapplication">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,13 +13,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShiftTracker">
-
-        <!-- CalendarActivity declaration -->
-        <activity android:name=".controller.MainActivity"
+        <activity
+            android:name=".controller.Traveling"
+            android:exported="false" />
+        <activity
+            android:name=".controller.Entertainment"
+            android:exported="false" />
+        <activity
+            android:name=".controller.SetBudget"
+            android:exported="false" />
+        <activity
+            android:name=".model.Shopping"
+            android:exported="false" />
+        <activity
+            android:name=".model.Food"
+            android:exported="false" /> <!-- CalendarActivity declaration -->
+        <activity
+            android:name=".controller.MainActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -29,5 +46,9 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".controller.BudgetMainActivity"
+            android:exported="true" />
     </application>
+
 </manifest>
