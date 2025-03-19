@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, BudgetMainActivity.class);
                 startActivity(intent);
                 return true;
+            } else if (itemId == R.id.nav_sharing) {
+                Intent intent = new Intent(MainActivity.this, SharingMainActivity.class);
+                startActivity(intent);
+                return true;
             }
             return false;
         });
