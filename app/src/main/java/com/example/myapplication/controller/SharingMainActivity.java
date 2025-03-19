@@ -1,7 +1,9 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +16,7 @@ import com.example.myapplication.view.adapter.JobListAdapter;
 import com.example.myapplication.view.adapter.SharedAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -27,7 +30,10 @@ public class SharingMainActivity extends AppCompatActivity {
     private RecyclerView sharedRecyclerView;
     private SharedAdapter sharedListAdapter;
     private BottomNavigationView bottomNav;
+    private FloatingActionButton fabNewShared;
+
     private List<SharedCard> sharedCals;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharingmain);
@@ -35,13 +41,14 @@ public class SharingMainActivity extends AppCompatActivity {
         topAppBar = findViewById(R.id.topAppBar);
         sharedRecyclerView = findViewById(R.id.sharedRecyclerView);
         bottomNav = findViewById(R.id.bottomNav);
+        fabNewShared = findViewById(R.id.fabNewShared);
 
         sharedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         sharedCals = new ArrayList<>();
 
         // need to check with team
-        db.collection("Jobs").get().addOnCompleteListener(task -> {
+        /*db.collection("Jobs").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Job job = document.toObject(Job.class);
@@ -51,10 +58,17 @@ public class SharingMainActivity extends AppCompatActivity {
             } else {
                 Log.e("MainActivity", "Error getting documents: ", task.getException());
             }
-        });
+        }); */
 
-        sharedListAdapter = new SharedAdapter(sharedCals);
-        sharedRecyclerView.setAdapter(sharedListAdapter);
+        /* sharedListAdapter = new SharedAdapter(sharedCals);
+        sharedRecyclerView.setAdapter(sharedListAdapter); */
+
+        fabNewShared.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SharingMainActivity.this, NewShared.class));
+            }
+        });
 
     }
 }
