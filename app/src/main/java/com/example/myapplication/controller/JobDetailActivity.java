@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -98,52 +99,68 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     private void setupEventRecyclerView() {
-
         // Set up the RecyclerView.
         eventRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Get the list of events from Firestore.
-        db.collection("Jobs").document(job.getTitle()).collection("Events")
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            CalendarEvent event = document.toObject(CalendarEvent.class);
-                            job.addEvent(event);
-                        }
-                        eventListAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.e(TAG, "Error getting events: ", task.getException());
-                    }
-                });
+        String jobId = job.getJobId();
 
         // Set the adapter.
         eventListAdapter = new EventListAdapter(job.getEvents());
         eventRecyclerView.setAdapter(eventListAdapter);
+
+        // First check if job has documentId
+        if (jobId != null && !jobId.isEmpty()) {
+
+            job.getEvents().clear();
+
+            db.collection("Jobs").document(jobId).collection("Events")
+            .get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        CalendarEvent event = document.toObject(CalendarEvent.class);
+                        job.addEvent(event);
+                    }
+                    eventListAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e(TAG, "Error getting events: ", task.getException());
+                }
+            });
+
+        }
+    
     }
 
 
     private void setupExpenseRecyclerView() {
-
         // Set up the RecyclerView.
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Get the list of expenses from Firestore.
-        db.collection("Jobs").document(job.getTitle()).collection("EXP")
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Expense expense = document.toObject(Expense.class);
-                            job.addExpense(expense);
-                        }
-                        expenseListAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.e(TAG, "Error getting expenses: ", task.getException());
-                    }
-                });
+        String jobId = job.getJobId();
 
         // Set the adapter.
         expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
         expenseRecyclerView.setAdapter(expenseListAdapter);
+    
+        // First check if job has documentId
+        if (jobId != null && !jobId.isEmpty()) {
+
+            job.getExpenses().clear();
+
+            db.collection("Jobs").document(jobId).collection("EXP")
+            .get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Expense expense = document.toObject(Expense.class);
+                        job.addExpense(expense);
+                    }
+                    expenseListAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e(TAG, "Error getting expenses: ", task.getException());
+                }
+            });
+
+        } 
+    
     }
 
     private void setupActionButtons() {
@@ -299,12 +316,15 @@ public class JobDetailActivity extends AppCompatActivity {
 
 
     private void saveEventToFirestore(CalendarEvent event) {
-        db.collection("Jobs").document(job.getTitle())
+        if (job.getJobId() != null && !job.getJobId().isEmpty()) {
+            // Use the stored document ID
+            db.collection("Jobs").document(job.getJobId())
                 .collection("Events")
-                .document(event.getName())
+                .document()
                 .set(event)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
                 .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
+        }
     }
 
 
@@ -376,12 +396,15 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     private void saveExpenseToFirestore(Expense expense) {
-        db.collection("Jobs").document(job.getTitle())
+        if (job.getJobId() != null && !job.getJobId().isEmpty()) {
+            // Use the stored document ID
+            db.collection("Jobs").document(job.getJobId())
                 .collection("EXP")
                 .document()
                 .set(expense)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Expense saved successfully"))
                 .addOnFailureListener(e -> Log.e(TAG, "Error saving expense", e));
+        }
     }
 
     private void showDatePicker(TextView tvDate, boolean isBeginDate) {
