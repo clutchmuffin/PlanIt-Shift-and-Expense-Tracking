@@ -52,4 +52,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.google.firebase.firestore)
+
+    // The view calendar library for Android
+    implementation("com.kizitonwose.calendar:view:2.6.2")
 }
