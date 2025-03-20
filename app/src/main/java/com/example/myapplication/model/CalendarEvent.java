@@ -13,7 +13,7 @@ public class CalendarEvent {
 
     private int net_pay;
 
-    private int user_id;
+    private String userId;
 
     private String begin_date;
     private String end_date;
@@ -44,9 +44,9 @@ public class CalendarEvent {
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, int uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated) {
+    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated) {
         this.name = n;
-        this.user_id = uid;
+        this.userId = uid;
         this.pay_rate = pay_rate;
         this.begin_date = begin;
         this.end_date = end;
@@ -64,9 +64,9 @@ public class CalendarEvent {
         this.repetition_step = 0;
     }
 
-    public CalendarEvent(String n, int uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
+    public CalendarEvent(String n, String uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
         this.name = n;
-        this.user_id = uid;
+        this.userId = uid;
         this.begin_date = begin;
         this.end_date = end;
         this.begin_tz = b_tz;
@@ -85,8 +85,12 @@ public class CalendarEvent {
         return name;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getBegin_date() {
