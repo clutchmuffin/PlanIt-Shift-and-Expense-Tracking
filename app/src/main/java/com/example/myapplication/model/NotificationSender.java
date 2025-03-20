@@ -100,21 +100,19 @@ public class NotificationSender {
     private Calendar findNextSunday(){
         Calendar currTime = Calendar.getInstance();
         Calendar nextSunday = Calendar.getInstance();
-        nextSunday.set(Calendar.SECOND, 0);
-        nextSunday.set(Calendar.MINUTE,0);
-        nextSunday.set(Calendar.HOUR, 6);
-        nextSunday.set(Calendar.AM_PM, Calendar.AM);
-        nextSunday.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        int weekDay = currTime.get(Calendar.DAY_OF_WEEK);
+        int days = Calendar.SUNDAY - weekDay;
+        int dayDiff = 0;
 
-        if(!currTime.before(nextSunday)){
-            int dayDiff = (7 + nextSunday.get(Calendar.DAY_OF_WEEK) - currTime.get(Calendar.DAY_OF_WEEK)) % 7;
-
-            if(dayDiff == 0){
-                dayDiff = 7;
-            }
-            nextSunday.add(Calendar.DAY_OF_MONTH, dayDiff);
+        if(days <= 0)
+        {
+            dayDiff = days+7;
         }
-        System.out.println(nextSunday);
+        nextSunday.set(Calendar.AM_PM, Calendar.AM);
+        nextSunday.add(Calendar.DAY_OF_WEEK, dayDiff);
+        nextSunday.set(Calendar.SECOND,0);
+        nextSunday.set(Calendar.MINUTE, 0);
+        nextSunday.set(Calendar.HOUR, 6);
         return nextSunday;
     }
 
@@ -158,7 +156,7 @@ public class NotificationSender {
                 intent,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-        manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextSunday, pendintent);
+        manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, pendintent);
     }
 
     /**

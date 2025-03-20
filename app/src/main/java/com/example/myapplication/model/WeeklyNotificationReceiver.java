@@ -1,11 +1,14 @@
 package com.example.myapplication.model;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
@@ -51,15 +54,14 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
 
         long nextSunday = intent.getLongExtra("nextSunday", 0);
         long twoWeekSunday = nextSunday + intent.getLongExtra("interval", 0);
-        System.out.println(nextSunday);
-        System.out.println(twoWeekSunday);
-
+        SharedPreferences prefs = context.getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        String currentUserId = prefs.getString("userId", null);
 
 
         if (nextSunday != 0) {
             StringBuilder content = new StringBuilder("");
             // Gets all events that fall within the next two Sundays
-            db.collectionGroup("Events").get().addOnCompleteListener(task -> {
+            db.collection("Events").whereEqualTo("userID",currentUserId).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         CalendarEvent event = document.toObject(CalendarEvent.class);

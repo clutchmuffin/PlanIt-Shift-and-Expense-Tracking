@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
         // Initialize views
         topAppBar = findViewById(R.id.topAppBar);
         jobRecyclerView = findViewById(R.id.jobRecyclerView);
