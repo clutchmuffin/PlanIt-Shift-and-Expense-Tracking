@@ -24,9 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 
 public class WeeklyNotificationReceiver extends BroadcastReceiver {
@@ -54,13 +51,12 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
 
         long nextSunday = intent.getLongExtra("nextSunday", 0);
         long twoWeekSunday = nextSunday + intent.getLongExtra("interval", 0);
-        ArrayList<CalendarEvent> fallNextWeek;
 
 
 
         if (nextSunday != 0) {
-            fallNextWeek = new ArrayList<>();
             StringBuilder content = new StringBuilder("");
+            // Gets all events that fall within the next two Sundays
             db.collectionGroup("Events").get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
@@ -71,6 +67,7 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
                       }
                     }
                 }
+                // Called when database query is over
                 if(task.isComplete()){
                     if(content.isEmpty())
                         builder.setContentText("No shifts this week");
@@ -78,6 +75,7 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
                         builder.setContentText("Here are your shifts for the next week");
                         builder.setStyle((new NotificationCompat.BigTextStyle()).bigText(content));
                     }
+                    // Asks for notification permissions and sends notification
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
@@ -91,9 +89,14 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
                 }
             });
         }
-
-
     }
+    /**
+     * Gets the time in milliseconds from epoch form given String date and hour/minute
+     * @param date --> the date to convert
+     * @param hour --> the hour to convert
+     * @param minute --> the minute to convert
+     * @return The time in millisecond from epoch to date, time:hour
+     */
     private long getMilliDateTime(String date, int hour, int minute){
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, dateFormatter);
@@ -102,6 +105,13 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
         return dateTime.toInstant().toEpochMilli();
     }
 
+    /**
+     * Checks if a calender event falls between firstWeek and secondWeek
+     * @param event --> the event to check
+     * @param firstWeek --> the millisecond time stamp of the first week
+     * @param secondWeek --> the millisecond time stamp of the second week
+     * @return true if event falls between firstWeek and secondWeek, false otherwise
+     */
     private boolean fallsWithinWeeks(CalendarEvent event, long firstWeek, long secondWeek){
         LocalTime time = LocalTime.parse(event.getBegin_time(), DateTimeFormatter.ofPattern("HH:mm:ss"));
 

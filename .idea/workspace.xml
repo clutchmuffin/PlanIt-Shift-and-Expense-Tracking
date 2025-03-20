@@ -36,8 +36,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="believe i have got weekly notifications working but need to work on how notification is displayed">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="pulled from main">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -290,7 +292,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742320452622</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="pulled from main">
+      <option name="closed" value="true" />
+      <created>1742327603619</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1742327603619</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -317,7 +327,8 @@
     <MESSAGE value="working on how to see if an event falls within two weeks" />
     <MESSAGE value="correctly found how to know if a shift is between two dates but running into race conditions when adding shifts to array" />
     <MESSAGE value="believe i have got weekly notifications working but need to work on how notification is displayed" />
-    <option name="LAST_COMMIT_MESSAGE" value="believe i have got weekly notifications working but need to work on how notification is displayed" />
+    <MESSAGE value="pulled from main" />
+    <option name="LAST_COMMIT_MESSAGE" value="pulled from main" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

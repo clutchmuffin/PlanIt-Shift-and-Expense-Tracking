@@ -25,6 +25,11 @@ public class NotificationSender {
         this.context = context;
     }
 
+    /**
+     * Schedules a notification on the day 'event' takes place at 6am
+     * @param event --> the event to schedule a notification for
+     * @param job --> the job the event belongs to
+     */
     public void scheduleDailyNotification(CalendarEvent event, String job) {
         String name = event.getName();
         String startTime = event.getBegin_time();
@@ -75,6 +80,10 @@ public class NotificationSender {
         return dateTime.toInstant().toEpochMilli();
     }
 
+    /**
+     * Finds the next Sunday from the current date
+     * @return the Calender date of the next Sunday
+     */
     private Calendar findNextSunday(){
         Calendar currTime = Calendar.getInstance();
         Calendar nextSunday = Calendar.getInstance();
@@ -116,22 +125,41 @@ public class NotificationSender {
         return lastSunday;
     }
 
+    /**
+     * Updates the weekly notification that gets sent every Sunday
+     */
     public void updateWeeklyNotif(){
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
 
+        // Information that will be needed for the notification to send correct data
         long nextSunday = findNextSunday().getTimeInMillis();
         long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
         intent.putExtra("nextSunday",nextSunday);
         intent.putExtra("interval", weeklyInterval);
 
+        // The notification that will get sent
         PendingIntent pendintent = PendingIntent.getBroadcast(context,
                 2,
                 intent,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
         manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextSunday, pendintent);
+    }
+
+    /**
+     * Cancels a notification if a CalenderEvent is deleted
+     * @param event --> the event that was deleted
+     */
+    public void cancelNotification(CalendarEvent event){
+            Intent intent = new Intent(context, NotificationReceiver.class);
+            PendingIntent pendintent = PendingIntent.getBroadcast(context,
+                    event.getID(),
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE);
+            AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            manager.cancel(pendintent);
     }
 
     /**
