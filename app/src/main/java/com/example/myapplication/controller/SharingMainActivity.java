@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
-import com.example.myapplication.model.SharedCard;
-import com.example.myapplication.view.adapter.JobListAdapter;
+import com.example.myapplication.model.SharedCal;
 import com.example.myapplication.view.adapter.SharedAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,7 +31,7 @@ public class SharingMainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabNewShared;
 
-    private List<SharedCard> sharedCals;
+    private List<SharedCal> sharedCals;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,21 +46,21 @@ public class SharingMainActivity extends AppCompatActivity {
 
         sharedCals = new ArrayList<>();
 
-        // need to check with team
-        /*db.collection("Jobs").get().addOnCompleteListener(task -> {
+        // not actually implemented in database yet -> finish NewShared
+        db.collection("Shared").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    Job job = document.toObject(Job.class);
-                    sharedCals.add(job);
+                    SharedCal shared = document.toObject(SharedCal.class);
+                    sharedCals.add(shared);
                 }
                 sharedListAdapter.notifyDataSetChanged();
             } else {
                 Log.e("MainActivity", "Error getting documents: ", task.getException());
             }
-        }); */
+        });
 
-        /* sharedListAdapter = new SharedAdapter(sharedCals);
-        sharedRecyclerView.setAdapter(sharedListAdapter); */
+        sharedListAdapter = new SharedAdapter(sharedCals);
+        sharedRecyclerView.setAdapter(sharedListAdapter);
 
         fabNewShared.setOnClickListener(new View.OnClickListener() {
             @Override

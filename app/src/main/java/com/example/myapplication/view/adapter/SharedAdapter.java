@@ -1,8 +1,6 @@
 package com.example.myapplication.view.adapter;
 
 import android.view.ViewGroup;
-import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -10,14 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.SharedCard;
+import com.example.myapplication.model.SharedCal;
 
 import java.util.List;
 
 public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedViewHolder> {
-    private List<SharedCard> sharedList;
+    private List<SharedCal> sharedList;
 
-    public SharedAdapter(List<SharedCard> shared) {
+    public SharedAdapter(List<SharedCal> shared) {
         this.sharedList = shared;
     }
 
@@ -30,11 +28,11 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
 
     @Override
     public void onBindViewHolder(@NonNull SharedAdapter.SharedViewHolder holder, int position) {
-        SharedCard sharedCard = sharedList.get(position);
+        SharedCal sharedCal = sharedList.get(position);
 
-        holder.sharedTitle.setText(sharedCard.getName());
-        holder.sharedPeople.setText(sharedCard.getMembers());
-        holder.colourAccent.setBackgroundColor(sharedCard.getColour());
+        holder.sharedTitle.setText(sharedCal.getName());
+        holder.sharedPeople.setText(sharedCal.getMembers());
+        holder.colourAccent.setBackgroundColor(sharedCal.getColour());
     }
 
     @Override
