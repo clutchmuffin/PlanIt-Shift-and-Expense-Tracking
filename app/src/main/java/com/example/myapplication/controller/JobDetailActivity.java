@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.model.RepeatType;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
@@ -252,6 +254,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         String name = etName.getText().toString().trim();
         RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
+        int ID = getNewEventID();
 
         CalendarEvent newEvent = new CalendarEvent(
                 name,
@@ -261,7 +264,8 @@ public class JobDetailActivity extends AppCompatActivity {
                 endDate.format(DATE_FORMATTER),
                 beginTime.format(TIME_FORMATTER),
                 endTime.format(TIME_FORMATTER),
-                repeatType
+                repeatType,
+                ID
         );
 
         checkForConflictsAndSaveEvent(newEvent, dialog);
@@ -309,6 +313,10 @@ public class JobDetailActivity extends AppCompatActivity {
                     eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
                     saveEventToFirestore(newEvent);
                     dialog.dismiss();
+                    NotificationSender notificationSender = new NotificationSender(this);
+//                    notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
+                    notificationSender.updateWeeklyNotif();
+
                 }
             }
         });
@@ -482,6 +490,20 @@ public class JobDetailActivity extends AppCompatActivity {
                     LocalTime.parse(event.getEnd_time(), TIME_FORMATTER)
             );
         }
+    }
+
+    private int getNewEventID(){
+        // Find a notification ID for the new shift to be added
+        SharedPreferences sharedPref = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if(sharedPref.getAll().isEmpty()){
+            editor.putInt("dailyNotif", 3);
+            editor.apply();
+        }
+        int newID = sharedPref.getInt("dailyNotif", 3);
+        editor.putInt("dailyNotif", newID + 1);
+        editor.apply();
+        return newID;
     }
 
 }

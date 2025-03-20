@@ -51,6 +51,8 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
 
         long nextSunday = intent.getLongExtra("nextSunday", 0);
         long twoWeekSunday = nextSunday + intent.getLongExtra("interval", 0);
+        System.out.println(nextSunday);
+        System.out.println(twoWeekSunday);
 
 
 
