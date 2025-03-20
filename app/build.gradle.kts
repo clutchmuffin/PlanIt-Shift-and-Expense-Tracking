@@ -63,4 +63,7 @@ dependencies {
 
     //import NotificationCompat
     implementation("androidx.core:core-ktx:1.15.0")
+
+    // The view calendar library for Android
+    implementation("com.kizitonwose.calendar:view:2.6.2")
 }

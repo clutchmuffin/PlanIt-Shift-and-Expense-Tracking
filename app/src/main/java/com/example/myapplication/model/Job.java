@@ -10,6 +10,8 @@ public class Job implements Serializable {
     private String location;
     private int color;
     private int pay_rate;
+    private String userId;
+    private String jobId;
     private ArrayList<CalendarEvent> events;
     private ArrayList<EventSlot> eventSlots;
     private ArrayList<Expense> expense_list;
@@ -62,6 +64,10 @@ public class Job implements Serializable {
 
     public int getPayRate() { return this.pay_rate; }
     public void setPayRate(int pay) { pay_rate = pay; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public String getJobId() { return jobId; }
+    public void setJobId(String jobId) { this.jobId = jobId; }
 
     public ArrayList<Expense> getExpenses() {
         return this.expense_list;

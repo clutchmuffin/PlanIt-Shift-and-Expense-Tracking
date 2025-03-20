@@ -32,21 +32,31 @@
         <activity
             android:name=".model.Food"
             android:exported="false" /> <!-- CalendarActivity declaration -->
+
         <activity
-            android:name=".controller.MainActivity"
+            android:name=".controller.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- BudgetMainActivity declaration -->
-        <receiver android:name=".model.NotificationReceiver" />
+        </activity>
+
+        <activity
+            android:name=".controller.MainActivity"
+            android:exported="true">
+        </activity>
+
+        <activity android:name=".controller.JobDetailActivity"
+            android:exported="true">
+        </activity>
+
+        <activity android:name=".controller.CalendarActivity"
+            android:exported="true">
+        </activity>
+
         <activity
             android:name=".controller.BudgetMainActivity"
-            android:exported="true" />
-        <activity
-            android:name=".controller.JobDetailActivity"
             android:exported="true" />
         <receiver android:name=".model.NotificationReceiver"/>
         <receiver android:name=".model.WeeklyNotificationReceiver"/>
