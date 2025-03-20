@@ -15,7 +15,7 @@ import java.util.TimeZone;
 
 
 public class NotificationSender {
-    private Context context;
+    private final Context context;
     public static String daily_channel_name = "dailyNotif";
     public static String daily_channel_desc = "a notification channel that gets used to send notifications for every shift";
     public static String weekly_channel_name = "weeklyNotif";
@@ -59,8 +59,21 @@ public class NotificationSender {
         if (event.getRepeated() == RepeatType.NEVER) {
             scheduleOnce(pendintent, milliStartDate, manager);
         }
-        else if (event.getRepeated() != RepeatType.NEVER && event.getRepeated_until() == RepeatUntilType.NEVER) {
-            scheduleOnce(pendintent, milliStartDate, manager);
+        else if (event.getRepeated() == RepeatType.DAILY) {
+            long dailyInterval = 1000 * 60 * 60 * 24;
+            scheduleRepeating(pendintent, milliStartDate, dailyInterval, manager);
+        }
+        else if(event.getRepeated() == RepeatType.WEEKLY){
+            long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
+            scheduleRepeating(pendintent, milliStartDate, weeklyInterval, manager);
+        }
+        else if(event.getRepeated() == RepeatType.MONTHLY){
+            long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
+            scheduleRepeating(pendintent, milliStartDate, monthlyInterval, manager);
+        }
+        else if(event.getRepeated() == RepeatType.ANNUALLY){
+            long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
+            scheduleRepeating(pendintent, milliStartDate, yearlyInterval, manager);
         }
 
     }
@@ -163,7 +176,7 @@ public class NotificationSender {
     }
 
     /**
-     * Schedules a daily notification on startDate at hour:minute
+     * Schedules a daily notification on startDate
      * @param pendIntent --> what should be scheduled
      * @param startDate --> the date to schedule the notification
      * @param manager --> the alarm manager that schedules the notification
@@ -175,7 +188,17 @@ public class NotificationSender {
                 pendIntent);
     }
 
-    private void scheduleDaily(PendingIntent pendIntent, long startDate, long untilDate){
-
+    /**
+     * Schedules a repeating notification on startDate with interval 'interval'
+     * @param pendIntent --> what should be scheduled
+     * @param startDate --> the date to start the notification scheduling
+     * @param interval --> time between notifications
+     * @param manager --> the alarm manager that schedules the notification
+     */
+    private void scheduleRepeating(PendingIntent pendIntent, long startDate, long interval, AlarmManager manager){
+        manager.setRepeating(AlarmManager.RTC_WAKEUP,
+                startDate,
+                interval,
+                pendIntent);
     }
 }
