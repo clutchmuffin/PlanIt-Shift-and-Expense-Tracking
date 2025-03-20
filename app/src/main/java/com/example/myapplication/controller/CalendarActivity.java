@@ -1,5 +1,7 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.view.adapter.dailyEventListAdapter;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.DayPosition;
 import com.kizitonwose.calendar.view.CalendarView;
@@ -37,7 +42,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private static final String TAG = "CalendarActivity";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+    private String currentUserId;
     private CalendarView calendarView;
     private RecyclerView dailyEventRecyclerView;
     private dailyEventListAdapter dailyEventListAdapter;
@@ -49,6 +54,16 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        // Get current user ID
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
 
         initializeViews();
         setupCalendarDateRange();
@@ -118,17 +133,30 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void loadEventsFromFirestore() {
-        db.collectionGroup("Events").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                QuerySnapshot querySnapshot = task.getResult();
-                for (QueryDocumentSnapshot document : querySnapshot) {
-                    CalendarEvent event = document.toObject(CalendarEvent.class);
-                    allEvents.add(event);
+        allEvents.clear();
+        
+        db.collection("Jobs")
+            .whereEqualTo("userId", currentUserId)
+            .get()
+            .addOnSuccessListener(jobsSnapshot -> {
+                for (DocumentSnapshot jobDoc : jobsSnapshot.getDocuments()) {
+                    // Fetch events for each job one after another
+                    db.collection("Jobs")
+                        .document(jobDoc.getId())
+                        .collection("Events")
+                        .get()
+                        .addOnSuccessListener(eventsSnapshot -> {
+                            for (DocumentSnapshot eventDoc : eventsSnapshot.getDocuments()) {
+                                CalendarEvent event = eventDoc.toObject(CalendarEvent.class);
+                                allEvents.add(event);
+                            }
+                            // Update UI after each job's events are loaded
+                            dailyEventListAdapter.notifyDataSetChanged();
+                        })
+                        .addOnFailureListener(e -> Log.e(TAG, "Error loading events", e));
                 }
-            } else {
-                Log.e(TAG, "Error loading events", task.getException());
-            }
-        });
+            })
+            .addOnFailureListener(e -> Log.e(TAG, "Error loading jobs", e));
     }
 
 

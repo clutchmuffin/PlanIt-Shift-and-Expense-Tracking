@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabAddJob;
     private List<Job> jobs;
+    private String currentUserId;
+
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -49,6 +53,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialize() {
+        // Get current user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        // If no user is logged in, redirect to login
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        // Initialize views
         topAppBar = findViewById(R.id.topAppBar);
         jobRecyclerView = findViewById(R.id.jobRecyclerView);
         bottomNav = findViewById(R.id.bottomNav);
@@ -57,24 +73,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-
         // Set up the RecyclerView.
         jobRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         jobs = new ArrayList<>();
 
-        // Get the list of jobs from Firestore.
-        db.collection("Jobs").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                jobs.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Job job = document.toObject(Job.class);
-                    jobs.add(job);
-                }
-                jobListAdapter.notifyDataSetChanged();
-            } else {
-                Log.e(TAG, "Error getting documents: ", task.getException());
-            }
-        });
+        // Get the list of jobs for current user.
+        db.collection("Jobs")
+                .whereEqualTo("userId", currentUserId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        jobs.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Job job = document.toObject(Job.class);
+                            jobs.add(job);
+                        }
+                        jobListAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e(TAG, "Error getting documents: ", task.getException());
+                    }
+                });
 
         // Set the adapter.
         jobListAdapter = new JobListAdapter(jobs);
@@ -182,20 +200,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveJobToFirestore(Job newJob) {
-        // Add the job to the local list
-        jobs.add(newJob);
-
-        // Save to Firestore
-        db.collection("Jobs").document(newJob.getTitle()).set(newJob)
-                .addOnSuccessListener(aVoid -> {
-                    // Notify the adapter that a new item was inserted
-                    jobListAdapter.notifyItemInserted(jobs.size() - 1);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error adding job to Firestore", e);
-                    // Remove from local list if Firestore save fails
-                    jobs.remove(newJob);
-                });
+        // Set the user ID for the job
+        newJob.setUserId(currentUserId);
+    
+        // Use a transaction to generate a counter-based job ID
+        db.runTransaction(transaction -> {
+            DocumentSnapshot counterDoc = transaction.get(db.collection("counters").document("jobs"));
+            
+            int jobCounterId;
+            if (counterDoc.exists()) {
+                jobCounterId = counterDoc.getLong("nextId").intValue();
+                transaction.update(db.collection("counters").document("jobs"), "nextId", jobCounterId + 1);
+            } else {
+                // First job, initialize counter
+                jobCounterId = 1;
+                transaction.set(db.collection("counters").document("jobs"), 
+                    java.util.Collections.singletonMap("nextId", 2));
+            }
+            
+            String jobId = "job_" + jobCounterId;
+            newJob.setJobId(jobId);
+            
+            // Save the job with its ID
+            transaction.set(db.collection("Jobs").document(jobId), newJob);
+            
+            return jobId;
+        }).addOnSuccessListener(jobId -> {
+            // Add the job to the local list
+            jobs.add(newJob);
+            jobListAdapter.notifyItemInserted(jobs.size() - 1);
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Error adding job to Firestore", e);
+        });
     }
 
     // Helper class to hold form data
