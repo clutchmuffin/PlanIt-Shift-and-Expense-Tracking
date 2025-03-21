@@ -353,9 +353,8 @@ public class JobDetailActivity extends AppCompatActivity {
                     saveEventToFirestore(newEvent);
                     dialog.dismiss();
                     NotificationSender notificationSender = new NotificationSender(this);
-//                    notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
+                    notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
                     notificationSender.updateWeeklyNotif();
-
                 }
             });
             }

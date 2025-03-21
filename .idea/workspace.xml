@@ -36,10 +36,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="fixed when weekly notifications get sent, but now having troubles reading from database">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="pulled from main">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -332,7 +332,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742494473727</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="pulled from main">
+      <option name="closed" value="true" />
+      <created>1742521922154</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1742521922154</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -361,9 +369,9 @@
     <MESSAGE value="believe i have got weekly notifications working but need to work on how notification is displayed" />
     <MESSAGE value="added method to cancel notifications and added documentation" />
     <MESSAGE value="added notifications for repeating events" />
-    <MESSAGE value="pulled from main" />
     <MESSAGE value="fixed when weekly notifications get sent, but now having troubles reading from database" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed when weekly notifications get sent, but now having troubles reading from database" />
+    <MESSAGE value="pulled from main" />
+    <option name="LAST_COMMIT_MESSAGE" value="pulled from main" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

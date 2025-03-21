@@ -1,5 +1,6 @@
 package com.example.myapplication.model;
 
+import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.Manifest;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -20,13 +22,18 @@ import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
 import com.example.myapplication.controller.MainActivity;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 public class WeeklyNotificationReceiver extends BroadcastReceiver {
@@ -61,37 +68,54 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
         if (nextSunday != 0) {
             StringBuilder content = new StringBuilder("");
             // Gets all events that fall within the next two Sundays
-            db.collection("Events").whereEqualTo("userID",currentUserId).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        CalendarEvent event = document.toObject(CalendarEvent.class);
-                        Log.i("WeeklyNotificationReceiver", "Checking if " + event.getName() + " falls within next two weeks");
-                        if (fallsWithinWeeks(event, nextSunday, twoWeekSunday)) {
-                            content.append(event.getName() + "\nOn: "+ event.getBegin_date() + " " + event.getBegin_time() + "\nUntil: " + event.getEnd_date() + " " + event.getEnd_time() + "\n");
-                      }
-                    }
-                }
-                // Called when database query is over
-                if(task.isComplete()){
-                    if(content.isEmpty())
-                        builder.setContentText("No shifts this week");
-                    else {
-                        builder.setContentText("Here are your shifts for the next week");
-                        builder.setStyle((new NotificationCompat.BigTextStyle()).bigText(content));
-                    }
-                    // Asks for notification permissions and sends notification
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                            notificationManager.notify(2, builder.build());
-                        } else {
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                            notificationManager.notify(2, builder.build());
+            db.collection("Jobs")
+                    .whereEqualTo("userId", currentUserId) // Get only jobs owned by current user
+                    .get()
+                    .addOnCompleteListener(jobTask -> {
+                        if (jobTask.isSuccessful()) {
+                            Log.i(TAG, "Fetched Jobs for User");
+                            List<Task<QuerySnapshot>> eventTasks = new ArrayList<>();
+
+                            for (QueryDocumentSnapshot jobDoc : jobTask.getResult()) {
+                                Task<QuerySnapshot> eventTask = jobDoc.getReference().collection("Events")
+                                        .get();
+                                eventTasks.add(eventTask);
+                            }
+
+                            Tasks.whenAllComplete(eventTasks).addOnCompleteListener(allEventsTask -> {
+
+                                for (Task<QuerySnapshot> eventTask : eventTasks) {
+                                    if (eventTask.isSuccessful()) {
+                                        for (QueryDocumentSnapshot eventDoc : eventTask.getResult()) {
+                                            CalendarEvent event = eventDoc.toObject(CalendarEvent.class);
+                                            Log.i(TAG, "Checking if " + event.getName() + " falls within next two weeks");
+                                            if (fallsWithinWeeks(event, nextSunday, twoWeekSunday)) {
+                                                content.append(event.getName() + "\nOn: "+ event.getBegin_date() + " " + event.getBegin_time() + "\nUntil: " + event.getEnd_date() + " " + event.getEnd_time() + "\n");
+                                            }
+                                        }
+                                    }
+                                }
+                                if(content.isEmpty()){
+                                    builder.setContentText("No shifts this week");
+                                }
+                                else{
+                                    builder.setContentText("Here are your shifts for the next week");
+                                    builder.setStyle((new NotificationCompat.BigTextStyle()).bigText(content));
+                                }
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                                        notificationManager.notify(2, builder.build());
+                                    } else {
+                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                                        notificationManager.notify(2, builder.build());
+                                    }
+                                }
+                            });
                         }
-                    }
-                }
-            });
+                    });
         }
     }
     /**
