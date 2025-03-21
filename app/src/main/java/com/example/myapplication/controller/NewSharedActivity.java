@@ -2,22 +2,16 @@ package com.example.myapplication.controller;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
-import com.example.myapplication.model.Job;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -28,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class NewShared extends AppCompatActivity {
+public class NewSharedActivity extends AppCompatActivity {
     private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNav;
     private TextInputEditText nameInput;
@@ -81,7 +75,7 @@ public class NewShared extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(NewShared.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(NewSharedActivity.this);
                 builder.setTitle("Select Events");
                 builder.setMultiChoiceItems(eventNames, selectedEvents, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override

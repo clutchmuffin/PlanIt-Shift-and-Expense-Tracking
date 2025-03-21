@@ -65,7 +65,7 @@ public class SharingMainActivity extends AppCompatActivity {
         fabNewShared.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SharingMainActivity.this, NewShared.class));
+                startActivity(new Intent(SharingMainActivity.this, NewSharedActivity.class));
             }
         });
 
