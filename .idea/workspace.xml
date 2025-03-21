@@ -36,11 +36,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="pulled from main">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/WeeklyNotificationReceiver.java" afterDir="false" />
-    </list>
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="made WeeklyNotificationReceiver only read user specific shifts" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -340,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742521922154</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="made WeeklyNotificationReceiver only read user specific shifts">
+      <option name="closed" value="true" />
+      <created>1742523088654</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1742523088654</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -371,7 +375,8 @@
     <MESSAGE value="added notifications for repeating events" />
     <MESSAGE value="fixed when weekly notifications get sent, but now having troubles reading from database" />
     <MESSAGE value="pulled from main" />
-    <option name="LAST_COMMIT_MESSAGE" value="pulled from main" />
+    <MESSAGE value="made WeeklyNotificationReceiver only read user specific shifts" />
+    <option name="LAST_COMMIT_MESSAGE" value="made WeeklyNotificationReceiver only read user specific shifts" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
