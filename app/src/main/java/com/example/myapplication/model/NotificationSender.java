@@ -34,7 +34,7 @@ public class NotificationSender {
         String name = event.getName();
         String startTime = event.getBegin_time();
         String endTime = event.getEnd_time();
-        int ID = event.getID();
+        int ID = event.getNotifID();
 
         // Information that will be needed in the notification
         Intent intent = new Intent(context, NotificationReceiver.class);
@@ -166,7 +166,7 @@ public class NotificationSender {
     public void cancelNotification(CalendarEvent event){
             Intent intent = new Intent(context, NotificationReceiver.class);
             PendingIntent pendintent = PendingIntent.getBroadcast(context,
-                    event.getID(),
+                    event.getNotifID(),
                     intent,
                     PendingIntent.FLAG_IMMUTABLE);
             AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

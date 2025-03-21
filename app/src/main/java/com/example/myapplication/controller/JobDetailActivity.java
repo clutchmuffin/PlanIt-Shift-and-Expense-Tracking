@@ -340,6 +340,7 @@ public class JobDetailActivity extends AppCompatActivity {
                                 }
                             }
 
+
                 if (conflict) {
                     new AlertDialog.Builder(this)
                             .setTitle("Scheduling Conflict")
@@ -356,9 +357,13 @@ public class JobDetailActivity extends AppCompatActivity {
                     notificationSender.updateWeeklyNotif();
 
                 }
+            });
             }
         });
     }
+
+
+
 
 
 
@@ -544,5 +549,5 @@ public class JobDetailActivity extends AppCompatActivity {
         editor.apply();
         return newID;
     }
-
 }
+
