@@ -4,17 +4,23 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
+import com.example.myapplication.model.Job;
+import com.example.myapplication.model.SharedCal;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -27,6 +33,7 @@ public class NewSharedActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private TextInputEditText nameInput;
     private ListView jobList;
+    private Button button;
     private TextView dropDownText;
     private boolean[] selectedEvents;
     private ArrayList<CalendarEvent> events;
@@ -43,6 +50,7 @@ public class NewSharedActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottomNav);
         topAppBar = findViewById(R.id.topAppBar);
         nameInput = findViewById(R.id.nameInput);
+        button = findViewById(R.id.button2);
         dropDownText = findViewById(R.id.dropDown);
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
@@ -123,5 +131,43 @@ public class NewSharedActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Use a transaction to generate a counter-based job ID
+                final SharedCal[] newShared = new SharedCal[1];
+                db.runTransaction(transaction -> {
+                    DocumentSnapshot counterDoc = transaction.get(db.collection("counters").document("shared"));
+
+                    int sharedCounterId;
+                    if (counterDoc.exists()) {
+                        sharedCounterId = counterDoc.getLong("nextId").intValue();
+                        transaction.update(db.collection("counters").document("shared"), "nextId", sharedCounterId + 1);
+                    } else {
+                        // First job, initialize counter
+                        sharedCounterId = 1;
+                        transaction.set(db.collection("counters").document("shared"),
+                                java.util.Collections.singletonMap("nextId", 2));
+                    }
+
+                    ArrayList<CalendarEvent> toAdd = new ArrayList<>();
+
+                    for (int j = 0; j < eventList.size(); j++) {
+                        toAdd.add(events.get(eventList.get(j)));
+                    }
+
+                    String sharedId = "shared_" + sharedCounterId;
+                    newShared[0] = new SharedCal(nameInput.toString().trim(), sharedId, currentUserId, toAdd);
+
+                    // Save the job with its ID
+                    transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
+
+                    return sharedId;
+                });
+                startActivity(new Intent(NewSharedActivity.this, SharedCalendarActivity.class));
+            }
+
+        });
+
     }
 }

@@ -3,30 +3,37 @@ package com.example.myapplication.model;
 import java.util.ArrayList;
 
 public class SharedCal {
+    private String sharedId;
     private String name;
-    private int members;
-    private int colour;
-    private ArrayList<Job> jobs;
+    private String members;
+    private ArrayList<CalendarEvent> events;
 
-    public SharedCal(String n, int m, int c, ArrayList<Job> j) {
+    public SharedCal(String n, String id, String m, ArrayList<CalendarEvent> j) {
         this.name = n;
         this.members = m;
-        this.colour = c;
-        this.jobs = j;
+        this.events = j;
     }
 
     public String getName() {
         return name;
     }
+    public void setName(String n) {
+        name = n;
+    }
 
-    public int getMembers() {
+    public String getSharedId() {
+        return sharedId;
+    }
+    public void setSharedId(String id) {
+        sharedId = id;
+    }
+
+    public String getMembers() {
         return members;
     }
 
-    public int getColour() {
-        return colour;
-    }
-    public ArrayList<Job> getJobs() {
-        return jobs;
+
+    public ArrayList<CalendarEvent> getEvents() {
+        return events;
     }
 }
