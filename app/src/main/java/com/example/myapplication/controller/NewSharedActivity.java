@@ -48,6 +48,8 @@ public class NewSharedActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         currentUserId = prefs.getString("userId", null);
 
+        events = new ArrayList<>();
+
         db.collection("Jobs")
                 .whereEqualTo("userId", currentUserId)
                 .get()
