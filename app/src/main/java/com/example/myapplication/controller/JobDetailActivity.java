@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
+import com.example.myapplication.model.EXP;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.RepeatType;
@@ -134,20 +135,20 @@ public class JobDetailActivity extends AppCompatActivity {
             job.getEvents().clear();
 
             db.collection("Jobs").document(jobId).collection("Events")
-            .get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        CalendarEvent event = document.toObject(CalendarEvent.class);
-                        job.addEvent(event);
-                    }
-                    eventListAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, "Error getting events: ", task.getException());
-                }
-            });
+                    .get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                CalendarEvent event = document.toObject(CalendarEvent.class);
+                                job.addEvent(event);
+                            }
+                            eventListAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.e(TAG, "Error getting events: ", task.getException());
+                        }
+                    });
 
         }
-    
+
     }
 
 
@@ -160,27 +161,27 @@ public class JobDetailActivity extends AppCompatActivity {
         // Set the adapter.
         expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
         expenseRecyclerView.setAdapter(expenseListAdapter);
-    
+
         // First check if job has documentId
         if (jobId != null && !jobId.isEmpty()) {
 
             job.getExpenses().clear();
 
             db.collection("Jobs").document(jobId).collection("EXP")
-            .get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Expense expense = document.toObject(Expense.class);
-                        job.addExpense(expense);
-                    }
-                    expenseListAdapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, "Error getting expenses: ", task.getException());
-                }
-            });
+                    .get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                EXP expense = document.toObject(EXP.class);
+                                job.addExpense(expense);
+                            }
+                            expenseListAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.e(TAG, "Error getting expenses: ", task.getException());
+                        }
+                    });
 
-        } 
-    
+        }
+
     }
 
     private void setupActionButtons() {
@@ -360,11 +361,11 @@ public class JobDetailActivity extends AppCompatActivity {
         if (job.getJobId() != null && !job.getJobId().isEmpty()) {
             // Use the stored document ID
             db.collection("Jobs").document(job.getJobId())
-                .collection("Events")
-                .document()
-                .set(event)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
-                .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
+                    .collection("Events")
+                    .document()
+                    .set(event)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
         }
     }
 
@@ -384,6 +385,8 @@ public class JobDetailActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (d, which) -> d.dismiss())
                 .create();
 
+        setupDatePickers(dialogView);
+
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 if (validateExpenseInput(dialogView)) {
@@ -395,10 +398,27 @@ public class JobDetailActivity extends AppCompatActivity {
         return dialog;
     }
 
+    private void setupDatePickers(View dialogView) {
+        Button btnSelectBeginDate = dialogView.findViewById(R.id.btnSelectBeginDate);
+        Button btnSelectEndDate = dialogView.findViewById(R.id.btnSelectEndDate);
+        TextView tvBeginDate = dialogView.findViewById(R.id.tvBeginDate);
+        TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
+
+        btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
+        btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
+    }
+
 
     private boolean validateExpenseInput(View dialogView) {
         EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
         EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
+        Button btnSelectBeginDate = dialogView.findViewById(R.id.btnSelectBeginDate);
+        Button btnSelectEndDate = dialogView.findViewById(R.id.btnSelectEndDate);
+        TextView tvBeginDate = dialogView.findViewById(R.id.tvBeginDate);
+        TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
+
+        btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
+        btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
 
         String description = etDescription.getText().toString().trim();
         if (TextUtils.isEmpty(description)) {
@@ -411,12 +431,28 @@ public class JobDetailActivity extends AppCompatActivity {
             etAmount.setError("Amount is required");
             return false;
         }
+        try {
+            Double.parseDouble(amount);
+        } catch (NumberFormatException e) {
+            etAmount.setError("Invalid amount");
+            return false;
+        }
+
+        if (beginDate == null) {
+            tvBeginDate.setError("Select a start date");
+            return false;
+        }
+        if (endDate == null) {
+            tvEndDate.setError("Select an end date");
+            return false;
+        }
+
 
         return true;
     }
 
     private void createAndSaveExpense(View dialogView, AlertDialog dialog) {
-        EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
+        /*EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
         EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
 
         String description = etDescription.getText().toString().trim();
@@ -433,18 +469,35 @@ public class JobDetailActivity extends AppCompatActivity {
         job.addExpense(newExpense);
         expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
         saveExpenseToFirestore(newExpense);
+        dialog.dismiss();*/
+
+        EditText etName = dialogView.findViewById(R.id.editExpenseDescription);
+        EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
+        RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
+
+        String name = etName.getText().toString().trim();
+        double amount = Double.parseDouble(etAmount.getText().toString().trim());
+
+        RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
+        EXP newExpense = new EXP(name, amount, repeatType, beginDate.format(DATE_FORMATTER), endDate.format(DATE_FORMATTER));
+
+        saveExpenseToFirestore(newExpense);
+        job.addExpense(newExpense);
+        expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
+        showExpenses();
         dialog.dismiss();
+
     }
 
-    private void saveExpenseToFirestore(Expense expense) {
+    private void saveExpenseToFirestore(EXP expense) {
         if (job.getJobId() != null && !job.getJobId().isEmpty()) {
             // Use the stored document ID
             db.collection("Jobs").document(job.getJobId())
-                .collection("EXP")
-                .document()
-                .set(expense)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Expense saved successfully"))
-                .addOnFailureListener(e -> Log.e(TAG, "Error saving expense", e));
+                    .collection("EXP")
+                    .document()
+                    .set(expense)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Expense saved successfully"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Error saving expense", e));
         }
     }
 
@@ -490,6 +543,24 @@ public class JobDetailActivity extends AppCompatActivity {
             tvTime.setText(selectedTime.format(TIME_FORMATTER));
         });
     }
+
+    private void showExpenses() {
+        db.collection("Jobs").document(job.getTitle()).collection("EXP")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        job.getExpenses().clear(); // Clear existing data to avoid duplicates
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            EXP expense = document.toObject(EXP.class);
+                            job.addExpense(expense);
+                        }
+                        expenseListAdapter.notifyDataSetChanged(); // Notify adapter about the changes
+                    } else {
+                        Log.e("JobDetailActivity", "Error getting documents: ", task.getException());
+                    }
+                });
+    }
+
 
     /**
      * Checks if two events overlap in time

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.model.EXP;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +24,7 @@ import java.util.List;
 public class Entertainment extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
-    private List<Expense> entertainmentExpenses;
+    private List<EXP> entertainmentExpenses;
     private TextView totalEntertainmentExpense;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
@@ -91,7 +92,7 @@ public class Entertainment extends AppCompatActivity {
 
                                             // Iterate through each food expense document
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
-                                                Expense expense = expenseDocument.toObject(Expense.class);
+                                                EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     entertainmentExpenses.add(expense);
                                                     jobEntertainmentExpense += expense.getAmount(); // Add to the total for this job

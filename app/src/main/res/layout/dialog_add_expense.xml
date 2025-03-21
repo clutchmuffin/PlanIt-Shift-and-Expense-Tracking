@@ -13,19 +13,113 @@
         <!-- Expense Description -->
         <EditText
             android:id="@+id/editExpenseDescription"
-            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Description"
-            android:minHeight="48dp" />
+            android:inputType="text"
+            android:minHeight="30dp" />
 
-        <!-- Expense Amount -->
         <EditText
             android:id="@+id/editExpenseAmount"
-            android:inputType="numberDecimal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Amount"
-            android:minHeight="48dp" />
+            android:inputType="text"
+            android:minHeight="30dp" />
+
+        <!-- Begin Date/Time -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Begin"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Display Selected Date -->
+        <TextView
+            android:id="@+id/tvBeginDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No date selected"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <!-- Select Date Button -->
+        <Button
+            android:id="@+id/btnSelectBeginDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="Select Start Date" />
+
+        <!-- Display Selected Start Time -->
+
+
+        <!-- Display Selected Date -->
+        <TextView
+            android:id="@+id/tvEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No date selected"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <!-- Select Date Button -->
+        <Button
+            android:id="@+id/btnSelectEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="Select End Date" />
+
+        <!-- Display Selected End Time -->
+
+        <!-- Select End Time Button -->
+
+        <!-- Repeat Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Repeat"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Repeat Type Options -->
+        <RadioGroup
+            android:id="@+id/radioGroupRepeatType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioNeverRepeat"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:checked="true"
+                android:text="No repeat" />
+
+            <RadioButton
+                android:id="@+id/radioDaily"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Daily"/>
+
+            <RadioButton
+                android:id="@+id/radioWeekly"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Weekly"/>
+
+            <RadioButton
+                android:id="@+id/radioMonthly"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Monthly"/>
+
+            <RadioButton
+                android:id="@+id/radioYearly"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Yearly"/>
+        </RadioGroup>
     </LinearLayout>
 </ScrollView>

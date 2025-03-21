@@ -14,7 +14,7 @@ public class Job implements Serializable {
     private String jobId;
     private ArrayList<CalendarEvent> events;
     private ArrayList<EventSlot> eventSlots;
-    private ArrayList<Expense> expense_list;
+    private ArrayList<EXP> expense_list;
 
     public Job() {
         this.events = new ArrayList<>();
@@ -69,11 +69,11 @@ public class Job implements Serializable {
     public String getJobId() { return jobId; }
     public void setJobId(String jobId) { this.jobId = jobId; }
 
-    public ArrayList<Expense> getExpenses() {
+    public ArrayList<EXP> getExpenses() {
         return this.expense_list;
     }
 
-    public void addExpense(Expense exp) {
+    public void addExpense(EXP exp) {
         expense_list.add(exp);
     }
 }

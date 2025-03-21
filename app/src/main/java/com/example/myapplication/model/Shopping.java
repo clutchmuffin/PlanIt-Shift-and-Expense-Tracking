@@ -23,7 +23,7 @@ import java.util.List;
 public class Shopping extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
-    private List<Expense> shoppingExpenses;
+    private List<EXP> shoppingExpenses;
     private TextView totalShoppingExpense;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "ShoppingActivity";
@@ -93,7 +93,7 @@ public class Shopping extends AppCompatActivity {
 
                                             // Iterate through each food expense document
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
-                                                Expense expense = expenseDocument.toObject(Expense.class);
+                                                EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     shoppingExpenses.add(expense);
                                                     jobShoppingExpense += expense.getAmount(); // Add to the total for this job
