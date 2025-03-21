@@ -43,6 +43,7 @@ public class SharingMainActivity extends AppCompatActivity {
         fabNewShared = findViewById(R.id.fabNewShared);
 
         sharedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        setupBottomNavigation();
 
         sharedCals = new ArrayList<>();
 
