@@ -1,5 +1,6 @@
 package com.example.myapplication.view.adapter;
 
+import android.content.Intent;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.controller.JobDetailActivity;
+import com.example.myapplication.controller.SharedCalendarActivity;
 import com.example.myapplication.model.SharedCal;
 
 import java.util.List;
@@ -32,7 +35,12 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
 
         holder.sharedTitle.setText(sharedCal.getName());
         holder.sharedPeople.setText(sharedCal.getMembers());
-        holder.colourAccent.setBackgroundColor(sharedCal.getColour());
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
+            intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -48,7 +56,6 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
 
             sharedTitle = itemView.findViewById(R.id.sharedTitle);
             sharedPeople = itemView.findViewById(R.id.sharedPeople);
-            colourAccent = itemView.findViewById(R.id.colorAccent);
         }
     }
 }

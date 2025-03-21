@@ -17,6 +17,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.SharedCal;
+import com.example.myapplication.view.adapter.SharedAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -40,6 +41,7 @@ public class NewSharedActivity extends AppCompatActivity {
     private String[] eventNames;
     private ArrayList<Integer> eventList;
     private String currentUserId;
+    private SharedAdapter sharedAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +165,8 @@ public class NewSharedActivity extends AppCompatActivity {
                     transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
 
                     return sharedId;
+                }).addOnSuccessListener(jobId -> {
+                    sharedAdapter.notifyDataSetChanged();
                 });
                 startActivity(new Intent(NewSharedActivity.this, SharedCalendarActivity.class));
             }

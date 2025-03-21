@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
+import com.example.myapplication.model.Job;
+import com.example.myapplication.model.SharedCal;
 import com.example.myapplication.view.adapter.dailyEventListAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,7 +45,8 @@ public class SharedCalendarActivity extends AppCompatActivity {
     private RecyclerView dailyEventRecyclerView;
     private com.example.myapplication.view.adapter.dailyEventListAdapter dailyEventListAdapter;
     private List<CalendarEvent> allEvents = new ArrayList<>();
-
+    private SharedCal cal;
+    public static final String EXTRA_SHARED = "com.example.myapplication.SHARED";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
@@ -54,6 +57,8 @@ public class SharedCalendarActivity extends AppCompatActivity {
         // Get current user ID
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         currentUserId = prefs.getString("userId", null);
+
+        cal = getIntent().getSerializableExtra(EXTRA_SHARED, SharedCal.class);
 
         if (currentUserId == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -136,9 +141,7 @@ public class SharedCalendarActivity extends AppCompatActivity {
                 .addOnSuccessListener(jobsSnapshot -> {
                     for (DocumentSnapshot jobDoc : jobsSnapshot.getDocuments()) {
                         // Fetch events for each job one after another
-                        db.collection("Jobs")
-                                .document(jobDoc.getId())
-                                .collection("Events")
+                        db.collection("Events")
                                 .get()
                                 .addOnSuccessListener(eventsSnapshot -> {
                                     for (DocumentSnapshot eventDoc : eventsSnapshot.getDocuments()) {

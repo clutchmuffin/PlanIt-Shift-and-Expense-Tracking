@@ -46,7 +46,6 @@ public class SharingMainActivity extends AppCompatActivity {
 
         sharedCals = new ArrayList<>();
 
-        // not actually implemented in database yet -> finish NewShared
         db.collection("Shared").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
@@ -69,5 +68,25 @@ public class SharingMainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void setupBottomNavigation() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_jobs) {
+                Intent intent = new Intent(SharingMainActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_calendar) {
+                startActivity(new Intent(this, CalendarActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_budget) {
+                startActivity(new Intent(SharingMainActivity.this, BudgetMainActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_sharing) {
+                // already here
+                return true;
+            }
+            return false;
+        });
     }
 }
