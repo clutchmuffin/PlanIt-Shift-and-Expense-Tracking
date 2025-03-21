@@ -1,7 +1,13 @@
 package com.example.myapplication.controller;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,10 +18,13 @@ import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -50,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         initialize();
         setupRecyclerView();
         setupBottomNavigation();
+        createNotificationChannels();
     }
 
     private void initialize() {
@@ -63,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
         // Initialize views
         topAppBar = findViewById(R.id.topAppBar);
         jobRecyclerView = findViewById(R.id.jobRecyclerView);
@@ -232,6 +241,32 @@ public class MainActivity extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Error adding job to Firestore", e);
         });
+    }
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            // Create a notification channel for notifications that get sent every shift
+            NotificationChannel dailyChannel = new NotificationChannel(NotificationSender.daily_channel_name,
+                    "dailyNotif",
+                    importance);
+            dailyChannel.setDescription(NotificationSender.daily_channel_desc);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(dailyChannel);
+
+            // Create a notification channel for notifications that get sent every Sunday
+            NotificationChannel weeklyChannel = new NotificationChannel(NotificationSender.weekly_channel_name,
+                    "weeklyNotif",
+                    importance);
+            dailyChannel.setDescription(NotificationSender.weekly_channel_desc);
+            manager.createNotificationChannel(weeklyChannel);
+        }
+
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
     }
 
     // Helper class to hold form data

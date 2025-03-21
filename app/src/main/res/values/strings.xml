@@ -17,4 +17,6 @@
     <string name="add_expense">Add Expense</string>
     <string name="pay_rate">Pay Rate</string>
     <string name="dollar">$</string>
+    <string name="channel_name">dailyNotif</string>
+    <string name="channel_description">daily notifications</string>
 </resources>

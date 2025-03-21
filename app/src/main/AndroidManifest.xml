@@ -4,6 +4,10 @@
     package="com.example.myapplication">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -54,6 +58,8 @@
         <activity
             android:name=".controller.BudgetMainActivity"
             android:exported="true" />
+        <receiver android:name=".model.NotificationReceiver"/>
+        <receiver android:name=".model.WeeklyNotificationReceiver"/>
     </application>
 
 </manifest>
