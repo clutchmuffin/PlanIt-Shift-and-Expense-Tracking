@@ -93,7 +93,7 @@ private void loadFoodExpenses() {
                                             EXP expense = expenseDocument.toObject(EXP.class);
                                             if (expense != null) {
                                                 foodExpenses.add(expense);
-                                                jobFoodExpense += expense.getAmount(); // Add to the total for this job
+                                                jobFoodExpense += expense.calculateExpenseDetails().get(1); // Add to the total for this job
                                             }
                                         }
 
