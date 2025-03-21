@@ -27,8 +27,8 @@
             android:src="@drawable/ic_avatar_placeholder" />
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -40,14 +40,13 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NameField"
-            tools:text="Enter Calendar Name" />
+            android:text="NameField" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/InputName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name">
+            android:layout_below="@id/textView">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nameInput"
@@ -60,15 +59,20 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            tools:text="Add Events" />
+            android:layout_below="@id/InputName"
+            android:text="TextView" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/jobListSelectable"
+        <TextView
+            android:id="@+id/dropDown"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView2"
+            android:layout_centerInParent="true"
+            android:background="@android:drawable/editbox_background"
+            android:drawablePadding="16dp"
+            android:hint="@string/select_jobs"
+            android:padding="12dp" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/button2"
@@ -93,5 +97,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_navigation_menu"
         tools:ignore="VisualLintBottomNav" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

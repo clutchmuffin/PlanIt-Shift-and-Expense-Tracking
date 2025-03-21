@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,7 +31,6 @@ public class SharingMainActivity extends AppCompatActivity {
     private SharedAdapter sharedListAdapter;
     private BottomNavigationView bottomNav;
     private FloatingActionButton fabNewShared;
-
     private List<SharedCal> sharedCals;
 
     protected void onCreate(Bundle savedInstanceState) {

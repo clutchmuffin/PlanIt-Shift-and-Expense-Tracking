@@ -21,4 +21,5 @@
     <string name="shared_title">Shared Title</string>
     <string name="sharedPeople">X members</string>
     <string name="sharing">Sharing</string>
+    <string name="select_jobs">Select Events</string>
 </resources>
