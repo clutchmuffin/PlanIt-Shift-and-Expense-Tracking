@@ -33,6 +33,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packagingOptions {
+        resources.excludes.add("META-INF/androidx.cardview_cardview.version")
+    }
 }
 
 dependencies {
@@ -42,17 +45,10 @@ dependencies {
     implementation(libs.recyclerview)
     implementation(libs.firebase.firestore)
     implementation(libs.activity)
+    implementation(libs.cardview.v7)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    implementation(libs.room.runtime)
-
-    // If this project only uses Java source, use the Java annotationProcessor
-    // No additional plugins are necessary
-    annotationProcessor(libs.room.compiler)
-    // optional - Test helpers
-    testImplementation(libs.room.testing)
 
     // Import the Firebase BoM
     implementation(platform(libs.firebase.bom))
