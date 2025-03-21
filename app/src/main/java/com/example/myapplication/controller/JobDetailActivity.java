@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,6 +23,8 @@ import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.model.RepeatType;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -32,10 +35,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class JobDetailActivity extends AppCompatActivity {
     private static final String TAG = "JobDetailActivity";
@@ -56,6 +62,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private LocalDate endDate;
     private LocalTime beginTime;
     private LocalTime endTime;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,18 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        // Get current user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        // If no user is logged in, redirect to login
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        // Initialize views
         eventRecyclerView = findViewById(R.id.eventRecyclerView);
         expenseRecyclerView = findViewById(R.id.expenseRecyclerView);
         fabAddButton = findViewById(R.id.fabAdd);
@@ -258,7 +277,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         CalendarEvent newEvent = new CalendarEvent(
                 name,
-                0,
+                currentUserId,
                 job.getPayRate(),
                 beginDate.format(DATE_FORMATTER),
                 endDate.format(DATE_FORMATTER),
@@ -290,17 +309,36 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     private void checkForConflictsAndSaveEvent(CalendarEvent newEvent, AlertDialog dialog) {
-        db.collectionGroup("Events").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                boolean conflict = false;
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    CalendarEvent otherEvent = document.toObject(CalendarEvent.class);
-                    Log.i("JobDetailActivity", "Checking for overlap with " + otherEvent.getName());
-                    if (hasConflict(newEvent, otherEvent)) {
-                        conflict = true;
-                        break;
-                    }
-                }
+        db.collection("Jobs")
+                .whereEqualTo("userId", currentUserId) // Get only jobs owned by current user
+                .get()
+                .addOnCompleteListener(jobTask -> {
+                    if (jobTask.isSuccessful()) {
+                        Log.i(TAG, "Fetched Jobs for User");
+                        List<Task<QuerySnapshot>> eventTasks = new ArrayList<>();
+
+                        for (QueryDocumentSnapshot jobDoc : jobTask.getResult()) {
+                            Task<QuerySnapshot> eventTask = jobDoc.getReference().collection("Events")
+                                    .get();
+                            eventTasks.add(eventTask);
+                        }
+
+                        Tasks.whenAllComplete(eventTasks).addOnCompleteListener(allEventsTask -> {
+                            boolean conflict = false;
+
+                            for (Task<QuerySnapshot> eventTask : eventTasks) {
+                                if (eventTask.isSuccessful()) {
+                                    for (QueryDocumentSnapshot eventDoc : eventTask.getResult()) {
+                                        CalendarEvent otherEvent = eventDoc.toObject(CalendarEvent.class);
+                                        Log.i(TAG, "Checking for overlap with " + otherEvent.getName());
+
+                                        if (hasConflict(newEvent, otherEvent)) {
+                                            conflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
 
                 if (conflict) {
                     new AlertDialog.Builder(this)
@@ -321,6 +359,7 @@ public class JobDetailActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     private void saveEventToFirestore(CalendarEvent event) {
