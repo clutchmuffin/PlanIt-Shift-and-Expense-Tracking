@@ -27,6 +27,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 
 public class NewSharedActivity extends AppCompatActivity {
@@ -159,8 +160,7 @@ public class NewSharedActivity extends AppCompatActivity {
                     }
 
                     String sharedId = "shared_" + sharedCounterId;
-                    newShared[0] = new SharedCal(nameInput.toString().trim(), sharedId, currentUserId, toAdd);
-
+                    newShared[0] = new SharedCal(Objects.requireNonNull(nameInput.getText()).toString().trim(), sharedId, currentUserId, toAdd);
                     // Save the job with its ID
                     transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
 
