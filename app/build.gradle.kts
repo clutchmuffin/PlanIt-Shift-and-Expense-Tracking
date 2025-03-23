@@ -62,4 +62,7 @@ dependencies {
 
     // The view calendar library for Android
     implementation("com.kizitonwose.calendar:view:2.6.2")
+
+    //The Pie Chart library for Android
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

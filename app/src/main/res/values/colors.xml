@@ -13,5 +13,7 @@
     <color name="blue_white">#f0f8ff</color>
     <color name="blue_white_normal">#a9ecff</color>
     <color name="deep_blue">#00aaff</color>
+    <color name="red">#EB105B</color>
     <color name="blue_normal_deep">#62daff</color>
+    <color name="green_normal">#2E9797</color>
 </resources>

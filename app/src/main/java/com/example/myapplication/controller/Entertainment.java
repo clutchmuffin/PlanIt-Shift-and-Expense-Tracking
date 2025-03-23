@@ -1,18 +1,21 @@
 package com.example.myapplication.controller;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.EXP;
-import com.example.myapplication.model.Expense;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,6 +29,7 @@ public class Entertainment extends AppCompatActivity {
     private ExpenseListAdapter adapter;
     private List<EXP> entertainmentExpenses;
     private TextView totalEntertainmentExpense;
+    private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
 
@@ -36,79 +40,61 @@ public class Entertainment extends AppCompatActivity {
 
         // Initialize UI components
         recyclerView = findViewById(R.id.recyclerView);
-        totalEntertainmentExpense = findViewById(R.id.totalEntertainmentExpense);
+        //totalEntertainmentExpense = findViewById(R.id.totalEntertainmentExpense);
+        pieChart = findViewById(R.id.pieEntertainmentChart);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize expense list and adapter
         entertainmentExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter(entertainmentExpenses, null);
+        adapter = new ExpenseListAdapter((ArrayList<EXP>) entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
-        //load expense amount when activty starts
+        // Load data
         loadEntertainmentExpenses();
         showMainBalance();
 
-        // Load expenses when "Show All Data" is clicked
-        findViewById(R.id.expenseEntertainmentShow).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadEntertainmentExpenses();
-            }
-        });
+        // findViewById(R.id.expenseEntertainmentShow).setOnClickListener(v -> loadEntertainmentExpenses());
     }
 
-
     private void loadEntertainmentExpenses() {
-        db.collection("Jobs")  // Access the 'Jobs' collection
+        db.collection("Jobs")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        final double[] totalEntertainmentExpenseAmount = {0.0}; // Using an array to hold the total
-                        entertainmentExpenses.clear(); // Clear old data
-
-                        // List to keep track of tasks for parallel execution
+                        final double[] totalEntertainmentExpenseAmount = {0.0};
+                        entertainmentExpenses.clear();
                         List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
 
-                        // Iterate through each job document and trigger parallel requests for expenses
                         for (DocumentSnapshot jobDocument : task.getResult()) {
-                            String jobId = jobDocument.getId(); // Get the job ID
-
-                            // Fetch expenses for this job in parallel
+                            String jobId = jobDocument.getId();
                             Task<QuerySnapshot> expenseTask = db.collection("Jobs")
                                     .document(jobId)
                                     .collection("EXP")
                                     .whereEqualTo("description", "Entertainment")
                                     .get();
-
                             expenseFetchTasks.add(expenseTask);
                         }
 
-                        // When all expense fetch operations are completed, process the results
                         Tasks.whenAllComplete(expenseFetchTasks)
                                 .addOnCompleteListener(allTask -> {
                                     for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
                                         if (expenseTask.isSuccessful()) {
                                             double jobEntertainmentExpense = 0.0;
-
-                                            // Iterate through each food expense document
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     entertainmentExpenses.add(expense);
-                                                    jobEntertainmentExpense += expense.getAmount(); // Add to the total for this job
+                                                    jobEntertainmentExpense += expense.getAmount();
                                                 }
                                             }
-
-                                            // Add this job's total food expense to the overall total
                                             totalEntertainmentExpenseAmount[0] += jobEntertainmentExpense;
                                         } else {
                                             Log.e(TAG, "Error fetching expenses", expenseTask.getException());
                                         }
                                     }
 
-                                    // Update the RecyclerView and total only after all tasks are completed
                                     adapter.notifyDataSetChanged();
-                                    totalEntertainmentExpense.setText("BDT: " + totalEntertainmentExpenseAmount[0]);
+                                    //totalEntertainmentExpense.setText("BDT: " + totalEntertainmentExpenseAmount[0]);
                                     updateBudgetTotal(totalEntertainmentExpenseAmount[0]);
                                 });
                     } else {
@@ -117,19 +103,11 @@ public class Entertainment extends AppCompatActivity {
                 });
     }
 
-
     private void updateBudgetTotal(double totalExp) {
-        // Reference the "Food" document in the "Budgy" collection
         db.collection("Budgy").document("Entertainment")
-                .update("totalExpenses", totalExp) // Update the "totalExp" field
-                .addOnSuccessListener(aVoid -> {
-                    // You can log success or do anything else here
-                    Log.d(TAG, "Successfully updated the total expense in Budgy.");
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure if any
-                    Log.e(TAG, "Error updating total expense in Budgy.", e);
-                });
+                .update("totalExpenses", totalExp)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Successfully updated total expense in Budgy."))
+                .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense in Budgy.", e));
     }
 
     private void showMainBalance() {
@@ -145,10 +123,26 @@ public class Entertainment extends AppCompatActivity {
                         double totalExp = documentSnapshot.contains("totalExpenses") ? documentSnapshot.getDouble("totalExpenses") : 0.0;
                         double mainBalanceAmount = budget - totalExp;
 
-                        TextView mainBalanceText = findViewById(R.id.mainBalance);
-                        mainBalanceText.setText("BDT: " + mainBalanceAmount);
+                        // TextView mainBalanceText = findViewById(R.id.mainBalance);
+                        // mainBalanceText.setText("BDT: " + mainBalanceAmount);
+
+                        updatePieChart(budget, totalExp);
                     }
                 });
     }
 
+    private void updatePieChart(double budget, double totalExp) {
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry((float) totalExp, "Spent"));
+        entries.add(new PieEntry((float) (budget - totalExp), "Remaining"));
+
+        PieDataSet dataSet = new PieDataSet(entries, "Entertainment Budget");
+        dataSet.setColors(Color.RED, Color.GREEN);
+        PieData data = new PieData(dataSet);
+        pieChart.setData(data);
+        pieChart.invalidate();
+
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
+    }
 }

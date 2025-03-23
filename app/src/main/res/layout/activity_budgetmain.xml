@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".controller.MainActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -27,53 +27,15 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="376dp"
-        android:layout_height="140dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        app:cardBackgroundColor="@color/black"
-        app:cardCornerRadius="12dp">
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:background="@drawable/round"
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_marginTop="70dp"
+            android:id="@+id/pieMainChart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total Balance"
-                android:textSize="16sp"
-                android:textColor="#E91E63"/>
-
-            <TextView
-                android:id="@+id/mainBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BDT: 00:00"
-                android:layout_marginTop="2dp"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/white"/>
-
-            <Button
-                android:id="@+id/updateBudget"
-                android:layout_width="183dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:background="@drawable/card_shape"
-                android:clickable="true"
-                android:layout_marginTop="10dp"
-                android:text="Update Budget"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
+            android:layout_height="301dp" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -90,70 +52,70 @@
             android:gravity="center_horizontal">
 
             <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="3"
-            android:layout_marginTop="15dp"
-            >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="3"
+                android:layout_marginTop="15dp"
+                >
 
-            <Button
-                android:id="@+id/food"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_columnWeight="1"
-                android:background="@drawable/card_shape"
-                android:text="FOOD"
-                android:clickable="true"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                <Button
+                    android:id="@+id/food"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:background="@drawable/card_shape"
+                    android:text="FOOD"
+                    android:clickable="true"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/traveling"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_columnWeight="1"
-                android:clickable="true"
-                android:background="@drawable/card_shape"
-                android:text="TRAVELING"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                <Button
+                    android:id="@+id/traveling"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:clickable="true"
+                    android:background="@drawable/card_shape"
+                    android:text="TRAVELING"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/entertainment"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="30dp"
-                android:clickable="true"
-                android:background="@drawable/card_shape"
-                android:text="ENTERTAINMENT"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                <Button
+                    android:id="@+id/entertainment"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginTop="30dp"
+                    android:clickable="true"
+                    android:background="@drawable/card_shape"
+                    android:text="ENTERTAINMENT"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/shopping"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="30dp"
-                android:clickable="true"
-                android:background="@drawable/card_shape"
-                android:text="SHOPPING"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                <Button
+                    android:id="@+id/shopping"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnWeight="1"
+                    android:layout_marginTop="30dp"
+                    android:clickable="true"
+                    android:background="@drawable/card_shape"
+                    android:text="SHOPPING"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/others"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_columnSpan="2"
-                android:background="@drawable/card_shape"
-                android:text="OTHERS"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
+                <Button
+                    android:id="@+id/others"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_columnSpan="2"
+                    android:background="@drawable/card_shape"
+                    android:text="OTHERS"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
 
-        </GridLayout>
+            </GridLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

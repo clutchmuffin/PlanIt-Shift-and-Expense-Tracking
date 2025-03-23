@@ -1,7 +1,8 @@
 package com.example.myapplication.controller;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,14 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.EXP;
-import com.example.myapplication.model.Expense;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class Traveling extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
     private List<EXP> travelingExpenses;
-    private TextView totalTravelingExpense;
+    private TextView totalFoodExpense, mainBalanceText;
+    private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "TravelingActivity";
 
@@ -33,105 +36,68 @@ public class Traveling extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_traveling);
 
-        // Initialize UI components
         recyclerView = findViewById(R.id.recyclerView);
-        totalTravelingExpense = findViewById(R.id.totalTravelingExpense);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // totalFoodExpense = findViewById(R.id.totalFoodExpense);
+        //mainBalanceText = findViewById(R.id.mainBalance);
+        pieChart = findViewById(R.id.pieTravelingChart);
 
-        // Initialize expense list and adapter
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         travelingExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter(travelingExpenses, null);
+        adapter = new ExpenseListAdapter((ArrayList<EXP>) travelingExpenses, null);
         recyclerView.setAdapter(adapter);
 
-        // Load expenses immediately when this activity opens
-        loadTravelingExpenses();
-        showMainBalance();
-
-        // Load expenses when "Show All Data" is clicked
-        findViewById(R.id.expenseTravelingShow).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadTravelingExpenses();
-            }
-        });
+        loadFoodExpenses();
+        showBudgetAndPieChart();
     }
 
-
-    private void loadTravelingExpenses() {
-        db.collection("Jobs")  // Access the 'Jobs' collection
+    private void loadFoodExpenses() {
+        db.collection("Jobs")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        final double[] totalTravelingExpenseAmount = {0.0}; // Using an array to hold the total
-                        travelingExpenses.clear(); // Clear old data
-
-                        // List to keep track of tasks for parallel execution
+                        final double[] totalTravelingExpenseAmount = {0.0};
+                        travelingExpenses.clear();
                         List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
 
-                        // Iterate through each job document and trigger parallel requests for expenses
                         for (DocumentSnapshot jobDocument : task.getResult()) {
-                            String jobId = jobDocument.getId(); // Get the job ID
-
-                            // Fetch expenses for this job in parallel
+                            String jobId = jobDocument.getId();
                             Task<QuerySnapshot> expenseTask = db.collection("Jobs")
                                     .document(jobId)
                                     .collection("EXP")
                                     .whereEqualTo("description", "Traveling")
                                     .get();
-
                             expenseFetchTasks.add(expenseTask);
                         }
 
-                        // When all expense fetch operations are completed, process the results
                         Tasks.whenAllComplete(expenseFetchTasks)
                                 .addOnCompleteListener(allTask -> {
                                     for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
                                         if (expenseTask.isSuccessful()) {
-                                            double jobFoodExpense = 0.0;
-
-                                            // Iterate through each food expense document
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     travelingExpenses.add(expense);
-                                                    jobFoodExpense += expense.getAmount(); // Add to the total for this job
+                                                    totalTravelingExpenseAmount[0] += expense.getAmount();
                                                 }
                                             }
-
-                                            // Add this job's total food expense to the overall total
-                                            totalTravelingExpenseAmount[0] += jobFoodExpense;
-                                        } else {
-                                            Log.e(TAG, "Error fetching expenses", expenseTask.getException());
                                         }
                                     }
-
-                                    // Update the RecyclerView and total only after all tasks are completed
                                     adapter.notifyDataSetChanged();
-                                    totalTravelingExpense.setText("BDT: " + totalTravelingExpenseAmount[0]);
+                                    // totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
                                     updateBudgetTotal(totalTravelingExpenseAmount[0]);
-
                                 });
-                    } else {
-                        Log.e(TAG, "Error fetching jobs", task.getException());
                     }
                 });
     }
 
     private void updateBudgetTotal(double totalExp) {
-        // Reference the "Food" document in the "Budgy" collection
-        db.collection("Budgy").document("Traveling")
-                .update("totalExpenses", totalExp) // Update the "totalExp" field
-                .addOnSuccessListener(aVoid -> {
-                    // You can log success or do anything else here
-                    Log.d(TAG, "Successfully updated the total expense in Budgy.");
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure if any
-                    Log.e(TAG, "Error updating total expense in Budgy.", e);
-                });
+        db.collection("Budgy").document("traveling")
+                .update("totalExpenses", totalExp)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Updated total expense."))
+                .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense.", e));
     }
 
-    private void showMainBalance() {
+    private void showBudgetAndPieChart() {
         db.collection("Budgy").document("Traveling")
                 .addSnapshotListener((documentSnapshot, error) -> {
                     if (error != null) {
@@ -140,16 +106,39 @@ public class Traveling extends AppCompatActivity {
                     }
 
                     if (documentSnapshot != null && documentSnapshot.exists()) {
-                        double budget = documentSnapshot.contains("budget") ? documentSnapshot.getDouble("budget") : 0.0;
-                        double totalExp = documentSnapshot.contains("totalExpenses") ? documentSnapshot.getDouble("totalExpenses") : 0.0;
-                        double mainBalanceAmount = budget - totalExp;
+                        double budget = documentSnapshot.getDouble("budget");
+                        double totalExp = documentSnapshot.getDouble("totalExpenses");
+                        double remaining = budget - totalExp;
 
-                        TextView mainBalanceText = findViewById(R.id.mainBalance);
-                        mainBalanceText.setText("BDT: " + mainBalanceAmount);
+                        //mainBalanceText.setText("BDT: " + remaining);
+                        updatePieChart(totalExp, remaining);
                     }
                 });
     }
 
+    private void updatePieChart(double spent, double remaining) {
+        List<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry((float) spent, "Spent"));
+        entries.add(new PieEntry((float) remaining, "Remaining"));
 
+        PieDataSet dataSet = new PieDataSet(entries, "Traveling Budget Breakdown");
+        dataSet.setColors(Color.RED, Color.GREEN);
+        dataSet.setValueTextSize(12f);
+        dataSet.setValueTextColor(Color.WHITE);
 
+        PieData pieData = new PieData(dataSet);
+        pieChart.setData(pieData);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setDrawEntryLabels(false);
+        pieChart.setUsePercentValues(true);
+
+        Legend legend = pieChart.getLegend();
+        legend.setTextSize(12f);
+        legend.setFormSize(12f);
+        legend.setTextColor(Color.BLACK);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+
+        pieChart.invalidate(); // Refresh the chart
+    }
 }
