@@ -1,22 +1,30 @@
 package com.example.myapplication.view.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
+import com.example.myapplication.model.Job;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder> {
     private List<CalendarEvent> events;
+    private Job job;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public EventListAdapter(List<CalendarEvent> events) {
+
+    public EventListAdapter(List<CalendarEvent> events, Job job) {
         this.events = events != null ? events : new ArrayList<>();
+        this.job = job;
     }
 
     @NonNull
@@ -34,6 +42,49 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         holder.tvTimeRange.setText(event.getBegin_time().substring(0,5) + " - " + event.getEnd_time().substring(0,5));
         holder.tvRepeatType.setText(event.getRepeated().toString());
         holder.tvNetPay.setText("$" + event.calculatePay());
+
+        holder.eventDelete.setOnClickListener(
+                v -> {
+                    if (job.getJobId() != null) {
+
+                        // Query for the event document ID based on event data
+                        db.collection("Jobs").document(job.getJobId())
+                                .collection("Events")
+                                .whereEqualTo("begin_date", event.getBegin_date())
+                                .whereEqualTo("begin_time", event.getBegin_time())
+                                .whereEqualTo("end_date", event.getEnd_date())
+                                .whereEqualTo("end_time", event.getEnd_time())
+                                .get()
+                                .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                                    if (!queryDocumentSnapshots.isEmpty()) {
+                                        // Get the document ID of the first matching event
+                                        String eventDocId = queryDocumentSnapshots.getDocuments().get(0).getId();
+
+                                        // Delete the event from Firestore
+                                        db.collection("Jobs").document(job.getJobId())
+                                                .collection("Events")
+                                                .document(eventDocId)
+                                                .delete()
+                                                .addOnSuccessListener(aVoid -> {
+
+                                                    // Delete from local list and update RecyclerView
+                                                    job.getEvents().remove(position);
+                                                    notifyItemRemoved(position);
+                                                    Log.d("JobDetailActivity", "Event successfully deleted from Firestore");
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("JobDetailActivity", "Error deleting event from Firestore", e);
+                                                });
+                                    } else {
+                                        Log.e("JobDetailActivity", "Could not find event document to delete");
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("JobDetailActivity", "Error querying for event to delete", e);
+                                });
+                    }
+                });
     }
 
     @Override
@@ -43,6 +94,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay;
+        ImageButton eventDelete;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -51,6 +103,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             tvTimeRange = itemView.findViewById(R.id.eventTimeRange);
             tvRepeatType = itemView.findViewById(R.id.eventRepeatInfo);
             tvNetPay = itemView.findViewById(R.id.netPay);
+            eventDelete = itemView.findViewById(R.id.eventDeleteBtn);
         }
     }
 }
