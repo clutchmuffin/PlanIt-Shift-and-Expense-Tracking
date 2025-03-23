@@ -47,7 +47,16 @@
                 android:layout_height="wrap_content"
                 android:text="@string/employer"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
+
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/jobDeleteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete job" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
