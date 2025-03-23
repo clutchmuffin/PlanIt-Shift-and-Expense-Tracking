@@ -33,6 +33,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packagingOptions {
+        resources.excludes.add("META-INF/androidx.cardview_cardview.version")
+    }
 }
 
 dependencies {
@@ -42,17 +45,10 @@ dependencies {
     implementation(libs.recyclerview)
     implementation(libs.firebase.firestore)
     implementation(libs.activity)
+    implementation(libs.cardview.v7)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    implementation(libs.room.runtime)
-
-    // If this project only uses Java source, use the Java annotationProcessor
-    // No additional plugins are necessary
-    annotationProcessor(libs.room.compiler)
-    // optional - Test helpers
-    testImplementation(libs.room.testing)
 
     // Import the Firebase BoM
     implementation(platform(libs.firebase.bom))
@@ -60,6 +56,9 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.google.firebase.firestore)
+
+    //import NotificationCompat
+    implementation("androidx.core:core-ktx:1.15.0")
 
     // The view calendar library for Android
     implementation("com.kizitonwose.calendar:view:2.6.2")

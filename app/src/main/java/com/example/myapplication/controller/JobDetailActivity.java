@@ -20,6 +20,7 @@ import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.EXP;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.model.RepeatType;
 import com.example.myapplication.view.adapter.EventListAdapter;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
@@ -126,7 +127,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String jobId = job.getJobId();
 
         // Set the adapter.
-        eventListAdapter = new EventListAdapter(job.getEvents());
+        eventListAdapter = new EventListAdapter(job.getEvents(), job);
         eventRecyclerView.setAdapter(eventListAdapter);
 
         // First check if job has documentId
@@ -159,7 +160,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String jobId = job.getJobId();
 
         // Set the adapter.
-        expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
+        expenseListAdapter = new ExpenseListAdapter(job.getExpenses(), job);
         expenseRecyclerView.setAdapter(expenseListAdapter);
 
         // First check if job has documentId
@@ -273,6 +274,7 @@ public class JobDetailActivity extends AppCompatActivity {
 
         String name = etName.getText().toString().trim();
         RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
+        int ID = getNewEventID();
 
         CalendarEvent newEvent = new CalendarEvent(
                 name,
@@ -282,7 +284,8 @@ public class JobDetailActivity extends AppCompatActivity {
                 endDate.format(DATE_FORMATTER),
                 beginTime.format(TIME_FORMATTER),
                 endTime.format(TIME_FORMATTER),
-                repeatType
+                repeatType,
+                ID
         );
 
         checkForConflictsAndSaveEvent(newEvent, dialog);
@@ -338,22 +341,29 @@ public class JobDetailActivity extends AppCompatActivity {
                                 }
                             }
 
-                            if (conflict) {
-                                new AlertDialog.Builder(dialog.getContext())
-                                        .setTitle("Scheduling Conflict")
-                                        .setMessage("This shift overlaps with an existing shift")
-                                        .setPositiveButton("Edit", (d, which) -> d.dismiss())
-                                        .show();
-                            } else {
-                                job.addEvent(newEvent);
-                                eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
-                                saveEventToFirestore(newEvent);
-                                dialog.dismiss();
-                            }
-                        });
-                    }
-                });
+
+                if (conflict) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Scheduling Conflict")
+                            .setMessage("This shift overlaps with an existing shift")
+                            .setPositiveButton("Edit", (d, which) -> d.dismiss())
+                            .show();
+                } else {
+                    job.addEvent(newEvent);
+                    eventListAdapter.notifyItemInserted(job.getEvents().size() - 1);
+                    saveEventToFirestore(newEvent);
+                    dialog.dismiss();
+                    NotificationSender notificationSender = new NotificationSender(this);
+                    notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
+                    notificationSender.updateWeeklyNotif();
+                }
+            });
+            }
+        });
     }
+
+
+
 
 
 
@@ -596,4 +606,18 @@ public class JobDetailActivity extends AppCompatActivity {
         }
     }
 
+    private int getNewEventID(){
+        // Find a notification ID for the new shift to be added
+        SharedPreferences sharedPref = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if(sharedPref.getAll().isEmpty()){
+            editor.putInt("dailyNotif", 3);
+            editor.apply();
+        }
+        int newID = sharedPref.getInt("dailyNotif", 3);
+        editor.putInt("dailyNotif", newID + 1);
+        editor.apply();
+        return newID;
+    }
 }
+

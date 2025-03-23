@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Job implements Serializable {
+    private int uid;
     private String title;
     private String subTitle;
     private String employer;

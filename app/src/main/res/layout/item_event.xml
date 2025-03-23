@@ -10,70 +10,86 @@
     app:cardCornerRadius="8dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/eventName"
-            android:hint="Event Name"
+        android:padding="10dp"
+        android:orientation="horizontal">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-
-        <!-- Date Range -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:padding="16dp"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/eventDateRange"
-                android:hint="Date Range"
-                android:layout_width="0dp"
+                android:id="@+id/eventName"
+                android:hint="Event Name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="16sp"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textStyle="bold"
+                android:textSize="16sp"/>
 
-            <TextView
-                android:id="@+id/eventTimeRange"
-                android:hint="Time Range"
-                android:layout_marginLeft="20sp"
-                android:textSize="16sp"
+            <!-- Date Range -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:orientation="horizontal">
 
-            <!-- Net Pay -->
+                <TextView
+                    android:id="@+id/eventDateRange"
+                    android:hint="Date Range"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/eventTimeRange"
+                    android:hint="Time Range"
+                    android:layout_marginLeft="20sp"
+                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <!-- Net Pay -->
+                <TextView
+                    android:id="@+id/netPay"
+                    android:text="@string/dollar"
+                    android:layout_marginLeft="20sp"
+                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
+
+            <!-- Repeat Info -->
             <TextView
-                android:id="@+id/netPay"
-                android:text="@string/dollar"
-                android:layout_marginLeft="20sp"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
+                android:id="@+id/eventRepeatInfo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textStyle="italic"
+                android:hint="Repeat Info"
+                android:textSize="12sp"/>
+
+            <!-- Additional Details (e.g., monthly type, weekly days) -->
+            <TextView
+                android:id="@+id/eventAdditionalInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Additional Info"
+                android:textSize="12sp"
+                android:visibility="gone"/>
         </LinearLayout>
 
-        <!-- Repeat Info -->
-        <TextView
-            android:id="@+id/eventRepeatInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:hint="Repeat Info"
-            android:textSize="12sp"/>
-
-        <!-- Additional Details (e.g., monthly type, weekly days) -->
-        <TextView
-            android:id="@+id/eventAdditionalInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Additional Info"
-            android:textSize="12sp"
-            android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/eventDeleteBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="20dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete event" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

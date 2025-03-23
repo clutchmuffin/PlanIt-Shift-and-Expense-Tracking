@@ -22,7 +22,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/circle_background"/>
+            android:background="@drawable/circle_background" />
 
         <!-- Job Title and Subtitle -->
         <LinearLayout
@@ -33,30 +33,21 @@
 
 
             <TextView
-                android:id="@+id/jobTitle"
+                android:id="@+id/sharedTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/job_title"
+                android:text="@string/shared_title"
                 android:textStyle="bold"/>
 
             <!-- Employer -->
             <TextView
-                android:id="@+id/jobEmployer"
+                android:id="@+id/sharedPeople"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/employer"
+                android:text="@string/sharedPeople"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/jobDeleteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete job" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

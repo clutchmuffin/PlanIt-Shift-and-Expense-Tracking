@@ -40,7 +40,7 @@ public class Food extends AppCompatActivity {
 
         // Initialize expense list and adapter
         foodExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter(foodExpenses);
+        adapter = new ExpenseListAdapter(foodExpenses, null);
         recyclerView.setAdapter(adapter);
 
         //Immediately show Food Expenses

@@ -40,7 +40,7 @@ public class Shopping extends AppCompatActivity {
 
         // Initialize expense list and adapter
         shoppingExpenses= new ArrayList<>();
-        adapter = new ExpenseListAdapter(shoppingExpenses);
+        adapter = new ExpenseListAdapter(shoppingExpenses, null);
         recyclerView.setAdapter(adapter);
 
 
