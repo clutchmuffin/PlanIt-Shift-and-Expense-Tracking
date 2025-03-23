@@ -40,7 +40,7 @@ public class Entertainment extends AppCompatActivity {
 
         // Initialize expense list and adapter
         entertainmentExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter(entertainmentExpenses);
+        adapter = new ExpenseListAdapter(entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
         //load expense amount when activty starts
