@@ -119,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_budget) {
                 startActivity(new Intent(MainActivity.this, BudgetMainActivity.class));
                 return true;
+            } else if (itemId == R.id.nav_sharing) {
+                Intent intent = new Intent(MainActivity.this, SharingMainActivity.class);
+                startActivity(intent);
+                return true;
             }
             return false;
         });

@@ -126,7 +126,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String jobId = job.getJobId();
 
         // Set the adapter.
-        eventListAdapter = new EventListAdapter(job.getEvents());
+        eventListAdapter = new EventListAdapter(job.getEvents(), job);
         eventRecyclerView.setAdapter(eventListAdapter);
 
         // First check if job has documentId
@@ -159,7 +159,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String jobId = job.getJobId();
 
         // Set the adapter.
-        expenseListAdapter = new ExpenseListAdapter(job.getExpenses());
+        expenseListAdapter = new ExpenseListAdapter(job.getExpenses(), job);
         expenseRecyclerView.setAdapter(expenseListAdapter);
     
         // First check if job has documentId

@@ -2,9 +2,11 @@ package com.example.myapplication.view.adapter;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,11 +16,15 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.controller.JobDetailActivity;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewHolder> {
+
+    private static final String TAG = "MainActivity";
     private List<Job> jobs;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public JobListAdapter(List<Job> jobs) {
         this.jobs = jobs;
@@ -49,6 +55,24 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
             intent.putExtra(JobDetailActivity.EXTRA_JOB, job);
             v.getContext().startActivity(intent);
         });
+
+        holder.jobDelete.setOnClickListener(
+                v -> {
+                    if (job.getJobId() != null) {
+                        db.collection("Jobs").document(job.getJobId())
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    // Delete from local list and update RecyclerView
+                                    jobs.remove(position);
+                                    notifyItemRemoved(position);
+                                    Log.d(TAG, "Job successfully deleted from Firestore");
+                                })
+                                .addOnFailureListener(e -> Log.e(TAG, "Error deleting job from Firestore", e));
+                    } else {
+                        Log.e(TAG, "Cannot delete job: jobId is null");
+                    }
+                }
+        );
     }
 
 
@@ -59,6 +83,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
 
     public static class JobViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitle, jobEmployer;
+        ImageButton jobDelete;
         MaterialCardView jobCard;
         View colorAccent;
 
@@ -66,6 +91,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
             super(itemView);
             jobTitle = itemView.findViewById(R.id.jobTitle);
             jobEmployer = itemView.findViewById(R.id.jobEmployer);
+            jobDelete = itemView.findViewById(R.id.jobDeleteBtn);
             jobCard = itemView.findViewById(R.id.jobCard);
             colorAccent = itemView.findViewById(R.id.colorAccent);
         }

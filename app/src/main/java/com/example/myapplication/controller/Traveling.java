@@ -39,7 +39,7 @@ public class Traveling extends AppCompatActivity {
 
         // Initialize expense list and adapter
         travelingExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter(travelingExpenses);
+        adapter = new ExpenseListAdapter(travelingExpenses, null);
         recyclerView.setAdapter(adapter);
 
         // Load expenses immediately when this activity opens
