@@ -21,6 +21,7 @@ import com.example.myapplication.controller.JobDetailActivity;
 import com.example.myapplication.model.NotificationSender;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.checkerframework.checker.units.qual.N;
 
@@ -68,12 +69,21 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
                 v -> {
                     if (job.getJobId() != null) {
                         db.collection("Jobs").document(job.getJobId())
+                                .collection("Events").get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            CalendarEvent event = document.toObject(CalendarEvent.class);
+                                            cancelNotification(event);
+                                        }
+                                    }
+                                });
+                        db.collection("Jobs").document(job.getJobId())
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
                                     // Delete from local list and update RecyclerView
                                     jobs.remove(position);
                                     notifyItemRemoved(position);
-                                    cancelNotifications(job);
                                     Log.d(TAG, "Job successfully deleted from Firestore");
                                 })
                                 .addOnFailureListener(e -> Log.e(TAG, "Error deleting job from Firestore", e));
@@ -90,9 +100,9 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         return jobs.size();
     }
 
-    private void cancelNotifications(Job job){
+    private void cancelNotification(CalendarEvent event){
         NotificationSender notifSender = new NotificationSender(context);
-        job.getEvents().forEach(notifSender::cancelNotification);
+        notifSender.cancelNotification(event);
         notifSender.updateWeeklyNotif();
     }
 
