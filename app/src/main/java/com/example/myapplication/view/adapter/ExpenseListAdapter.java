@@ -38,8 +38,14 @@ public class ExpenseListAdapter extends RecyclerView.Adapter<ExpenseListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
         EXP expense = expenses.get(position);
+        List<Double> expenseDetails = expense.calculateExpenseDetails();
         holder.tvDescription.setText(expense.getDescription());
-        holder.tvAmount.setText(String.valueOf(expense.getAmount()));
+        //holder.tvAmount.setText(String.valueOf(expense.getAmount()));
+        holder.tvAmount.setText("Total: " + "$" + expenseDetails.get(1));
+        holder.tvRate.setText( "Rate: "+ "$" + expenseDetails.get(0));
+        holder.tvRepeatType.setText(expense.getRepeatType().toString());
+        holder.tvDateRange.setText(expense.getStartDate().substring(5) + " to " + expense.getEndDate().substring(5));
+
 
         holder.expenseDelete.setOnClickListener(
                 v -> {
@@ -89,7 +95,7 @@ public class ExpenseListAdapter extends RecyclerView.Adapter<ExpenseListAdapter.
     }
 
     public static class ExpenseViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDescription, tvAmount;
+        TextView tvDescription, tvAmount,tvDateRange,tvRate, tvRepeatType;
         ImageButton expenseDelete;
 
         public ExpenseViewHolder(@NonNull View itemView) {
@@ -97,6 +103,10 @@ public class ExpenseListAdapter extends RecyclerView.Adapter<ExpenseListAdapter.
             tvDescription = itemView.findViewById(R.id.expenseDescription);
             tvAmount = itemView.findViewById(R.id.expenseAmount);
             expenseDelete = itemView.findViewById(R.id.expenseDeleteBtn);
+            tvRate =  itemView.findViewById(R.id.expenseRate);
+            tvRepeatType = itemView.findViewById(R.id.eventRepeatInfo); // New for recurrence info
+            tvDateRange = itemView.findViewById(R.id.eventDateRange); // New for date range
+
         }
     }
 }

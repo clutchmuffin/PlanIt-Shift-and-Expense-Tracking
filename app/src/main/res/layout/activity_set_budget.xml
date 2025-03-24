@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AddActivity">
+    tools:context=".controller.SetBudget">
 
 
     <androidx.cardview.widget.CardView
@@ -133,7 +133,7 @@
 
 
     <TextView
-        android:id="@+id/addBudget"
+        android:id="@+id/addToBudget"
         android:layout_width="232dp"
         android:layout_height="55dp"
         android:layout_gravity="center"
@@ -142,7 +142,20 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/round"
         android:gravity="center"
-        android:text="Update"
+        android:text="Add to Budget"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/resetBudget"
+        android:layout_width="232dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/round"
+        android:gravity="center"
+        android:text="Reset Budget"
         android:textColor="@color/white" />
 
 </LinearLayout>

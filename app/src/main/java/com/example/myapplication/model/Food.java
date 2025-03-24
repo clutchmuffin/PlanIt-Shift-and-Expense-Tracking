@@ -1,14 +1,18 @@
 package com.example.myapplication.model;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.controller.BudgetMainActivity;
+import com.example.myapplication.controller.SetBudget;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -25,7 +29,7 @@ public class Food extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
     private List<EXP> foodExpenses;
-    private TextView totalFoodExpense, mainBalanceText;
+    private TextView totalFoodExpense, addIncome;
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "FoodActivity";
@@ -45,8 +49,30 @@ public class Food extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) foodExpenses, null);
         recyclerView.setAdapter(adapter);
 
+
+        addIncome = findViewById(R.id.addIncome);
+        addIncome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Food.this, SetBudget.class);
+                intent.putExtra("BUDGET_CATEGORY", "Food");
+                startActivity(intent);
+
+
+            }
+        });
+
+
+
+
         loadFoodExpenses();
         showBudgetAndPieChart();
+    }
+
+    private void openSetBudget(String category) {
+        Intent intent = new Intent(Food.this, SetBudget.class);
+        intent.putExtra("BUDGET_CATEGORY", category);
+        startActivity(intent);
     }
 
     private void loadFoodExpenses() {
@@ -105,9 +131,14 @@ public class Food extends AppCompatActivity {
                     }
 
                     if (documentSnapshot != null && documentSnapshot.exists()) {
-                        double budget = documentSnapshot.getDouble("budget");
-                        double totalExp = documentSnapshot.getDouble("totalExpenses");
-                        double remaining = budget - totalExp;
+                        Double budget = documentSnapshot.getDouble("budget");
+                        Double totalExp = documentSnapshot.getDouble("totalExpenses");
+                        double remaining = 0;
+                        if (budget != null && totalExp != null) {
+                            remaining = budget - totalExp;
+                        } else {
+                            Log.e(TAG, "Budget or Total Expenses is null");
+                        }
 
                         //mainBalanceText.setText("BDT: " + remaining);
                         updatePieChart(totalExp, remaining);
@@ -121,15 +152,16 @@ public class Food extends AppCompatActivity {
         entries.add(new PieEntry((float) remaining, "Remaining"));
 
         PieDataSet dataSet = new PieDataSet(entries, "Food Budget Breakdown");
-        dataSet.setColors(Color.RED, Color.GREEN);
-        dataSet.setValueTextSize(12f);
+
+        dataSet.setColors(Color.RED,Color.parseColor("#2E9797"));
+        dataSet.setValueTextSize(18f);
         dataSet.setValueTextColor(Color.WHITE);
 
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setDrawEntryLabels(false);
-        pieChart.setUsePercentValues(true);
+        pieChart.setDrawEntryLabels(true);
+        pieChart.setUsePercentValues(false);
 
         Legend legend = pieChart.getLegend();
         legend.setTextSize(12f);

@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +27,7 @@ public class Traveling extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
     private List<EXP> travelingExpenses;
-    private TextView totalFoodExpense, mainBalanceText;
+    private TextView addIncome, mainBalanceText;
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "TravelingActivity";
@@ -46,11 +47,24 @@ public class Traveling extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) travelingExpenses, null);
         recyclerView.setAdapter(adapter);
 
-        loadFoodExpenses();
+
+        addIncome = findViewById(R.id.addIncome);
+
+        addIncome.setOnClickListener(v -> openSetBudget("Traveling"));
+
+
+
+        loadTravelingExpenses();
         showBudgetAndPieChart();
     }
 
-    private void loadFoodExpenses() {
+    private void openSetBudget(String category) {
+        Intent intent = new Intent(this, SetBudget.class);
+        intent.putExtra("BUDGET_CATEGORY", category);
+        startActivity(intent);
+    }
+
+    private void loadTravelingExpenses() {
         db.collection("Jobs")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -91,7 +105,7 @@ public class Traveling extends AppCompatActivity {
     }
 
     private void updateBudgetTotal(double totalExp) {
-        db.collection("Budgy").document("traveling")
+        db.collection("Budgy").document("Traveling")
                 .update("totalExpenses", totalExp)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Updated total expense."))
                 .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense.", e));
@@ -121,16 +135,17 @@ public class Traveling extends AppCompatActivity {
         entries.add(new PieEntry((float) spent, "Spent"));
         entries.add(new PieEntry((float) remaining, "Remaining"));
 
-        PieDataSet dataSet = new PieDataSet(entries, "Traveling Budget Breakdown");
-        dataSet.setColors(Color.RED, Color.GREEN);
-        dataSet.setValueTextSize(12f);
+        PieDataSet dataSet = new PieDataSet(entries, "   Traveling Budget Breakdown");
+
+        dataSet.setColors(Color.RED, Color.parseColor("#2E9797"));
+        dataSet.setValueTextSize(17f);
         dataSet.setValueTextColor(Color.WHITE);
 
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setDrawEntryLabels(false);
-        pieChart.setUsePercentValues(true);
+        pieChart.setDrawEntryLabels(true);
+        pieChart.setUsePercentValues(false);
 
         Legend legend = pieChart.getLegend();
         legend.setTextSize(12f);

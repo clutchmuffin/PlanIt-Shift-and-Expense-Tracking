@@ -1,5 +1,6 @@
 package com.example.myapplication.controller;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +29,7 @@ public class Entertainment extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
     private List<EXP> entertainmentExpenses;
-    private TextView totalEntertainmentExpense;
+    private TextView totalEntertainmentExpense, addIncome;
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
@@ -49,13 +50,23 @@ public class Entertainment extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
+
+        addIncome = findViewById(R.id.addIncome);
+
+        addIncome.setOnClickListener(v -> openSetBudget("Entertainment"));
+
         // Load data
         loadEntertainmentExpenses();
         showMainBalance();
 
-        // findViewById(R.id.expenseEntertainmentShow).setOnClickListener(v -> loadEntertainmentExpenses());
+
     }
 
+    private void openSetBudget(String category) {
+        Intent intent = new Intent(this, SetBudget.class);
+        intent.putExtra("BUDGET_CATEGORY", category);
+        startActivity(intent);
+    }
     private void loadEntertainmentExpenses() {
         db.collection("Jobs")
                 .get()
@@ -119,30 +130,45 @@ public class Entertainment extends AppCompatActivity {
                     }
 
                     if (documentSnapshot != null && documentSnapshot.exists()) {
-                        double budget = documentSnapshot.contains("budget") ? documentSnapshot.getDouble("budget") : 0.0;
-                        double totalExp = documentSnapshot.contains("totalExpenses") ? documentSnapshot.getDouble("totalExpenses") : 0.0;
-                        double mainBalanceAmount = budget - totalExp;
+                        Double budget = documentSnapshot.getDouble("budget");
+                        Double totalExp = documentSnapshot.getDouble("totalExpenses");
+                        double remaining = 0;
+                        if (budget != null && totalExp != null) {
+                            remaining = budget - totalExp;
+                        } else {
+                            Log.e(TAG, "Budget or Total Expenses is null");
+                        }
 
-                        // TextView mainBalanceText = findViewById(R.id.mainBalance);
-                        // mainBalanceText.setText("BDT: " + mainBalanceAmount);
-
-                        updatePieChart(budget, totalExp);
+                        //mainBalanceText.setText("BDT: " + remaining);
+                        updatePieChart(totalExp, remaining);
                     }
                 });
     }
 
-    private void updatePieChart(double budget, double totalExp) {
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry((float) totalExp, "Spent"));
-        entries.add(new PieEntry((float) (budget - totalExp), "Remaining"));
+    private void updatePieChart(double spent, double remaining) {
+        List<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry((float) spent, "Spent"));
+        entries.add(new PieEntry((float) remaining, "Remaining"));
 
-        PieDataSet dataSet = new PieDataSet(entries, "Entertainment Budget");
-        dataSet.setColors(Color.RED, Color.GREEN);
-        PieData data = new PieData(dataSet);
-        pieChart.setData(data);
-        pieChart.invalidate();
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setColors(Color.RED,Color.parseColor("#2E9797"));
+        dataSet.setValueTextSize(18f);
+
+        dataSet.setValueTextColor(Color.WHITE);
+
+        PieData pieData = new PieData(dataSet);
+        pieChart.setData(pieData);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setDrawEntryLabels(true);
+        pieChart.setUsePercentValues(false);
 
         Legend legend = pieChart.getLegend();
-        legend.setEnabled(true);
+        legend.setTextSize(12f);
+        legend.setFormSize(12f);
+        legend.setTextColor(Color.BLACK);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+
+        pieChart.invalidate(); // Refresh the chart
     }
 }

@@ -65,6 +65,14 @@ public class BudgetMainActivity extends AppCompatActivity {
         shopping.setOnClickListener(v -> startActivity(new Intent(BudgetMainActivity.this, Shopping.class)));
         entertainment.setOnClickListener(v -> startActivity(new Intent(BudgetMainActivity.this, Entertainment.class)));
         traveling.setOnClickListener(v -> startActivity(new Intent(BudgetMainActivity.this, Traveling.class)));
+        updateBudget = findViewById(R.id.updateBudget);
+
+        updateBudget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BudgetMainActivity.this,SetBudget.class));
+            }
+        });
 
 
 
@@ -153,7 +161,7 @@ public class BudgetMainActivity extends AppCompatActivity {
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "Budget Overview");
         pieDataSet.setColors(colors);
         pieDataSet.setValueTextColor(getResources().getColor(R.color.white));
-
+        pieDataSet.setValueTextSize(18f);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
         pieChart.invalidate();
