@@ -126,7 +126,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String jobId = job.getJobId();
 
         // Set the adapter.
-        eventListAdapter = new EventListAdapter(job.getEvents(), job);
+        eventListAdapter = new EventListAdapter(job.getEvents(), job, this);
         eventRecyclerView.setAdapter(eventListAdapter);
 
         // First check if job has documentId

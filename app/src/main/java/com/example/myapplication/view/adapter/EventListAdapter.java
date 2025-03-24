@@ -1,16 +1,20 @@
 package com.example.myapplication.view.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
+import com.example.myapplication.model.NotificationSender;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -19,12 +23,14 @@ import java.util.List;
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder> {
     private List<CalendarEvent> events;
     private Job job;
+    private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-    public EventListAdapter(List<CalendarEvent> events, Job job) {
+    public EventListAdapter(List<CalendarEvent> events, Job job, Context context) {
         this.events = events != null ? events : new ArrayList<>();
         this.job = job;
+        this.context = context;
     }
 
     @NonNull
@@ -69,7 +75,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                                                 .addOnSuccessListener(aVoid -> {
 
                                                     // Delete from local list and update RecyclerView
-                                                    job.getEvents().remove(position);
+                                                    cancelNotification(job.getEvents().remove(position));
                                                     notifyItemRemoved(position);
                                                     Log.d("JobDetailActivity", "Event successfully deleted from Firestore");
                                                 })
@@ -90,6 +96,12 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    private void cancelNotification(CalendarEvent event){
+        NotificationSender notifSender = new NotificationSender(context);
+        notifSender.cancelNotification(event);
+        notifSender.updateWeeklyNotif();
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {

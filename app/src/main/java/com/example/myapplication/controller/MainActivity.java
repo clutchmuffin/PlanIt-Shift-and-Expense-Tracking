@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Set the adapter.
-        jobListAdapter = new JobListAdapter(jobs);
+        jobListAdapter = new JobListAdapter(jobs, this);
         jobRecyclerView.setAdapter(jobListAdapter);
     }
 

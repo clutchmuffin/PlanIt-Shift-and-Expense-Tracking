@@ -1,5 +1,6 @@
 package com.example.myapplication.view.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
@@ -10,13 +11,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.controller.JobDetailActivity;
+import com.example.myapplication.model.NotificationSender;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.checkerframework.checker.units.qual.N;
 
 import java.util.List;
 
@@ -24,10 +30,12 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
 
     private static final String TAG = "MainActivity";
     private List<Job> jobs;
+    private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public JobListAdapter(List<Job> jobs) {
+    public JobListAdapter(List<Job> jobs, Context context) {
         this.jobs = jobs;
+        this.context = context;
     }
 
     @NonNull
@@ -65,6 +73,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
                                     // Delete from local list and update RecyclerView
                                     jobs.remove(position);
                                     notifyItemRemoved(position);
+                                    cancelNotifications(job);
                                     Log.d(TAG, "Job successfully deleted from Firestore");
                                 })
                                 .addOnFailureListener(e -> Log.e(TAG, "Error deleting job from Firestore", e));
@@ -79,6 +88,12 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
     @Override
     public int getItemCount() {
         return jobs.size();
+    }
+
+    private void cancelNotifications(Job job){
+        NotificationSender notifSender = new NotificationSender(context);
+        job.getEvents().forEach(notifSender::cancelNotification);
+        notifSender.updateWeeklyNotif();
     }
 
     public static class JobViewHolder extends RecyclerView.ViewHolder {
