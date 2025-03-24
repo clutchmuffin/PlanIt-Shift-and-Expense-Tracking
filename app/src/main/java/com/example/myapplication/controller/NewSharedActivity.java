@@ -31,6 +31,8 @@ import java.util.Objects;
 
 
 public class NewSharedActivity extends AppCompatActivity {
+    private static final String TAG = "NewSharedActivity";
+
     private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNav;
     private TextInputEditText nameInput;
@@ -58,31 +60,43 @@ public class NewSharedActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         currentUserId = prefs.getString("userId", null);
+        // If no user is logged in, redirect to login
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
 
         events = new ArrayList<>();
 
         db.collection("Jobs")
                 .whereEqualTo("userId", currentUserId)
                 .get()
-                .addOnSuccessListener(jobSnapshots -> {
-                    for (QueryDocumentSnapshot jobDoc : jobSnapshots) {
-                        jobDoc.getReference().collection("Events")
+                .addOnSuccessListener(jobsSnapshot -> {
+                    for (DocumentSnapshot jobDoc : jobsSnapshot.getDocuments()) {
+                        // Fetch events for each job one after another
+                        db.collection("Jobs")
+                                .document(jobDoc.getId())
+                                .collection("Events")
                                 .get()
-                                .addOnSuccessListener(eventSnapshots -> {
-                                    for (QueryDocumentSnapshot eventDoc : eventSnapshots) {
+                                .addOnSuccessListener(eventsSnapshot -> {
+                                    for (DocumentSnapshot eventDoc : eventsSnapshot.getDocuments()) {
                                         CalendarEvent event = eventDoc.toObject(CalendarEvent.class);
                                         events.add(event);
                                     }
-                                });
+                                })
+                                .addOnFailureListener(e -> Log.e(TAG, "Error loading events", e));
                     }
-                });
-        selectedEvents = new boolean[events.size()];
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error loading jobs", e));
         eventList = new ArrayList<>();
+        eventNames = new String[events.size()];
         int i = 0;
         for (CalendarEvent e : events) {
             eventNames[i] = e.getName();
             i++;
         }
+        selectedEvents = new boolean[eventNames.length];
 
         dropDownText.setOnClickListener(new View.OnClickListener() {
 
@@ -90,16 +104,14 @@ public class NewSharedActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(NewSharedActivity.this);
                 builder.setTitle("Select Events");
-                builder.setMultiChoiceItems(eventNames, selectedEvents, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        if (isChecked) {
-                            eventList.add(which);
-                            Collections.sort(eventList);
-                        }
-                        else {
-                            eventList.remove(Integer.valueOf(which));
-                        }
+                builder.setCancelable(false);
+                builder.setMultiChoiceItems(eventNames, selectedEvents, (dialog, which, isChecked) -> {
+                    if (isChecked) {
+                        eventList.add(which);
+                        Collections.sort(eventList);
+                    }
+                    else {
+                        eventList.remove(Integer.valueOf(which));
                     }
                 });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

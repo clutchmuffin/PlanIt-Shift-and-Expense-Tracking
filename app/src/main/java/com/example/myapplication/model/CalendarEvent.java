@@ -9,9 +9,9 @@ import java.util.ArrayList;
 public class CalendarEvent {
     private String name;
 
-    private int pay_rate;
+    private int payRate;
 
-    private int net_pay;
+    private int netPay;
 
     private String userId;
 
@@ -48,13 +48,13 @@ public class CalendarEvent {
     public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int ID) {
         this.name = n;
         this.userId = uid;
-        this.pay_rate = pay_rate;
+        this.payRate = pay_rate;
         this.begin_date = begin;
         this.end_date = end;
         this.begin_time = begin_time;
         this.end_time = end_time;
         this.repeated = repeated;
-        this.net_pay = calculatePay();
+        this.netPay = calculatePay();
 
         this.begin_tz = 0;
         this.end_tz = 0;
@@ -117,11 +117,11 @@ public class CalendarEvent {
     }
 
     public int getPayRate() {
-        return pay_rate;
+        return payRate;
     }
 
     public int getNetPay() {
-        return net_pay;
+        return netPay;
     }
 
     public RepeatType getRepeated() {
@@ -177,6 +177,6 @@ public class CalendarEvent {
         }
 
         // Calculate pay (round to nearest integer)
-        return (int) Math.round(totalHours * pay_rate);
+        return (int) Math.round(totalHours * payRate);
     }
 }
