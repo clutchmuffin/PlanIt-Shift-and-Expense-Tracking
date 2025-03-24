@@ -180,7 +180,7 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                     }
 
-                    dailyEventListAdapter = new dailyEventListAdapter(dailyEvents);
+                    dailyEventListAdapter = new dailyEventListAdapter(dailyEvents.reversed());
                     dailyEventRecyclerView.setAdapter(dailyEventListAdapter);
                 }
             });

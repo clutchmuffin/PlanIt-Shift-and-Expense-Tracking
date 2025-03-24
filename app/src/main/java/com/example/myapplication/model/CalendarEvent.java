@@ -42,6 +42,7 @@ public class CalendarEvent {
     // for events repeated a certain number of times, how many reps?
     private int repetition_step, repeated_reps;
     private int notifID;
+    private int color;
 
     public CalendarEvent() {}
 
@@ -146,6 +147,14 @@ public class CalendarEvent {
 
     public int getRepetition_step() {
         return repetition_step;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public int calculatePay() {

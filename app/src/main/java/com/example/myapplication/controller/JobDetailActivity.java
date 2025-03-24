@@ -286,6 +286,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 repeatType,
                 ID
         );
+        newEvent.setColor(job.getColor());
 
         checkForConflictsAndSaveEvent(newEvent, dialog);
     }
