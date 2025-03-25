@@ -220,7 +220,7 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
 
         List<String> alarmOptions = new ArrayList<>();
-        alarmOptions.add("None");
+        alarmOptions.add("NONE");
         alarmOptions.add("1 hour before start");
         alarmOptions.add("2 hours before start");
         alarmOptions.add("3 hours before start");

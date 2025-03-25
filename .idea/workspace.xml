@@ -5,6 +5,11 @@
       <config />
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/rounded_alarm_spinner.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_budgetmain.xml">
         <config>
           <theme>@style/Theme.ShiftTracker</theme>
@@ -51,12 +56,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="notifications are now cancelled for all events if a job is deleted">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/alarm_spinner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/rounded_alarm_spinner.xml" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="added dropdown menu to select if the user wants to set an alarm before their shift">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/dialog_add_event.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_add_event.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -153,6 +155,11 @@
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\danie\StudioProjects\cmpt370team14\app\src\main\res\drawable" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="My_Application.app" />
@@ -388,7 +395,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742853951804</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="added dropdown menu to select if the user wants to set an alarm before their shift">
+      <option name="closed" value="true" />
+      <created>1742860964776</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1742860964776</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -423,7 +438,8 @@
     <MESSAGE value="about to merge daniel_branch" />
     <MESSAGE value="pulling from main" />
     <MESSAGE value="notifications are now cancelled for all events if a job is deleted" />
-    <option name="LAST_COMMIT_MESSAGE" value="notifications are now cancelled for all events if a job is deleted" />
+    <MESSAGE value="added dropdown menu to select if the user wants to set an alarm before their shift" />
+    <option name="LAST_COMMIT_MESSAGE" value="added dropdown menu to select if the user wants to set an alarm before their shift" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
