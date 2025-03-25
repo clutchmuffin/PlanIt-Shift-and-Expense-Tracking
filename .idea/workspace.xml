@@ -5,6 +5,16 @@
       <config />
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_add.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_alarm.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_budgetmain.xml">
         <config>
           <theme>@style/Theme.ShiftTracker</theme>
@@ -40,6 +50,11 @@
           <theme>@style/Theme.ShiftTracker</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_add_event.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_add_expense.xml">
         <config>
           <theme>@style/Theme.ShiftTracker</theme>
@@ -61,13 +76,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="starting work on logic in scheduling alarms">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="first iteration using phone's own clock app didnt work, moving on to my own alarm screen">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_alarm.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,9 +114,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="layoutResourceFile" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="layoutResourceFile" />
       </list>
     </option>
   </component>
@@ -150,7 +161,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Android App.app.executor": "Debug",
+    "Android App.app.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -405,7 +416,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742940219035</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="first iteration using phone's own clock app didnt work, moving on to my own alarm screen">
+      <option name="closed" value="true" />
+      <created>1742944688124</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1742944688124</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -440,7 +459,8 @@
     <MESSAGE value="fixed some issues with shared cal creation, but db access not getting any events" />
     <MESSAGE value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
     <MESSAGE value="starting work on logic in scheduling alarms" />
-    <option name="LAST_COMMIT_MESSAGE" value="starting work on logic in scheduling alarms" />
+    <MESSAGE value="first iteration using phone's own clock app didnt work, moving on to my own alarm screen" />
+    <option name="LAST_COMMIT_MESSAGE" value="first iteration using phone's own clock app didnt work, moving on to my own alarm screen" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
