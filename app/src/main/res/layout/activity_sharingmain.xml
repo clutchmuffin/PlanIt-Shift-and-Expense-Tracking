@@ -35,18 +35,26 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewShared"
+    <Button
+        android:id="@+id/createbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="@string/add_job"
-        android:src="@drawable/ic_add"
-        app:layout_anchor="@id/sharedRecyclerView"
-        app:layout_anchorGravity="bottom|end"
+        android:text="Create"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintLeft_toRightOf="@id/joinbutton"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/joinbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Join"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toLeftOf="@id/createbutton" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"

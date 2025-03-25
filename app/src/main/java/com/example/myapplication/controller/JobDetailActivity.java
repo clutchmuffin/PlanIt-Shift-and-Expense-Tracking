@@ -304,6 +304,7 @@ public class JobDetailActivity extends AppCompatActivity {
                 ID
         );
 
+
         checkForConflictsAndSaveEvent(newEvent, dialog);
     }
 
