@@ -7,11 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.SharedCal;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -20,7 +23,9 @@ public class SharingJoinActivity extends AppCompatActivity {
     private TextInputEditText input;
     private String currentUserId;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    protected void OnCreate(Bundle savedInstanceState) {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharing_join);
 
@@ -44,12 +49,14 @@ public class SharingJoinActivity extends AppCompatActivity {
                 if (input.getText() != null) {
                     String code = input.getText().toString();
 
-                    db.collection("Shared").whereEqualTo("sharedID", code)
+                    db.collection("Shared").whereEqualTo("sharedId", code)
                             .get().addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         SharedCal shared = document.toObject(SharedCal.class);
                                         shared.addMember(currentUserId);
+                                        DocumentReference ref = db.collection("Shared").document(code);
+                                        ref.update("members", shared.getMembers());
                                         Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                                         intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, shared);
                                         v.getContext().startActivity(intent);
@@ -60,9 +67,6 @@ public class SharingJoinActivity extends AppCompatActivity {
                             });
 
                 }
-
-
-
             }
         });
     }

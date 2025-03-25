@@ -66,18 +66,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="fixed some issues with shared cal creation, but db access not getting any events">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingJoinActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_sharing_join.xml" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedDialogFragment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingMainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingMainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/SharedCal.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/SharedCal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_sharingmain.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_sharingmain.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/dialog_new_share.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingJoinActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingJoinActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -398,7 +389,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742852178972</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?">
+      <option name="closed" value="true" />
+      <created>1742876670070</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1742876670070</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -431,7 +430,8 @@
     <MESSAGE value="pulled from main" />
     <MESSAGE value="made WeeklyNotificationReceiver only read user specific shifts" />
     <MESSAGE value="fixed some issues with shared cal creation, but db access not getting any events" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed some issues with shared cal creation, but db access not getting any events" />
+    <MESSAGE value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
