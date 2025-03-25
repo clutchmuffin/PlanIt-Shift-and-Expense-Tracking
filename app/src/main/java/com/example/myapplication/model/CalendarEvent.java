@@ -42,14 +42,13 @@ public class CalendarEvent {
     // for events repeated a certain number of times, how many reps?
     private int repetition_step, repeated_reps;
     private int notifID;
-    private int color;
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, String uid, int payRate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int ID) {
+    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int ID) {
         this.name = n;
         this.userId = uid;
-        this.payRate = payRate;
+        this.payRate = pay_rate;
         this.begin_date = begin;
         this.end_date = end;
         this.begin_time = begin_time;
@@ -149,14 +148,6 @@ public class CalendarEvent {
 
     public int getRepetition_step() {
         return repetition_step;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
     }
 
     public int calculatePay() {

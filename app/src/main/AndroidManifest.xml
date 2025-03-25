@@ -71,6 +71,10 @@
             android:name=".controller.SharedCalendarActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".controller.SharingJoinActivity"
+            android:exported="true">
+        </activity>
 
         <receiver android:name=".model.NotificationReceiver"/>
         <receiver android:name=".model.WeeklyNotificationReceiver"/>
