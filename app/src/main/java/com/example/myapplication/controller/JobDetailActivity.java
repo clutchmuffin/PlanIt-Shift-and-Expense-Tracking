@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.model.AlarmType;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
@@ -232,6 +234,17 @@ public class JobDetailActivity extends AppCompatActivity {
                 alarmOptions
         );
         alarmPicker.setAdapter(adapter);
+        alarmPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(getAlarmType(alarmPicker));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                System.out.println("nothing selected");
+            }
+        });
 
 
         btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
@@ -287,10 +300,12 @@ public class JobDetailActivity extends AppCompatActivity {
     private void createAndSaveEvent(View dialogView, AlertDialog dialog) {
         EditText etName = dialogView.findViewById(R.id.editEventName);
         RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
+        Spinner alarmPicker = dialogView.findViewById(R.id.alarmPicker);
 
         String name = etName.getText().toString().trim();
         RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
         int ID = getNewEventID();
+        AlarmType alarmType = getAlarmType(alarmPicker);
 
         CalendarEvent newEvent = new CalendarEvent(
                 name,
@@ -301,11 +316,26 @@ public class JobDetailActivity extends AppCompatActivity {
                 beginTime.format(TIME_FORMATTER),
                 endTime.format(TIME_FORMATTER),
                 repeatType,
-                ID
+                ID,
+                alarmType
         );
 
 
         checkForConflictsAndSaveEvent(newEvent, dialog);
+    }
+
+    private AlarmType getAlarmType(Spinner alarmPicker) {
+        String picked = alarmPicker.getSelectedItem().toString();
+        if(picked.equals("NONE"))
+            return AlarmType.NONE;
+        else if(picked.equals("1 hour before start"))
+            return AlarmType.ONE_HOUR;
+        else if(picked.equals("2 hours before start"))
+            return AlarmType.TWO_HOUR;
+        else if(picked.equals("3 hours before start"))
+            return AlarmType.THREE_HOUR;
+        else
+            return AlarmType.NONE;
     }
 
     private RepeatType getSelectedRepeatType(RadioGroup radioGroupRepeatType) {
@@ -373,6 +403,7 @@ public class JobDetailActivity extends AppCompatActivity {
                     NotificationSender notificationSender = new NotificationSender(this);
                     notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
                     notificationSender.updateWeeklyNotif();
+                    notificationSender.scheduleAlarm(newEvent);
                 }
             });
             }

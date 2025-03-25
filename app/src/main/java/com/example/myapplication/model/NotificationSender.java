@@ -119,26 +119,6 @@ public class NotificationSender {
         return nextSunday;
     }
 
-    private Calendar findLastSunday(){
-        Calendar currTime = Calendar.getInstance();
-        Calendar lastSunday = Calendar.getInstance();
-        lastSunday.set(Calendar.SECOND, 0);
-        lastSunday.set(Calendar.MINUTE,0);
-        lastSunday.set(Calendar.HOUR, 6);
-        lastSunday.set(Calendar.AM_PM, Calendar.AM);
-        lastSunday.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-
-        if(!currTime.after(lastSunday)){
-            int dayDiff = (7 + currTime.get(Calendar.DAY_OF_WEEK) - lastSunday.get(Calendar.DAY_OF_WEEK)) % 7;
-
-            if(dayDiff == 0){
-                dayDiff = -7;
-            }
-            lastSunday.add(Calendar.DAY_OF_MONTH, dayDiff);
-        }
-        return lastSunday;
-    }
-
     /**
      * Updates the weekly notification that gets sent every Sunday
      */
@@ -199,5 +179,11 @@ public class NotificationSender {
                 startDate,
                 interval,
                 pendIntent);
+    }
+
+    public void scheduleAlarm(CalendarEvent event){
+        if(event.getAlarmType() != AlarmType.NONE){
+
+        }
     }
 }
