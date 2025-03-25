@@ -1,5 +1,6 @@
 package com.example.myapplication.model;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class Food extends AppCompatActivity {
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "FoodActivity";
+    private ProgressDialog progressDialog;  // Declare the ProgressDialog
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,12 @@ public class Food extends AppCompatActivity {
         foodExpenses = new ArrayList<>();
         adapter = new ExpenseListAdapter((ArrayList<EXP>) foodExpenses, null);
         recyclerView.setAdapter(adapter);
+
+        // Initialize the ProgressDialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Please Wait");
+        progressDialog.setMessage("Loading Food Data...");
+        progressDialog.setCancelable(false);
 
 
         addIncome = findViewById(R.id.addIncome);
@@ -76,6 +84,9 @@ public class Food extends AppCompatActivity {
     }
 
     private void loadFoodExpenses() {
+
+        progressDialog.show();
+
         db.collection("Jobs")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -103,6 +114,7 @@ public class Food extends AppCompatActivity {
                                                 if (expense != null) {
                                                     foodExpenses.add(expense);
                                                     totalFoodExpenseAmount[0] += expense.getAmount();
+
                                                 }
                                             }
                                         }
@@ -110,6 +122,7 @@ public class Food extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();
                                     // totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
                                     updateBudgetTotal(totalFoodExpenseAmount[0]);
+                                    progressDialog.dismiss();
                                 });
                     }
                 });

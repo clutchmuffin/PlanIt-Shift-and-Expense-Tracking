@@ -1,5 +1,6 @@
 package com.example.myapplication.model;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,6 +33,8 @@ public class Shopping extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "ShoppingActivity";
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +50,11 @@ public class Shopping extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) shoppingExpenses, null);
         recyclerView.setAdapter(adapter);
 
+// Initialize the ProgressDialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Please Wait");
+        progressDialog.setMessage("Loading Shopping Data...");
+        progressDialog.setCancelable(false);
 
         addBudget = findViewById(R.id.addBudget);
 
@@ -65,6 +73,7 @@ public class Shopping extends AppCompatActivity {
         startActivity(intent);
     }
     private void loadShoppingExpenses() {
+        progressDialog.show();
         db.collection("Jobs")
                 .get()
                 .addOnCompleteListener(task -> {
@@ -99,6 +108,7 @@ public class Shopping extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();
                                     // totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
                                     updateBudgetTotal(totalShoppingExpenseAmount[0]);
+                                    progressDialog.dismiss();
                                 });
                     }
                 });
