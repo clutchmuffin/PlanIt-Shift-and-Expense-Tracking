@@ -103,6 +103,30 @@
             android:minHeight="48dp"
             android:text="Select End Time" />
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:text="Alarm: "
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/alarmPicker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:background="@drawable/rounded_alarm_spinner" />
+        </LinearLayout>
+
+
         <!-- Repeat Section -->
         <TextView
             android:layout_width="match_parent"
@@ -148,5 +172,6 @@
                 android:layout_height="35dp"
                 android:text="Yearly"/>
         </RadioGroup>
+
     </LinearLayout>
 </ScrollView>

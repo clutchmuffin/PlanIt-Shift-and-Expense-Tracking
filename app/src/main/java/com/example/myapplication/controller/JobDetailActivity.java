@@ -7,9 +7,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -216,6 +218,21 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
         TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
         TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
+
+        List<String> alarmOptions = new ArrayList<>();
+        alarmOptions.add("None");
+        alarmOptions.add("1 hour before start");
+        alarmOptions.add("2 hours before start");
+        alarmOptions.add("3 hours before start");
+
+        Spinner alarmPicker = dialogView.findViewById(R.id.alarmPicker);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                R.layout.alarm_spinner,
+                alarmOptions
+        );
+        alarmPicker.setAdapter(adapter);
+
 
         btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
         btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
