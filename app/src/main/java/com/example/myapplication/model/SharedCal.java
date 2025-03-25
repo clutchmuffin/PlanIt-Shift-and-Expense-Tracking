@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class SharedCal implements Serializable {
     private String sharedId;
     private String name;
-    private String members;
+    private ArrayList<String> members;
     private ArrayList<CalendarEvent> events;
 
     public SharedCal() {
@@ -14,7 +14,8 @@ public class SharedCal implements Serializable {
     }
     public SharedCal(String n, String id, String m, ArrayList<CalendarEvent> j) {
         this.name = n;
-        this.members = m;
+        this.members = new ArrayList<>();
+        this.members.add(m);
         this.events = j;
     }
 
@@ -32,8 +33,11 @@ public class SharedCal implements Serializable {
         sharedId = id;
     }
 
-    public String getMembers() {
+    public ArrayList<String> getMembers() {
         return members;
+    }
+    public void addMember(String id) {
+        this.members.add(id);
     }
 
 
