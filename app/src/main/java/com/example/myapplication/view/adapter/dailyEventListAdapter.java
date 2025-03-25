@@ -41,11 +41,6 @@ public class dailyEventListAdapter extends RecyclerView.Adapter<dailyEventListAd
         holder.tvRepeatType.setText(event.getRepeated().toString());
         holder.tvNetPay.setText("$" + event.calculatePay());
 
-        int color = event.getColor();
-        holder.card.setCardBackgroundColor(Color.argb(128,
-                Color.red(color),
-                Color.green(color),
-                Color.blue(color)));
     }
 
     @Override
