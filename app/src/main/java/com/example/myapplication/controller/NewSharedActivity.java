@@ -180,6 +180,7 @@ public class NewSharedActivity extends AppCompatActivity {
                 }).addOnSuccessListener(jobId -> {
                     sharedAdapter.notifyDataSetChanged();
                 });
+
                 startActivity(new Intent(NewSharedActivity.this, SharedCalendarActivity.class));
             }
 

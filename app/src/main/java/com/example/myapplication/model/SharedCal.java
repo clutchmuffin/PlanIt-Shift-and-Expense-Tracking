@@ -17,6 +17,7 @@ public class SharedCal implements Serializable {
         this.members = new ArrayList<>();
         this.members.add(m);
         this.events = j;
+        this.sharedId = id;
     }
 
     public String getName() {

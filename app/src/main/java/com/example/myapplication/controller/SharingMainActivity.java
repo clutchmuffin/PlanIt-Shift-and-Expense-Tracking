@@ -34,7 +34,8 @@ public class SharingMainActivity extends AppCompatActivity {
     private RecyclerView sharedRecyclerView;
     private SharedAdapter sharedListAdapter;
     private BottomNavigationView bottomNav;
-    private FloatingActionButton fabNewShared;
+    private Button createbutton;
+    private Button joinbutton;
     private List<SharedCal> sharedCals;
     private String currentUserId;
 
@@ -45,7 +46,8 @@ public class SharingMainActivity extends AppCompatActivity {
         topAppBar = findViewById(R.id.topAppBar);
         sharedRecyclerView = findViewById(R.id.sharedRecyclerView);
         bottomNav = findViewById(R.id.bottomNav);
-        fabNewShared = findViewById(R.id.fabNewShared);
+        createbutton = findViewById(R.id.createbutton);
+        joinbutton = findViewById(R.id.joinbutton);
 
         sharedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         setupBottomNavigation();
@@ -82,71 +84,23 @@ public class SharingMainActivity extends AppCompatActivity {
         sharedListAdapter = new SharedAdapter(sharedCals);
         sharedRecyclerView.setAdapter(sharedListAdapter);
 
-        fabNewShared.setOnClickListener(new View.OnClickListener() {
+        createbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddCalDialog();
+                startActivity(new Intent(SharingMainActivity.this, NewSharedActivity.class));
+            }
+        });
+
+        joinbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SharingMainActivity.this, SharingJoinActivity.class));
             }
         });
 
     }
-    private void showAddCalDialog() {
-        AlertDialog dialog = createAddCalDialog();
-        dialog.show();
-    }
-
-    private AlertDialog createAddCalDialog() {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_new_share, null);
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Add New Shared Calendar")
-                .setView(dialogView)
-                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
-                .create();
-
-        dialog.setOnShowListener(dialogInterface -> {
-            Button join = findViewById(R.id.joinbutton);
-            Button create = findViewById(R.id.createbutton);
-            TextInputEditText joinInput = findViewById(R.id.joininput);
-
-            join.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (joinInput.getText() != null) {
-                        String code = joinInput.getText().toString();
-
-                        db.collection("Shared").whereEqualTo("sharedID", code)
-                                .get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    SharedCal shared = document.toObject(SharedCal.class);
-                                    shared.addMember(currentUserId);
-                                    Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
-                                    intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, shared);
-                                    v.getContext().startActivity(intent);
-                                }
-                            } else {
-                                Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
-                            }
-                        });
-
-                    }
 
 
-
-                }
-            });
-
-            create.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(SharingMainActivity.this, NewSharedActivity.class));
-                }
-            });
-        });
-
-        return dialog;
-    }
     private void setupBottomNavigation() {
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
