@@ -24,6 +24,7 @@ public class NotificationSender {
     public static String weekly_channel_name = "weeklyNotif";
     public static String weekly_channel_desc = "a notification channel that gets used to send weekly notifications";
 
+
     public NotificationSender(Context context) {
         this.context = context;
         manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -162,10 +163,12 @@ public class NotificationSender {
      * @param startDate --> the date to schedule the notification
      */
     private void scheduleOnce(PendingIntent pendIntent, long startDate){
-        manager.setAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                startDate,
-                pendIntent);
+        if(startDate >= System.currentTimeMillis()) {
+            manager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    startDate,
+                    pendIntent);
+        }
     }
 
     /**
@@ -181,9 +184,51 @@ public class NotificationSender {
                 pendIntent);
     }
 
+    private int[] getTime(String time){
+        int hour = 0, minute = 0;
+        try{
+            String[] times = time.split(":");
+            hour = Integer.parseInt(times[0]);
+            minute = Integer.parseInt(times[1]);
+        } catch (NumberFormatException e){
+            hour = 6;
+        }
+        return new int[]{hour, minute};
+    }
+
     public void scheduleAlarm(CalendarEvent event){
         if(event.getAlarmType() != AlarmType.NONE){
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        int[] times = getTime(event.getBegin_time());
+        int hour = times[0];
+        int minute = times[1];
+        intent.putExtra("name", event.getName());
+        intent.putExtra("minute", 12);
 
+            switch (event.getAlarmType()) {
+                case ONE_HOUR:
+                    hour -= 1;
+                case TWO_HOUR:
+                    hour -= 2;
+                case THREE_HOUR:
+                    hour -= 3;
+            }
+            intent.putExtra("hour", 17);
+            long startDate = getMilliDateTime(event.getBegin_date(),hour-2,minute);
+
+            PendingIntent pendintent = PendingIntent.getBroadcast(context,
+                    event.getAlarmID(),
+                    intent,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+
+
+            manager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    System.currentTimeMillis(),
+                    pendintent
+            );
         }
+        else
+            return;
     }
 }

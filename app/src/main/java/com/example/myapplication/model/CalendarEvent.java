@@ -42,11 +42,12 @@ public class CalendarEvent {
     // for events repeated a certain number of times, how many reps?
     private int repetition_step, repeated_reps;
     private int notifID;
+    private int alarmID;
     private AlarmType alarmType;
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int ID, AlarmType alarmType) {
+    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int notifID, int alarmID, AlarmType alarmType) {
         this.name = n;
         this.userId = uid;
         this.payRate = pay_rate;
@@ -65,7 +66,8 @@ public class CalendarEvent {
         this.repeated_reps = 0;
         this.repetition_step = 0;
 
-        this.notifID = ID;
+        this.notifID = notifID;
+        this.alarmID = alarmID;
         this.alarmType = alarmType;
     }
 
@@ -186,5 +188,9 @@ public class CalendarEvent {
 
     public AlarmType getAlarmType(){
         return alarmType;
+    }
+
+    public int getAlarmID(){
+        return alarmID;
     }
 }

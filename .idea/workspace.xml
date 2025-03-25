@@ -61,11 +61,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmType.java" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="starting work on logic in scheduling alarms">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
     </list>
@@ -150,7 +150,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Android App.app.executor": "Run",
+    "Android App.app.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -397,7 +397,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742876670070</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="starting work on logic in scheduling alarms">
+      <option name="closed" value="true" />
+      <created>1742940219035</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1742940219035</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -431,19 +439,41 @@
     <MESSAGE value="made WeeklyNotificationReceiver only read user specific shifts" />
     <MESSAGE value="fixed some issues with shared cal creation, but db access not getting any events" />
     <MESSAGE value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
+    <MESSAGE value="starting work on logic in scheduling alarms" />
+    <option name="LAST_COMMIT_MESSAGE" value="starting work on logic in scheduling alarms" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java</url>
+          <line>207</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/CalendarEvent.java</url>
+          <line>193</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.example.myapplication">
           <value>
-            <CheckInfo lastCheckTimestamp="1742850557451" />
+            <CheckInfo lastCheckTimestamp="1742942825108" />
           </value>
         </entry>
         <entry key="com.example.myapplication.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1742850557451" />
+            <CheckInfo lastCheckTimestamp="1742942825109" />
           </value>
         </entry>
       </map>

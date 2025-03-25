@@ -78,6 +78,7 @@
 
         <receiver android:name=".model.NotificationReceiver"/>
         <receiver android:name=".model.WeeklyNotificationReceiver"/>
+        <receiver android:name=".model.AlarmReceiver"/>
     </application>
 
 </manifest>
