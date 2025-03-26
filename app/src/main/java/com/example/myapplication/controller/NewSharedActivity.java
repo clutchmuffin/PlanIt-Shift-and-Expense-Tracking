@@ -21,6 +21,7 @@ import com.example.myapplication.view.adapter.SharedAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -43,8 +44,10 @@ public class NewSharedActivity extends AppCompatActivity {
     private ArrayList<CalendarEvent> events;
     private String[] eventNames;
     private ArrayList<Integer> eventList;
+    public static final String EXTRA_SHARED = "com.example.myapplication.SHARED";
     private String currentUserId;
     private SharedAdapter sharedAdapter;
+    private SharedCal sharedCal;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,15 @@ public class NewSharedActivity extends AppCompatActivity {
             return;
         }
 
+        sharedCal = getIntent().getSerializableExtra(EXTRA_SHARED, SharedCal.class);
+        if (sharedCal != null) {
+            editExisting(sharedCal);
+        }
+        else {
+            createNew();
+        }
+    }
+    public void listEvents() {
         events = new ArrayList<>();
 
         db.collection("Jobs")
@@ -146,10 +158,13 @@ public class NewSharedActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+    }
+    public void createNew() {
+        listEvents();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Use a transaction to generate a counter-based job ID
+                // Use a transaction to generate a counter-based shared ID
                 final SharedCal[] newShared = new SharedCal[1];
                 db.runTransaction(transaction -> {
                     DocumentSnapshot counterDoc = transaction.get(db.collection("counters").document("shared"));
@@ -159,7 +174,7 @@ public class NewSharedActivity extends AppCompatActivity {
                         sharedCounterId = counterDoc.getLong("nextId").intValue();
                         transaction.update(db.collection("counters").document("shared"), "nextId", sharedCounterId + 1);
                     } else {
-                        // First job, initialize counter
+                        // First shared calendar, initialize counter
                         sharedCounterId = 1;
                         transaction.set(db.collection("counters").document("shared"),
                                 java.util.Collections.singletonMap("nextId", 2));
@@ -173,18 +188,49 @@ public class NewSharedActivity extends AppCompatActivity {
 
                     String sharedId = "shared_" + sharedCounterId;
                     newShared[0] = new SharedCal(Objects.requireNonNull(nameInput.getText()).toString().trim(), sharedId, currentUserId, toAdd);
-                    // Save the job with its ID
+                    // Save the calendar with its ID
                     transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
 
                     return sharedId;
                 }).addOnSuccessListener(jobId -> {
                     sharedAdapter.notifyDataSetChanged();
                 });
-
-                startActivity(new Intent(NewSharedActivity.this, SharedCalendarActivity.class));
+                Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
+                intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
+                v.getContext().startActivity(intent);
             }
 
         });
+    }
+    public void editExisting(SharedCal cal) {
+        listEvents();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("Shared").whereEqualTo("sharedId", cal.getSharedId())
+                        .get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    ArrayList<CalendarEvent> calEvents = cal.getEvents();
+                                    for (int j = 0; j < eventList.size(); j++) {
+                                        calEvents.add(events.get(eventList.get(j)));
+                                    }
+                                    DocumentReference ref = db.collection("Shared").document(cal.getSharedId());
+                                    ref.update("events", calEvents);
+                                    if (nameInput.getText() != null) {
+                                        ref.update("name", nameInput.getText().toString().trim());
+                                    }
+                                }
+                            } else {
+                                Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
+                            }
+                        });
 
+                Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
+                intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
+                v.getContext().startActivity(intent);
+            }
+
+        });
     }
 }
