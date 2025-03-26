@@ -220,6 +220,7 @@ public class NewSharedActivity extends AppCompatActivity {
                                     if (nameInput.getText() != null) {
                                         ref.update("name", nameInput.getText().toString().trim());
                                     }
+                                    sharedAdapter.notifyDataSetChanged();
                                 }
                             } else {
                                 Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
