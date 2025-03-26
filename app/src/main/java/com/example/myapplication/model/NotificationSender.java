@@ -25,6 +25,8 @@ public class NotificationSender {
     public static String daily_channel_desc = "a notification channel that gets used to send notifications for every shift";
     public static String weekly_channel_name = "weeklyNotif";
     public static String weekly_channel_desc = "a notification channel that gets used to send weekly notifications";
+    public static String alarm_channel = "alarmChannel";
+    public static String alarm_channel_desc = "a notification channel that gets used to send alarm notifications";
 
 
     public NotificationSender(Context context) {
@@ -152,14 +154,15 @@ public class NotificationSender {
      * @param event --> the event that was deleted
      */
     public void cancelNotification(CalendarEvent event){
+        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, NotificationReceiver.class);
         PendingIntent pendintent = PendingIntent.getActivity(context,
                 event.getNotifID(),
                 intent,
-                PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if(pendintent != null) {
             pendintent.cancel();
-            manager.cancel(pendintent);
+            notifManager.cancel(event.getNotifID());
         }
     }
 
@@ -212,6 +215,7 @@ public class NotificationSender {
             intent.putExtra("shiftName", event.getName());
             intent.putExtra("startTime", event.getBegin_time());
             intent.putExtra("endTime", event.getEnd_time());
+            intent.putExtra("alarmID",event.getAlarmID());
 
                 switch (event.getAlarmType()) {
                     case ONE_HOUR:
@@ -228,12 +232,16 @@ public class NotificationSender {
                         intent,
                         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-
-                manager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + 10000,
-                        pendintent
-                );
+                long time = System.currentTimeMillis() + 10000;
+//                manager.setRepeating(
+//                        AlarmManager.RTC_WAKEUP,
+//                        time,
+//                        100,
+//                        pendintent
+//                );
+            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    time,
+                    pendintent);
         }
         else
             return;

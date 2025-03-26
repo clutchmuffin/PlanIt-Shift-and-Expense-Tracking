@@ -1,8 +1,12 @@
 package com.example.myapplication.controller;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -11,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.AlarmReceiver;
 import com.example.myapplication.model.AlarmSounder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -18,6 +23,7 @@ public class AlarmActivity extends AppCompatActivity {
     private FloatingActionButton dismissButton;
     private TextView tvJobName, tvShiftName, tvShiftStart, tvShiftEnd;
     private String jobName, shiftName, shiftStart, shiftEnd;
+    private int ID;
     private AlarmManager manager;
 
     @Override
@@ -27,7 +33,7 @@ public class AlarmActivity extends AppCompatActivity {
         manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         initialize();
         populateDetails();
-        alertUser();
+//        alertUser();
     }
 
     private void initialize(){
@@ -45,6 +51,7 @@ public class AlarmActivity extends AppCompatActivity {
         shiftName = shiftInfo.getStringExtra("shiftName");
         shiftStart = shiftInfo.getStringExtra("startTime");
         shiftEnd = shiftInfo.getStringExtra("endTime");
+        ID = shiftInfo.getIntExtra("alarmID", ID);
     }
 
     private void populateDetails(){
@@ -61,14 +68,24 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     private void dismissAlarm(){
-        Intent intent = new Intent(this, AlarmSounder.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        manager.cancel(pendingIntent);
+//        Intent intent = new Intent(this, AlarmSounder.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+//        manager.cancel(pendingIntent);
 
-        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-        homeIntent.addCategory(Intent.CATEGORY_HOME);
-        homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(homeIntent);
+        NotificationManager notifManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Intent notification = new Intent(this, AlarmReceiver.class);
+        PendingIntent notificationPending = PendingIntent.getBroadcast(this,
+                ID,
+                notification,
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        if(notificationPending != null) {
+            notificationPending.cancel();
+            notifManager.cancel(ID);
+        }
+
+
+        Intent mainIntent = new Intent(this,MainActivity.class);
+        startActivity(mainIntent);
     }
 
 }

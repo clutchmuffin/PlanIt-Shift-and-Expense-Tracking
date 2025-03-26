@@ -264,6 +264,12 @@ public class MainActivity extends AppCompatActivity {
                     importance);
             dailyChannel.setDescription(NotificationSender.weekly_channel_desc);
             manager.createNotificationChannel(weeklyChannel);
+
+            NotificationChannel alarmChannel = new NotificationChannel(NotificationSender.alarm_channel,
+                    "alarmChannel",
+                    importance);
+            alarmChannel.setDescription(NotificationSender.alarm_channel_desc);
+            manager.createNotificationChannel(alarmChannel);
         }
 
         if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.TIRAMISU) {

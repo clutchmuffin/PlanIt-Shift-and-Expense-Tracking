@@ -76,9 +76,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="android doesn't allow activities to start in the background so I might need to scrap this idea">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/AlarmActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/AlarmActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -672,7 +675,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742957695731</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="android doesn't allow activities to start in the background so I might need to scrap this idea">
+      <option name="closed" value="true" />
+      <created>1742958634085</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1742958634085</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -711,7 +722,8 @@
     <MESSAGE value="started work on own alarm screen" />
     <MESSAGE value="got alarm screen to show up when a shift is added" />
     <MESSAGE value="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode" />
-    <option name="LAST_COMMIT_MESSAGE" value="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode" />
+    <MESSAGE value="android doesn't allow activities to start in the background so I might need to scrap this idea" />
+    <option name="LAST_COMMIT_MESSAGE" value="android doesn't allow activities to start in the background so I might need to scrap this idea" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -720,11 +732,6 @@
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java</url>
           <line>400</line>
           <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java</url>
-          <line>225</line>
-          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
