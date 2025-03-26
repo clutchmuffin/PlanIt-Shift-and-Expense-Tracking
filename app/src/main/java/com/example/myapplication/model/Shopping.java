@@ -122,7 +122,7 @@ private String currentUserId;
                                     }
                                     adapter.notifyDataSetChanged();
                                     updateBudgetTotal(totalShoppingExpenseAmount[0]);
-                                    progressDialog.dismiss();
+
                                 });
                     }
                 });
@@ -164,9 +164,11 @@ private String currentUserId;
                                 Log.e(TAG, "Budget or totalExpenses for shopping is null");
                             }
                         }
-                    }
+                    } progressDialog.dismiss(); // Dismiss after data is fetched
                 })
+
                 .addOnFailureListener(e -> Log.e(TAG, "Error fetching shopping budget data", e));
+        progressDialog.dismiss(); // Dismiss after data is fetched
     }
 
 

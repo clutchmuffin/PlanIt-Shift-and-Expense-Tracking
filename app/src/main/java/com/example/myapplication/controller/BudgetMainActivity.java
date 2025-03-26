@@ -1,7 +1,10 @@
 package com.example.myapplication.controller;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,6 +14,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +30,12 @@ import com.example.myapplication.model.Food;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Shopping;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.SetOptions;
 
 
 public class BudgetMainActivity extends AppCompatActivity {
@@ -44,7 +50,9 @@ public class BudgetMainActivity extends AppCompatActivity {
     PieChart pieChart;
 
     long totalBudget = 0, totalExpenses = 0;
+    private String currentUserId;
 
+    private ProgressDialog progressDialog;
 
 
 
@@ -55,8 +63,19 @@ public class BudgetMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_budgetmain);
 
 
+        // Retrieve user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            Log.e("BudgetMainActivity", "Firestore access failed: userId is null");
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         pieChart = findViewById(R.id.pieMainChart);
-        getBudgetData();
+
 
 
         // Button Click Listeners
@@ -71,6 +90,8 @@ public class BudgetMainActivity extends AppCompatActivity {
         traveling.setOnClickListener(v -> startActivity(new Intent(BudgetMainActivity.this, Traveling.class)));
         updateBudget = findViewById(R.id.updateBudget);
         financialSummary = findViewById(R.id.financialSummary);
+
+        progressDialog = new ProgressDialog(this);
 
         updateBudget.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +147,7 @@ public class BudgetMainActivity extends AppCompatActivity {
 
             }
         });
-
+        getBudgetData(currentUserId,pieChart);
 
     }
 
@@ -138,74 +159,108 @@ public class BudgetMainActivity extends AppCompatActivity {
     }
 
     //setting up the pie chart
-    private void getBudgetData() {
-        db.collection("Budgy").get().addOnSuccessListener(queryDocumentSnapshots -> {
-            totalBudget = 0;
-            totalExpenses = 0;
+    public void getBudgetData(String userId, PieChart pieChart) {
 
-            List<PieEntry> pieEntries = new ArrayList<>();
-            List<Integer> colors = new ArrayList<>();
+        progressDialog.setMessage("Updating budget...");
+        progressDialog.setCancelable(false);
+        progressDialog.show(); // Show the loading dialog
 
-            // Category color mapping
-            Map<String, Integer> categoryColors = new HashMap<>();
-            categoryColors.put("Shopping", getResources().getColor(R.color.purple_700));
-            categoryColors.put("Food", getResources().getColor(R.color.hot_pink));
-            categoryColors.put("Traveling", getResources().getColor(R.color.orange));
-            categoryColors.put("Entertainment", getResources().getColor(R.color.purple_200));
 
-            for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                if (doc.contains("budget") && doc.contains("totalExpenses")) {
-                    long budget = doc.getLong("budget");
-                    long expenses = doc.getLong("totalExpenses");
-                    totalBudget += budget;
-                    totalExpenses += expenses;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userBudgetRef = db.collection("budget").document(userId);
 
-                    String category = doc.getId(); // Get category name from Firestore doc ID
+        userBudgetRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Map<String, Object> budgetData = documentSnapshot.getData();
+                if (budgetData != null) {
+                    int totalBudget = 0;
+                    int totalExpenses = 0;
+                    List<PieEntry> pieEntries = new ArrayList<>();
+                    List<Integer> colors = new ArrayList<>();
 
-                    if (expenses > 0 && categoryColors.containsKey(category)) {
-                        pieEntries.add(new PieEntry(expenses, category)); // Add category label
-                        colors.add(categoryColors.get(category)); // Assign color
+                    for (Map.Entry<String, Object> entry : budgetData.entrySet()) {
+                        if (entry.getValue() instanceof Map) {
+                            Map<String, Object> categoryMap = (Map<String, Object>) entry.getValue();
+
+                            // Get budgetAmount
+                            int budgetAmount = categoryMap.containsKey("budgetAmount") ?
+                                    ((Number) categoryMap.get("budgetAmount")).intValue() : 0;
+                            totalBudget += budgetAmount;
+
+                            // Ensure totalExpenses exists, else set it to 0
+                            if (!categoryMap.containsKey("totalExpenses")) {
+                                categoryMap.put("totalExpenses", 0);
+                            }
+
+                            // Get totalExpenses
+                            int expenses = categoryMap.containsKey("totalExpenses") ?
+                                    ((Number) categoryMap.get("totalExpenses")).intValue() : 0;
+                            totalExpenses += expenses;
+
+                            // Add category as an individual slice
+                            if (expenses > 0) { // Only add categories that have expenses
+                                pieEntries.add(new PieEntry(expenses, entry.getKey())); // Category name
+                                colors.add(getCategoryColor(entry.getKey())); // Assign a unique color
+                            }
+                        }
                     }
+
+                    // Calculate remaining budget
+                    int remainingBudget = totalBudget - totalExpenses;
+                    if (remainingBudget > 0) {
+                        pieEntries.add(new PieEntry(remainingBudget, "Remaining Budget"));
+                        colors.add(Color.GRAY); // Use gray for the remaining balance
+                    }
+
+                    // Update Pie Chart
+                    updatePieChart(pieChart, pieEntries, colors);
                 }
-            }
-
-            // Add remaining budget as a separate category
-            if (totalBudget - totalExpenses > 0) {
-                pieEntries.add(new PieEntry(totalBudget - totalExpenses, "Remaining"));
-                colors.add(getResources().getColor(R.color.teal_700));
-            }
-
-            setUpGraph(pieEntries, colors);
+            } else {
+                Toast.makeText(pieChart.getContext(), "No budget data found", Toast.LENGTH_SHORT).show();
+            } progressDialog.dismiss(); // Hide the loading di
+        }).addOnFailureListener(e -> {
+            progressDialog.dismiss(); // Hide the loading dialog on failure
+            Toast.makeText(pieChart.getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 
-    private void setUpGraph(List<PieEntry> pieEntries, List<Integer> colors) {
-        PieDataSet pieDataSet = new PieDataSet(pieEntries, "Budget Overview");
-        pieDataSet.setColors(colors);
-        pieDataSet.setValueTextColor(Color.BLACK);
-        pieDataSet.setValueTextSize(14f);
-
-        // Improve visibility of small slices
-        pieDataSet.setSliceSpace(3f); // Add spacing between slices
-        pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE); // Move small labels outside
-        pieDataSet.setValueLinePart1Length(0.8f);
-        pieDataSet.setValueLinePart2Length(0.8f);
-        pieDataSet.setValueLineColor(Color.BLACK); // Ensure label lines are visible
-
-        PieData pieData = new PieData(pieDataSet);
-        pieData.setValueFormatter(new PercentFormatter(pieChart)); // Ensure small values are formatted properly
-
-        pieChart.setData(pieData);
-        pieChart.setDrawEntryLabels(false); // Disable direct labels if they overlap
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setEntryLabelTextSize(14f);
-        pieChart.getDescription().setEnabled(false); // Hide extra description text
-        pieChart.setUsePercentValues(true);
-        pieChart.setExtraOffsets(15, 15, 10, 15); // Adjust offsets for better spacing
-        pieChart.getLegend().setEnabled(true); // Enable legend for better readability
-        pieChart.invalidate(); // Refresh chart
+    private int getCategoryColor(String category) {
+        switch (category.toLowerCase()) {
+            case "shopping":
+                return Color.BLUE;
+            case "food":
+                return Color.RED;
+            case "traveling":
+                return Color.MAGENTA;
+            case "entertainment":
+                return Color.GREEN;
+            default:
+                return Color.LTGRAY; // Default color for unknown categories
+        }
     }
 
+    private void updatePieChart(PieChart pieChart, List<PieEntry> entries, List<Integer> colors) {
+
+
+        PieDataSet dataSet = new PieDataSet(entries, "Budget Overview");
+        dataSet.setColors(colors);  // Use dynamic category colors
+        dataSet.setValueTextSize(14f);
+
+        PieData pieData = new PieData(dataSet);
+        pieChart.setData(pieData);
+
+        // Customize chart appearance
+        pieChart.setUsePercentValues(false);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setCenterText("Budget Breakdown");
+        pieChart.setEntryLabelTextSize(12f);
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setHoleRadius(40f);
+        pieChart.setTransparentCircleRadius(45f);
+
+        // Refresh the chart
+        pieChart.invalidate();
+    }
 
 
 }

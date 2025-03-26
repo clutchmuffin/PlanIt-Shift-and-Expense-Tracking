@@ -127,7 +127,7 @@ public class Food extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();
 
                                     updateBudgetTotal(totalFoodExpenseAmount[0]);
-                                    progressDialog.dismiss();
+
                                 });
                     } else {
                         Log.e(TAG, "Error fetching jobs for current user", task.getException());
@@ -171,9 +171,10 @@ public class Food extends AppCompatActivity {
                                 Log.e(TAG, "Budget or totalExpenses for food is null");
                             }
                         }
-                    }
+                    }  progressDialog.dismiss(); // Dismiss after data is fetched
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error fetching food budget data", e));
+        progressDialog.dismiss(); // Dismiss after data is fetched
     }
 
     private void updatePieChart(double spent, double remaining) {

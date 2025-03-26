@@ -129,7 +129,7 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
 
                                     adapter.notifyDataSetChanged();
                                     updateBudgetTotal(totalTravelingExpenseAmount[0]);
-                                    progressDialog.dismiss();
+
                                 });
                     }
                 });
@@ -171,9 +171,10 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
                                 Log.e(TAG, "Budget or totalExpenses for traveling is null");
                             }
                         }
-                    }
+                    } progressDialog.dismiss(); // Dismiss after data is fetched
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error fetching traveling budget data", e));
+        progressDialog.dismiss(); // Dismiss after data is fetched
     }
 
     private void updatePieChart(double spent, double remaining) {

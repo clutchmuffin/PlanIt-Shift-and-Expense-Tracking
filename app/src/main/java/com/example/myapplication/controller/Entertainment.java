@@ -131,9 +131,10 @@ public class Entertainment extends AppCompatActivity {
                                     adapter.notifyDataSetChanged();
                                     //totalEntertainmentExpense.setText("BDT: " + totalEntertainmentExpenseAmount[0]);
                                     updateBudgetTotal(totalEntertainmentExpenseAmount[0]);
-                                    progressDialog.dismiss();
+
                                 });
                     } else {
+                        progressDialog.dismiss(); // Dismiss after data is fetched
                         Log.e(TAG, "Error fetching jobs", task.getException());
                     }
                 });
@@ -175,9 +176,10 @@ public class Entertainment extends AppCompatActivity {
                                 Log.e(TAG, "Budget or totalExpenses for entertainment is null");
                             }
                         }
-                    }
+                    } progressDialog.dismiss(); // Dismiss after data is fetched
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error fetching entertainment budget data", e));
+        progressDialog.dismiss(); // Dismiss after data is fetched
     }
 
 

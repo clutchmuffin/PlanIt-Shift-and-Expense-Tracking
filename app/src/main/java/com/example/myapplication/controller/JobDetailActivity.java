@@ -572,6 +572,7 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
 
+
     /**
      * Checks if two events overlap in time
      */
