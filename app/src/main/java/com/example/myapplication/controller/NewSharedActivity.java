@@ -69,7 +69,7 @@ public class NewSharedActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        setupBottomNavigation();
         sharedCal = getIntent().getSerializableExtra(EXTRA_SHARED, SharedCal.class);
         if (sharedCal != null) {
             editExisting(sharedCal);
@@ -78,8 +78,8 @@ public class NewSharedActivity extends AppCompatActivity {
             createNew();
         }
     }
-    public void listEvents() {
-        events = new ArrayList<>();
+    private void loadEventsFromFirestore() {
+        events.clear();
 
         db.collection("Jobs")
                 .whereEqualTo("userId", currentUserId)
@@ -101,6 +101,10 @@ public class NewSharedActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Error loading jobs", e));
+    }
+    public void listEvents() {
+        events = new ArrayList<>();
+        loadEventsFromFirestore();
         eventList = new ArrayList<>();
         eventNames = new String[events.size()];
         int i = 0;
@@ -232,6 +236,26 @@ public class NewSharedActivity extends AppCompatActivity {
                 v.getContext().startActivity(intent);
             }
 
+        });
+    }
+    private void setupBottomNavigation() {
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_jobs) {
+                Intent intent = new Intent(NewSharedActivity.this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            } else if (itemId == R.id.nav_calendar) {
+                startActivity(new Intent(this, CalendarActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_budget) {
+                startActivity(new Intent(NewSharedActivity.this, BudgetMainActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_sharing) {
+                // already here
+                return true;
+            }
+            return false;
         });
     }
 }
