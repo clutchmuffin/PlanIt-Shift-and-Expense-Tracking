@@ -76,9 +76,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="alarm screen now has correct information, moving on to test if correct times are calculated">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="added documentation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,7 +161,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Android App.AlarmActivity.executor": "Run",
-    "Android App.app.executor": "Debug",
+    "Android App.app.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -704,7 +703,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743019073861</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="fixed bug that would schedule alarms on the wrong date if alarm were to be scheduled on the day before the shift starts=">
+      <option name="closed" value="true" />
+      <created>1743020057265</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1743020057265</updated>
+    </task>
+    <task id="LOCAL-00030" summary="added documentation">
+      <option name="closed" value="true" />
+      <created>1743020650262</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1743020650262</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -719,8 +734,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing" />
-    <MESSAGE value="getting notifications to be sent using alarm manager and they are no longer overwriting eachother" />
     <MESSAGE value="notifications are now successfully scheduled on the day shifts are." />
     <MESSAGE value="added extra shift information" />
     <MESSAGE value="adding weekly notification receiver that sends a notification with info on next week's shifts" />
@@ -744,7 +757,9 @@
     <MESSAGE value="got ringtone to play with notification,now just need ringtone to stop" />
     <MESSAGE value="refactored some code to remove unnecessary code and modularize things, also added way to cancel alarms and changed what information the alarm screen has" />
     <MESSAGE value="alarm screen now has correct information, moving on to test if correct times are calculated" />
-    <option name="LAST_COMMIT_MESSAGE" value="alarm screen now has correct information, moving on to test if correct times are calculated" />
+    <MESSAGE value="fixed bug that would schedule alarms on the wrong date if alarm were to be scheduled on the day before the shift starts=" />
+    <MESSAGE value="added documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="added documentation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -753,11 +768,6 @@
           <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java</url>
           <line>400</line>
           <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java</url>
-          <line>254</line>
-          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
