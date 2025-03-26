@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.model.AlarmReceiver;
 import com.example.myapplication.model.AlarmSounder;
+import com.example.myapplication.model.RingtoneHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AlarmActivity extends AppCompatActivity {
@@ -82,7 +83,7 @@ public class AlarmActivity extends AppCompatActivity {
             notificationPending.cancel();
             notifManager.cancel(ID);
         }
-
+        RingtoneHelper.stopRingtone();
 
         Intent mainIntent = new Intent(this,MainActivity.class);
         startActivity(mainIntent);

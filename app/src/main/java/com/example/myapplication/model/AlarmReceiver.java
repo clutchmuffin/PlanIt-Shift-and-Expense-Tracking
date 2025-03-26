@@ -48,17 +48,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmIntent.putExtra("endTime", shiftEnd);
         alarmIntent.putExtra("alarmID", ID);
 
-        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        if (alarmUri == null) {
-            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        }
-
-        // setting default ringtone
-        Ringtone ringtone = RingtoneManager.getRingtone(context, alarmUri);
-
-        // play ringtone
-        ringtone.play();
-        alarmIntent.putExtra("ringtone", (Serializable) ringtone);
+        RingtoneHelper.playRingtone(context);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
                 0,
@@ -78,11 +68,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                ringtone.stop();
                 notificationManager.notify(ID, builder.build());
             } else {
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                ringtone.stop();
                 notificationManager.notify(ID, builder.build());
             }
         }
