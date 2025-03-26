@@ -94,6 +94,10 @@ public class NotificationSender {
     private long getMilliDateTime(String date, int hour, int minute){
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, dateFormatter);
+        if(hour < 0){
+            localDate.minusDays(1);
+            hour = hour+24;
+        }
         ZonedDateTime dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
 
         return dateTime.toInstant().toEpochMilli();
@@ -148,16 +152,15 @@ public class NotificationSender {
      * @param event --> the event that was deleted
      */
     public void cancelNotification(CalendarEvent event){
-        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        System.out.println("cancelling " + event.getName());
         Intent intent = new Intent(context, NotificationReceiver.class);
         PendingIntent pendintent = PendingIntent.getActivity(context,
                 event.getNotifID(),
                 intent,
                 PendingIntent.FLAG_IMMUTABLE);
-        pendintent.cancel();
-        manager.cancel(pendintent);
-        notifManager.cancel(event.getNotifID());
+        if(pendintent != null) {
+            pendintent.cancel();
+            manager.cancel(pendintent);
+        }
     }
 
     /**
@@ -194,7 +197,7 @@ public class NotificationSender {
             hour = Integer.parseInt(times[0]);
             minute = Integer.parseInt(times[1]);
         } catch (NumberFormatException e){
-            hour = 6;
+            hour = 0;
         }
         return new int[]{hour, minute};
     }
@@ -218,7 +221,6 @@ public class NotificationSender {
                     case THREE_HOUR:
                         hour -= 3;
                 }
-                intent.putExtra("hour", 17);
 //                long startDate = getMilliDateTime(event.getBegin_date(),hour-2,minute);
 
                 PendingIntent pendintent = PendingIntent.getBroadcast(context,
@@ -229,7 +231,7 @@ public class NotificationSender {
 
                 manager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + 5000,
+                        System.currentTimeMillis() + 10000,
                         pendintent
                 );
         }
