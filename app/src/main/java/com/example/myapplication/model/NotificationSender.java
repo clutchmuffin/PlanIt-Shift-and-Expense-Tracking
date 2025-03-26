@@ -85,12 +85,13 @@ public class NotificationSender {
     private long getMilliDateTime(String date, int hour, int minute){
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, dateFormatter);
+        ZonedDateTime dateTime;
         if(hour < 0){
-            localDate.minusDays(1);
             hour = hour+24;
+            dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
+            return dateTime.toInstant().toEpochMilli() - dailyInterval;
         }
-        ZonedDateTime dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
-
+        dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
         return dateTime.toInstant().toEpochMilli();
     }
 
