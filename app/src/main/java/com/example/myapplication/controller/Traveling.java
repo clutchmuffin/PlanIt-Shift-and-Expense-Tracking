@@ -2,6 +2,7 @@ package com.example.myapplication.controller;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Traveling extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -30,6 +32,7 @@ public class Traveling extends AppCompatActivity {
     private List<EXP> travelingExpenses;
     private TextView addIncome, mainBalanceText;
     private PieChart pieChart;
+    private String currentUserId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "TravelingActivity";
     private ProgressDialog progressDialog;
@@ -49,17 +52,26 @@ public class Traveling extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) travelingExpenses, null);
         recyclerView.setAdapter(adapter);
 
+SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
 
 // Initialize the ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
-        progressDialog.setMessage("Loading Shopping Data...");
+        progressDialog.setMessage("Loading Traveling Data...");
         progressDialog.setCancelable(false);
 
 
         addIncome = findViewById(R.id.addIncome);
 
-        addIncome.setOnClickListener(v -> openSetBudget("Traveling"));
+        addIncome.setOnClickListener(v -> openSetBudget("traveling"));
 
 
 
@@ -73,9 +85,10 @@ public class Traveling extends AppCompatActivity {
         startActivity(intent);
     }
 
+
     private void loadTravelingExpenses() {
         progressDialog.show();
-        db.collection("Jobs")
+        db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -95,6 +108,7 @@ public class Traveling extends AppCompatActivity {
 
                         Tasks.whenAllComplete(expenseFetchTasks)
                                 .addOnCompleteListener(allTask -> {
+                                    boolean hasExpenses = false;
                                     for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
                                         if (expenseTask.isSuccessful()) {
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
@@ -102,12 +116,18 @@ public class Traveling extends AppCompatActivity {
                                                 if (expense != null) {
                                                     travelingExpenses.add(expense);
                                                     totalTravelingExpenseAmount[0] += expense.getAmount();
+                                                    hasExpenses = true;
                                                 }
                                             }
                                         }
                                     }
+
+                                    // If no expenses were found, ensure totalExpenses is set to 0
+                                    if (!hasExpenses) {
+                                        totalTravelingExpenseAmount[0] = 0.0;
+                                    }
+
                                     adapter.notifyDataSetChanged();
-                                    // totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
                                     updateBudgetTotal(totalTravelingExpenseAmount[0]);
                                     progressDialog.dismiss();
                                 });
@@ -115,30 +135,45 @@ public class Traveling extends AppCompatActivity {
                 });
     }
 
+
     private void updateBudgetTotal(double totalExp) {
-        db.collection("Budgy").document("Traveling")
-                .update("totalExpenses", totalExp)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Updated total expense."))
-                .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense.", e));
+        DocumentReference docRef = db.collection("budget").document(currentUserId);
+
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Map<String, Object> budgetData = documentSnapshot.getData();
+                if (budgetData != null && budgetData.containsKey("traveling")) {
+                    Map<String, Object> travelingCategory = (Map<String, Object>) budgetData.get("traveling");
+                    travelingCategory.put("totalExpenses", totalExp);
+
+                    docRef.update("traveling", travelingCategory)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Traveling expenses updated successfully"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update traveling expenses", e));
+                }
+            }
+        });
     }
 
     private void showBudgetAndPieChart() {
-        db.collection("Budgy").document("Traveling")
-                .addSnapshotListener((documentSnapshot, error) -> {
-                    if (error != null) {
-                        Log.e(TAG, "Error fetching budget data", error);
-                        return;
-                    }
+        db.collection("budget").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> budgetData = documentSnapshot.getData();
+                        if (budgetData != null && budgetData.containsKey("traveling")) {
+                            Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("traveling");
+                            Double budget = (Double) foodCategory.get("budgetAmount");
+                            Double totalExp = (Double) foodCategory.get("totalExpenses");
 
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                        double budget = documentSnapshot.getDouble("budget");
-                        double totalExp = documentSnapshot.getDouble("totalExpenses");
-                        double remaining = budget - totalExp;
-
-                        //mainBalanceText.setText("BDT: " + remaining);
-                        updatePieChart(totalExp, remaining);
+                            if (budget != null && totalExp != null) {
+                                double remaining = budget - totalExp;
+                                updatePieChart(totalExp, remaining);
+                            } else {
+                                Log.e(TAG, "Budget or totalExpenses for traveling is null");
+                            }
+                        }
                     }
-                });
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error fetching traveling budget data", e));
     }
 
     private void updatePieChart(double spent, double remaining) {
@@ -146,7 +181,7 @@ public class Traveling extends AppCompatActivity {
         entries.add(new PieEntry((float) spent, "Spent"));
         entries.add(new PieEntry((float) remaining, "Remaining"));
 
-        PieDataSet dataSet = new PieDataSet(entries, "   Traveling Budget Breakdown");
+        PieDataSet dataSet = new PieDataSet(entries, "Traveling Budget Breakdown");
 
         dataSet.setColors(Color.RED, Color.parseColor("#2E9797"));
         dataSet.setValueTextSize(17f);

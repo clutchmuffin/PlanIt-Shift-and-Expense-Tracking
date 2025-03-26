@@ -2,6 +2,7 @@ package com.example.myapplication.controller;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,11 +21,13 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Entertainment extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -35,6 +38,7 @@ public class Entertainment extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
     private ProgressDialog progressDialog;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,20 +56,31 @@ public class Entertainment extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
+
+        // Retrieve user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         // Initialize the ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
-        progressDialog.setMessage("Loading Shopping Data...");
+        progressDialog.setMessage("Loading Entertainment Data...");
         progressDialog.setCancelable(false);
 
 
         addIncome = findViewById(R.id.addIncome);
 
-        addIncome.setOnClickListener(v -> openSetBudget("Entertainment"));
+        addIncome.setOnClickListener(v -> openSetBudget("entertainment"));
 
         // Load data
         loadEntertainmentExpenses();
-        showMainBalance();
+        showBudgetAndPieChart();
 
 
     }
@@ -124,36 +139,47 @@ public class Entertainment extends AppCompatActivity {
                 });
     }
 
+
     private void updateBudgetTotal(double totalExp) {
-        db.collection("Budgy").document("Entertainment")
-                .update("totalExpenses", totalExp)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Successfully updated total expense in Budgy."))
-                .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense in Budgy.", e));
+        DocumentReference docRef = db.collection("budget").document(currentUserId);
+
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Map<String, Object> budgetData = documentSnapshot.getData();
+                if (budgetData != null && budgetData.containsKey("entertainment")) {
+                    Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("entertainment");
+                    foodCategory.put("totalExpenses", totalExp);
+
+                    docRef.update("entertainment", foodCategory)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Entertainment expenses updated successfully"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update entertainment expenses", e));
+                }
+            }
+        });
     }
 
-    private void showMainBalance() {
-        db.collection("Budgy").document("Entertainment")
-                .addSnapshotListener((documentSnapshot, error) -> {
-                    if (error != null) {
-                        Log.e(TAG, "Error fetching budget data", error);
-                        return;
-                    }
+    private void showBudgetAndPieChart() {
+        db.collection("budget").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> budgetData = documentSnapshot.getData();
+                        if (budgetData != null && budgetData.containsKey("entertainment")) {
+                            Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("entertainment");
+                            Double budget = (Double) foodCategory.get("budgetAmount");
+                            Double totalExp = (Double) foodCategory.get("totalExpenses");
 
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                        Double budget = documentSnapshot.getDouble("budget");
-                        Double totalExp = documentSnapshot.getDouble("totalExpenses");
-                        double remaining = 0;
-                        if (budget != null && totalExp != null) {
-                            remaining = budget - totalExp;
-                        } else {
-                            Log.e(TAG, "Budget or Total Expenses is null");
+                            if (budget != null && totalExp != null) {
+                                double remaining = budget - totalExp;
+                                updatePieChart(totalExp, remaining);
+                            } else {
+                                Log.e(TAG, "Budget or totalExpenses for entertainment is null");
+                            }
                         }
-
-                        //mainBalanceText.setText("BDT: " + remaining);
-                        updatePieChart(totalExp, remaining);
                     }
-                });
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error fetching entertainment budget data", e));
     }
+
 
     private void updatePieChart(double spent, double remaining) {
         List<PieEntry> entries = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.example.myapplication.model;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.controller.LoginActivity;
 import com.example.myapplication.controller.SetBudget;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.github.mikephil.charting.charts.PieChart;
@@ -23,6 +25,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Shopping extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -34,6 +37,7 @@ public class Shopping extends AppCompatActivity {
     private static final String TAG = "ShoppingActivity";
 
     private ProgressDialog progressDialog;
+private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,17 @@ public class Shopping extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) shoppingExpenses, null);
         recyclerView.setAdapter(adapter);
 
+        // Retrieve user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+
 // Initialize the ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
@@ -58,7 +73,7 @@ public class Shopping extends AppCompatActivity {
 
         addBudget = findViewById(R.id.addBudget);
 
-        addBudget.setOnClickListener(v -> openSetBudget("Shopping"));
+        addBudget.setOnClickListener(v -> openSetBudget("shopping"));
 
 
 
@@ -74,7 +89,7 @@ public class Shopping extends AppCompatActivity {
     }
     private void loadShoppingExpenses() {
         progressDialog.show();
-        db.collection("Jobs")
+        db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -106,7 +121,6 @@ public class Shopping extends AppCompatActivity {
                                         }
                                     }
                                     adapter.notifyDataSetChanged();
-                                    // totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
                                     updateBudgetTotal(totalShoppingExpenseAmount[0]);
                                     progressDialog.dismiss();
                                 });
@@ -114,31 +128,47 @@ public class Shopping extends AppCompatActivity {
                 });
     }
 
+
     private void updateBudgetTotal(double totalExp) {
-        db.collection("Budgy").document("Shopping")
-                .update("totalExpenses", totalExp)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Updated total expense."))
-                .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense.", e));
+        DocumentReference docRef = db.collection("budget").document(currentUserId);
+
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Map<String, Object> budgetData = documentSnapshot.getData();
+                if (budgetData != null && budgetData.containsKey("shopping")) {
+                    Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("shopping");
+                    foodCategory.put("totalExpenses", totalExp);
+
+                    docRef.update("shopping", foodCategory)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Shopping expenses updated successfully"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update shopping expenses", e));
+                }
+            }
+        });
     }
 
     private void showBudgetAndPieChart() {
-        db.collection("Budgy").document("Shopping")
-                .addSnapshotListener((documentSnapshot, error) -> {
-                    if (error != null) {
-                        Log.e(TAG, "Error fetching budget data", error);
-                        return;
-                    }
+        db.collection("budget").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> budgetData = documentSnapshot.getData();
+                        if (budgetData != null && budgetData.containsKey("shopping")) {
+                            Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("shopping");
+                            Double budget = (Double) foodCategory.get("budgetAmount");
+                            Double totalExp = (Double) foodCategory.get("totalExpenses");
 
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                        double budget = documentSnapshot.getDouble("budget");
-                        double totalExp = documentSnapshot.getDouble("totalExpenses");
-                        double remaining = budget - totalExp;
-
-                        //mainBalanceText.setText("BDT: " + remaining);
-                        updatePieChart(totalExp, remaining);
+                            if (budget != null && totalExp != null) {
+                                double remaining = budget - totalExp;
+                                updatePieChart(totalExp, remaining);
+                            } else {
+                                Log.e(TAG, "Budget or totalExpenses for shopping is null");
+                            }
+                        }
                     }
-                });
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error fetching shopping budget data", e));
     }
+
 
     private void updatePieChart(double spent, double remaining) {
         List<PieEntry> entries = new ArrayList<>();

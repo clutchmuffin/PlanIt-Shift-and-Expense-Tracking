@@ -2,6 +2,7 @@ package com.example.myapplication.model;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.controller.BudgetMainActivity;
+import com.example.myapplication.controller.LoginActivity;
 import com.example.myapplication.controller.SetBudget;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.github.mikephil.charting.charts.PieChart;
@@ -25,6 +27,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Food extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -34,6 +37,7 @@ public class Food extends AppCompatActivity {
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "FoodActivity";
+    private String currentUserId;
     private ProgressDialog progressDialog;  // Declare the ProgressDialog
 
     @Override
@@ -58,18 +62,19 @@ public class Food extends AppCompatActivity {
         progressDialog.setCancelable(false);
 
 
+        // Retrieve user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+
         addIncome = findViewById(R.id.addIncome);
-        addIncome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Food.this, SetBudget.class);
-                intent.putExtra("BUDGET_CATEGORY", "Food");
-                startActivity(intent);
-
-
-            }
-        });
-
+        addIncome.setOnClickListener(v -> openSetBudget("food"));
 
 
 
@@ -87,7 +92,7 @@ public class Food extends AppCompatActivity {
 
         progressDialog.show();
 
-        db.collection("Jobs")
+        db.collection("Jobs").whereEqualTo("userId", currentUserId) // Filter jobs by current user
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -120,43 +125,55 @@ public class Food extends AppCompatActivity {
                                         }
                                     }
                                     adapter.notifyDataSetChanged();
-                                    // totalFoodExpense.setText("BDT: " + totalFoodExpenseAmount[0]);
+
                                     updateBudgetTotal(totalFoodExpenseAmount[0]);
                                     progressDialog.dismiss();
                                 });
+                    } else {
+                        Log.e(TAG, "Error fetching jobs for current user", task.getException());
+                        progressDialog.dismiss();
                     }
                 });
     }
 
     private void updateBudgetTotal(double totalExp) {
-        db.collection("Budgy").document("Food")
-                .update("totalExpenses", totalExp)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "Updated total expense."))
-                .addOnFailureListener(e -> Log.e(TAG, "Error updating total expense.", e));
+        DocumentReference docRef = db.collection("budget").document(currentUserId);
+
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Map<String, Object> budgetData = documentSnapshot.getData();
+                if (budgetData != null && budgetData.containsKey("food")) {
+                    Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("food");
+                    foodCategory.put("totalExpenses", totalExp);
+
+                    docRef.update("food", foodCategory)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Food expenses updated successfully"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update food expenses", e));
+                }
+            }
+        });
     }
 
     private void showBudgetAndPieChart() {
-        db.collection("Budgy").document("Food")
-                .addSnapshotListener((documentSnapshot, error) -> {
-                    if (error != null) {
-                        Log.e(TAG, "Error fetching budget data", error);
-                        return;
-                    }
+        db.collection("budget").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> budgetData = documentSnapshot.getData();
+                        if (budgetData != null && budgetData.containsKey("food")) {
+                            Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("food");
+                            Double budget = (Double) foodCategory.get("budgetAmount");
+                            Double totalExp = (Double) foodCategory.get("totalExpenses");
 
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                        Double budget = documentSnapshot.getDouble("budget");
-                        Double totalExp = documentSnapshot.getDouble("totalExpenses");
-                        double remaining = 0;
-                        if (budget != null && totalExp != null) {
-                            remaining = budget - totalExp;
-                        } else {
-                            Log.e(TAG, "Budget or Total Expenses is null");
+                            if (budget != null && totalExp != null) {
+                                double remaining = budget - totalExp;
+                                updatePieChart(totalExp, remaining);
+                            } else {
+                                Log.e(TAG, "Budget or totalExpenses for food is null");
+                            }
                         }
-
-                        //mainBalanceText.setText("BDT: " + remaining);
-                        updatePieChart(totalExp, remaining);
                     }
-                });
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error fetching food budget data", e));
     }
 
     private void updatePieChart(double spent, double remaining) {
@@ -165,8 +182,7 @@ public class Food extends AppCompatActivity {
         entries.add(new PieEntry((float) remaining, "Remaining"));
 
         PieDataSet dataSet = new PieDataSet(entries, "Food Budget Breakdown");
-
-        dataSet.setColors(Color.RED,Color.parseColor("#2E9797"));
+        dataSet.setColors(Color.RED, Color.parseColor("#2E9797"));
         dataSet.setValueTextSize(18f);
         dataSet.setValueTextColor(Color.WHITE);
 
@@ -183,6 +199,7 @@ public class Food extends AppCompatActivity {
         legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
 
-        pieChart.invalidate(); // Refresh the chart
+        pieChart.invalidate();
     }
+
 }

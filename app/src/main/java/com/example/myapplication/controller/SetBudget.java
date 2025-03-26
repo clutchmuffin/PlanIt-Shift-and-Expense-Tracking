@@ -1,7 +1,7 @@
 package com.example.myapplication.controller;
 
-import android.app.Notification;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,8 +11,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,48 +24,50 @@ public class SetBudget extends AppCompatActivity {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final Map<String, EditText> budgetFields = new HashMap<>();
     private TextView addToBudget, resetBudget;
-
     private EditText foodBudget, travelingBudget, entertainmentBudget, shoppingBudget;
-
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_budget);
 
-        // Initialize fields before using them
         foodBudget = findViewById(R.id.foodBudget);
         travelingBudget = findViewById(R.id.travelingBudget);
         entertainmentBudget = findViewById(R.id.entertainmentBudget);
         shoppingBudget = findViewById(R.id.shoppingBudget);
 
-        budgetFields.put("Food", findViewById(R.id.foodBudget));
-        budgetFields.put("Traveling", findViewById(R.id.travelingBudget));
-        budgetFields.put("Entertainment", findViewById(R.id.entertainmentBudget));
-        budgetFields.put("Shopping", findViewById(R.id.shoppingBudget));
+        budgetFields.put("food", foodBudget);
+        budgetFields.put("traveling", travelingBudget);
+        budgetFields.put("entertainment", entertainmentBudget);
+        budgetFields.put("shopping", shoppingBudget);
 
-        // Get the selected category from intent
+        // Retrieve user ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        currentUserId = prefs.getString("userId", null);
+
+        if (currentUserId == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         String category = getIntent().getStringExtra("BUDGET_CATEGORY");
-
         if (category != null) {
             showOnlySelectedCategory(category);
         }
 
-
         addToBudget = findViewById(R.id.addToBudget);
         resetBudget = findViewById(R.id.resetBudget);
 
-        addToBudget.setOnClickListener(v -> modifyBudget(true));  // Add to current budget
-        resetBudget.setOnClickListener(v -> modifyBudget(false)); // Reset budget
-
-
+        addToBudget.setOnClickListener(v -> modifyBudget(true));
+        resetBudget.setOnClickListener(v -> modifyBudget(false));
     }
 
     private void modifyBudget(boolean isAddition) {
         for (Map.Entry<String, EditText> entry : budgetFields.entrySet()) {
             EditText field = entry.getValue();
 
-            // Skip hidden fields
             if (field.getVisibility() != View.VISIBLE) {
                 continue;
             }
@@ -85,45 +89,50 @@ public class SetBudget extends AppCompatActivity {
                 }
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Invalid input for " + category + ". Enter a valid number.", Toast.LENGTH_SHORT).show();
-                return;
             }
         }
     }
 
-    // Adds the new budget value to the existing budget
     private void addToExistingBudget(String category, double newAmount) {
-        db.collection("Budgy").document(category)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        double currentBudget = documentSnapshot.getDouble("budget");
-                        double updatedBudget = currentBudget + newAmount;
+        DocumentReference docRef = db.collection("budget").document(currentUserId);
 
-                        Map<String, Object> updatedData = new HashMap<>();
-                        updatedData.put("budget", updatedBudget);
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            double currentBudget = 0.0; // Default if missing
 
-                        db.collection("Budgy").document(category)
-                                .update(updatedData)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(SetBudget.this, category + " budget updated!", Toast.LENGTH_SHORT).show();
-                                    goToMainMenu();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(SetBudget.this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> Toast.makeText(SetBudget.this, "Failed to fetch current budget: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+            if (documentSnapshot.exists() && documentSnapshot.contains(category)) {
+                Map<String, Object> categoryData = (Map<String, Object>) documentSnapshot.get(category);
+                if (categoryData != null && categoryData.containsKey("budgetAmount")) {
+                    currentBudget = ((Number) categoryData.get("budgetAmount")).doubleValue();
+                }
+            }
+
+            double updatedBudget = currentBudget + newAmount;
+
+            Map<String, Object> newCategoryData = new HashMap<>();
+            newCategoryData.put("budgetAmount", updatedBudget);
+
+            docRef.set(new HashMap<String, Object>() {{
+                        put(category, newCategoryData);
+                    }}, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(SetBudget.this, category + " budget updated!", Toast.LENGTH_SHORT).show();
+                        goToMainMenu();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(SetBudget.this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
     }
 
-    // Resets the budget to the new value
     private void resetBudget(String category, double newValue) {
+        DocumentReference docRef = db.collection("budget").document(currentUserId);
+
         Map<String, Object> categoryData = new HashMap<>();
-        categoryData.put("budget", newValue);
+        categoryData.put("budgetAmount", newValue);
         categoryData.put("totalExpenses", 0.0);
 
-        db.collection("Budgy").document(category)
-                .set(categoryData)
+        docRef.set(new HashMap<String, Object>() {{
+                    put(category, categoryData);
+                }}, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(SetBudget.this, category + " budget reset!", Toast.LENGTH_SHORT).show();
                     goToMainMenu();
@@ -138,25 +147,22 @@ public class SetBudget extends AppCompatActivity {
     }
 
     private void showOnlySelectedCategory(String category) {
-        // Hide all fields first
-
         foodBudget.setVisibility(View.GONE);
         travelingBudget.setVisibility(View.GONE);
         entertainmentBudget.setVisibility(View.GONE);
         shoppingBudget.setVisibility(View.GONE);
 
-        // Show only the selected category
         switch (category) {
-            case "Food":
+            case "food":
                 foodBudget.setVisibility(View.VISIBLE);
                 break;
-            case "Traveling":
+            case "travel":
                 travelingBudget.setVisibility(View.VISIBLE);
                 break;
-            case "Entertainment":
+            case "entertainment":
                 entertainmentBudget.setVisibility(View.VISIBLE);
                 break;
-            case "Shopping":
+            case "shopping":
                 shoppingBudget.setVisibility(View.VISIBLE);
                 break;
         }
