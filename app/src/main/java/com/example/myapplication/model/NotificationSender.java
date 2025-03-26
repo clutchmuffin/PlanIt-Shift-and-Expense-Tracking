@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import com.example.myapplication.controller.AlarmActivity;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -149,10 +151,11 @@ public class NotificationSender {
         NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         System.out.println("cancelling " + event.getName());
         Intent intent = new Intent(context, NotificationReceiver.class);
-        PendingIntent pendintent = PendingIntent.getBroadcast(context,
+        PendingIntent pendintent = PendingIntent.getActivity(context,
                 event.getNotifID(),
                 intent,
-                PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent.FLAG_IMMUTABLE);
+        pendintent.cancel();
         manager.cancel(pendintent);
         notifManager.cancel(event.getNotifID());
     }
@@ -198,35 +201,37 @@ public class NotificationSender {
 
     public void scheduleAlarm(CalendarEvent event){
         if(event.getAlarmType() != AlarmType.NONE){
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        int[] times = getTime(event.getBegin_time());
-        int hour = times[0];
-        int minute = times[1];
-        intent.putExtra("name", event.getName());
-        intent.putExtra("minute", 12);
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            int[] times = getTime(event.getBegin_time());
+            int hour = times[0];
+            int minute = times[1];
+            intent.putExtra("jobName", "testJob");
+            intent.putExtra("shiftName", event.getName());
+            intent.putExtra("startTime", event.getBegin_time());
+            intent.putExtra("endTime", event.getEnd_time());
 
-            switch (event.getAlarmType()) {
-                case ONE_HOUR:
-                    hour -= 1;
-                case TWO_HOUR:
-                    hour -= 2;
-                case THREE_HOUR:
-                    hour -= 3;
-            }
-            intent.putExtra("hour", 17);
-            long startDate = getMilliDateTime(event.getBegin_date(),hour-2,minute);
+                switch (event.getAlarmType()) {
+                    case ONE_HOUR:
+                        hour -= 1;
+                    case TWO_HOUR:
+                        hour -= 2;
+                    case THREE_HOUR:
+                        hour -= 3;
+                }
+                intent.putExtra("hour", 17);
+//                long startDate = getMilliDateTime(event.getBegin_date(),hour-2,minute);
 
-            PendingIntent pendintent = PendingIntent.getBroadcast(context,
-                    event.getAlarmID(),
-                    intent,
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+                PendingIntent pendintent = PendingIntent.getBroadcast(context,
+                        event.getAlarmID(),
+                        intent,
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
 
-            manager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis(),
-                    pendintent
-            );
+                manager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis() + 5000,
+                        pendintent
+                );
         }
         else
             return;

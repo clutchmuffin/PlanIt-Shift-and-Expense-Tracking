@@ -76,6 +76,11 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".controller.AlarmActivity"
+            android:exported="true">
+        </activity>
+
         <receiver android:name=".model.NotificationReceiver"/>
         <receiver android:name=".model.WeeklyNotificationReceiver"/>
         <receiver android:name=".model.AlarmReceiver"/>
