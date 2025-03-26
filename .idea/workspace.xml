@@ -76,12 +76,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="got ringtone to play with notification,now just need ringtone to stop">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/AlarmActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/AlarmActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/JobDetailActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="refactored some code to remove unnecessary code and modularize things, also added way to cancel alarms and changed what information the alarm screen has">
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -692,7 +687,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742963160765</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="refactored some code to remove unnecessary code and modularize things, also added way to cancel alarms and changed what information the alarm screen has">
+      <option name="closed" value="true" />
+      <created>1743017791817</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1743017791817</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -707,7 +710,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="got some notifications to show, but having a problem with scheduling new shifts" />
     <MESSAGE value="figured out issues with scheduling new shifts, and notifications now have distinct IDs" />
     <MESSAGE value="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing" />
     <MESSAGE value="getting notifications to be sent using alarm manager and they are no longer overwriting eachother" />
@@ -732,7 +734,8 @@
     <MESSAGE value="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode" />
     <MESSAGE value="android doesn't allow activities to start in the background so I might need to scrap this idea" />
     <MESSAGE value="got ringtone to play with notification,now just need ringtone to stop" />
-    <option name="LAST_COMMIT_MESSAGE" value="got ringtone to play with notification,now just need ringtone to stop" />
+    <MESSAGE value="refactored some code to remove unnecessary code and modularize things, also added way to cancel alarms and changed what information the alarm screen has" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactored some code to remove unnecessary code and modularize things, also added way to cancel alarms and changed what information the alarm screen has" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

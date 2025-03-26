@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import com.example.myapplication.controller.AlarmActivity;
 
@@ -33,7 +34,7 @@ public class NotificationSender {
     private long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
     private long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
 
-
+    private static final String TAG = "NotificationSender";
 
 
     public NotificationSender(Context context) {
@@ -150,9 +151,12 @@ public class NotificationSender {
                 notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if(notificationPendingIntent != null) {
+            Log.d(TAG, "Canceled notification for: " + event.getName());
             notificationPendingIntent.cancel();
             notifManager.cancel(event.getNotifID());
         }
+        else
+            Log.e(TAG, "Error canceling notification for " + event.getName());
 
         // Cancel alarm associated with this event
         Intent alarmIntent = new Intent(context,AlarmReceiver.class);
@@ -161,9 +165,12 @@ public class NotificationSender {
                 alarmIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if(alarmPendingIntent != null){
+            Log.d(TAG, "Canceled alarm for: " + event.getName());
             alarmPendingIntent.cancel();
             notifManager.cancel(event.getAlarmID());
         }
+        else
+            Log.e(TAG, "Error canceling alarm for " + event.getName());
     }
 
     /**
@@ -220,15 +227,21 @@ public class NotificationSender {
             intent.putExtra("alarmID",event.getAlarmID());
 
             switch (event.getAlarmType()) {
-                case ONE_HOUR:
+                case ONE_HOUR: {
                     hour -= 1;
                     inHours = "one hour!";
-                case TWO_HOUR:
+                    break;
+                }
+                case TWO_HOUR: {
                     hour -= 2;
                     inHours = "two hours!";
-                case THREE_HOUR:
+                    break;
+                }
+                case THREE_HOUR: {
                     hour -= 3;
                     inHours = "three hours!";
+                    break;
+                }
             }
             intent.putExtra("inHours",inHours);
 
@@ -237,8 +250,7 @@ public class NotificationSender {
                     intent,
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-//            long startDate = getMilliDateTime(event.getBegin_date(),hour,minute);
-            long startDate = System.currentTimeMillis()+10000;
+            long startDate = getMilliDateTime(event.getBegin_date(),hour,minute);
             scheduleEvent(event, startDate, pendingIntent);
 
         }
