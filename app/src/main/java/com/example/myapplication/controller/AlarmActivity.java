@@ -23,18 +23,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class AlarmActivity extends AppCompatActivity {
     private FloatingActionButton dismissButton;
     private TextView tvJobName, tvShiftName, tvShiftStart, tvShiftEnd;
-    private String jobName, shiftName, shiftStart, shiftEnd;
+    private String jobName, shiftName, shiftStart, shiftEnd, endDate;
     private int ID;
-    private AlarmManager manager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
-        manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         initialize();
         populateDetails();
-//        alertUser();
     }
 
     private void initialize(){
@@ -52,27 +49,18 @@ public class AlarmActivity extends AppCompatActivity {
         shiftName = shiftInfo.getStringExtra("shiftName");
         shiftStart = shiftInfo.getStringExtra("startTime");
         shiftEnd = shiftInfo.getStringExtra("endTime");
+        endDate = shiftInfo.getStringExtra("endDate");
         ID = shiftInfo.getIntExtra("alarmID", ID);
     }
 
     private void populateDetails(){
         tvJobName.setText(jobName);
         tvShiftName.setText(shiftName);
-        tvShiftStart.setText(shiftStart);
-        tvShiftEnd.setText(shiftEnd);
-    }
-
-    private void alertUser(){
-        Intent intent = new Intent(this, AlarmSounder.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        manager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(), 10000, pendingIntent);
+        tvShiftStart.setText("Starts today at: " + shiftStart);
+        tvShiftEnd.setText("Ends " + endDate + " at: " + shiftEnd);
     }
 
     private void dismissAlarm(){
-//        Intent intent = new Intent(this, AlarmSounder.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-//        manager.cancel(pendingIntent);
-
         NotificationManager notifManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Intent notification = new Intent(this, AlarmReceiver.class);
         PendingIntent notificationPending = PendingIntent.getBroadcast(this,
@@ -85,6 +73,7 @@ public class AlarmActivity extends AppCompatActivity {
         }
         RingtoneHelper.stopRingtone();
 
+        // When the user clicks dismiss, launch the Main Activity
         Intent mainIntent = new Intent(this,MainActivity.class);
         startActivity(mainIntent);
     }

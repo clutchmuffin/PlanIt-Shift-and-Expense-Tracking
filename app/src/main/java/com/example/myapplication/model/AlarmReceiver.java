@@ -2,18 +2,12 @@ package com.example.myapplication.model;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.AlarmClock;
-import android.provider.Settings;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -23,21 +17,17 @@ import androidx.core.content.ContextCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.controller.AlarmActivity;
 
-import java.io.Serializable;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (!alarmManager.canScheduleExactAlarms()) {
-            Intent askIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            context.startActivity(askIntent);
-        }
-
+        // Pass on information that the alarm screen will need
         String jobName = intent.getStringExtra("jobName");
         String shiftName = intent.getStringExtra("shiftName");
         String shiftStart = intent.getStringExtra("startTime");
         String shiftEnd = intent.getStringExtra("endTime");
+        String endDate = intent.getStringExtra("endDate");
+        String inHours = intent.getStringExtra("inHours");
         int ID = intent.getIntExtra("alarmID", 0);
 
         Intent alarmIntent = new Intent(context, AlarmActivity.class);
@@ -46,6 +36,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmIntent.putExtra("shiftName", shiftName);
         alarmIntent.putExtra("startTime", shiftStart);
         alarmIntent.putExtra("endTime", shiftEnd);
+        alarmIntent.putExtra("endDate", endDate);
         alarmIntent.putExtra("alarmID", ID);
 
         RingtoneHelper.playRingtone(context);
@@ -58,7 +49,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationSender.alarm_channel)
                 .setSmallIcon(R.drawable.baseline_add_alert_24)
                 .setContentIntent(pendingIntent)
-                .setContentTitle("Shift at: " + shiftStart)
+                .setContentTitle("Shift in: " + inHours)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{1000, 1000, 1000})
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);

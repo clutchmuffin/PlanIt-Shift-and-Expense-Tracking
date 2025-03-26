@@ -397,7 +397,7 @@ public class JobDetailActivity extends AppCompatActivity {
                     NotificationSender notificationSender = new NotificationSender(this);
                     notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
                     notificationSender.updateWeeklyNotif();
-                    notificationSender.scheduleAlarm(newEvent);
+                    notificationSender.scheduleAlarm(newEvent, job.getEmployer());
                 }
             });
             }

@@ -28,6 +28,13 @@ public class NotificationSender {
     public static String alarm_channel = "alarmChannel";
     public static String alarm_channel_desc = "a notification channel that gets used to send alarm notifications";
 
+    private long dailyInterval = 1000 * 60 * 60 * 24;
+    private long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
+    private long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
+    private long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
+
+
+
 
     public NotificationSender(Context context) {
         this.context = context;
@@ -63,26 +70,7 @@ public class NotificationSender {
                 intent,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-        // Schedules a notification to go off at 6am the day of the added shift if the shift isn't repeating
-        if (event.getRepeated() == RepeatType.NEVER) {
-            scheduleOnce(pendintent, milliStartDate);
-        }
-        else if (event.getRepeated() == RepeatType.DAILY) {
-            long dailyInterval = 1000 * 60 * 60 * 24;
-            scheduleRepeating(pendintent, milliStartDate, dailyInterval);
-        }
-        else if(event.getRepeated() == RepeatType.WEEKLY){
-            long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
-            scheduleRepeating(pendintent, milliStartDate, weeklyInterval);
-        }
-        else if(event.getRepeated() == RepeatType.MONTHLY){
-            long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
-            scheduleRepeating(pendintent, milliStartDate, monthlyInterval);
-        }
-        else if(event.getRepeated() == RepeatType.ANNUALLY){
-            long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
-            scheduleRepeating(pendintent, milliStartDate, yearlyInterval);
-        }
+        scheduleEvent(event,milliStartDate,pendintent);
 
     }
 
@@ -154,15 +142,27 @@ public class NotificationSender {
      * @param event --> the event that was deleted
      */
     public void cancelNotification(CalendarEvent event){
+        // Cancel notification associated with this event
         NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent = new Intent(context, NotificationReceiver.class);
-        PendingIntent pendintent = PendingIntent.getActivity(context,
+        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context,
                 event.getNotifID(),
-                intent,
+                notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        if(pendintent != null) {
-            pendintent.cancel();
+        if(notificationPendingIntent != null) {
+            notificationPendingIntent.cancel();
             notifManager.cancel(event.getNotifID());
+        }
+
+        // Cancel alarm associated with this event
+        Intent alarmIntent = new Intent(context,AlarmReceiver.class);
+        PendingIntent alarmPendingIntent = PendingIntent.getActivity(context,
+                event.getAlarmID(),
+                alarmIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        if(alarmPendingIntent != null){
+            alarmPendingIntent.cancel();
+            notifManager.cancel(event.getAlarmID());
         }
     }
 
@@ -205,45 +205,63 @@ public class NotificationSender {
         return new int[]{hour, minute};
     }
 
-    public void scheduleAlarm(CalendarEvent event){
+    public void scheduleAlarm(CalendarEvent event, String job){
         if(event.getAlarmType() != AlarmType.NONE){
             Intent intent = new Intent(context, AlarmReceiver.class);
             int[] times = getTime(event.getBegin_time());
             int hour = times[0];
             int minute = times[1];
-            intent.putExtra("jobName", "testJob");
+            String inHours = "";
+            intent.putExtra("jobName", job);
             intent.putExtra("shiftName", event.getName());
             intent.putExtra("startTime", event.getBegin_time());
             intent.putExtra("endTime", event.getEnd_time());
+            intent.putExtra("endDate", event.getEnd_date());
             intent.putExtra("alarmID",event.getAlarmID());
 
-                switch (event.getAlarmType()) {
-                    case ONE_HOUR:
-                        hour -= 1;
-                    case TWO_HOUR:
-                        hour -= 2;
-                    case THREE_HOUR:
-                        hour -= 3;
-                }
-//                long startDate = getMilliDateTime(event.getBegin_date(),hour-2,minute);
+            switch (event.getAlarmType()) {
+                case ONE_HOUR:
+                    hour -= 1;
+                    inHours = "one hour!";
+                case TWO_HOUR:
+                    hour -= 2;
+                    inHours = "two hours!";
+                case THREE_HOUR:
+                    hour -= 3;
+                    inHours = "three hours!";
+            }
+            intent.putExtra("inHours",inHours);
 
-                PendingIntent pendintent = PendingIntent.getBroadcast(context,
-                        event.getAlarmID(),
-                        intent,
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    event.getAlarmID(),
+                    intent,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-                long time = System.currentTimeMillis() + 10000;
-//                manager.setRepeating(
-//                        AlarmManager.RTC_WAKEUP,
-//                        time,
-//                        100,
-//                        pendintent
-//                );
-            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    time,
-                    pendintent);
+//            long startDate = getMilliDateTime(event.getBegin_date(),hour,minute);
+            long startDate = System.currentTimeMillis()+10000;
+            scheduleEvent(event, startDate, pendingIntent);
+
         }
         else
             return;
+    }
+
+    private void scheduleEvent(CalendarEvent event, long startDate, PendingIntent pendingIntent){
+        // Schedules a notification to go off at 6am the day of the added shift if the shift isn't repeating
+        if (event.getRepeated() == RepeatType.NEVER) {
+            scheduleOnce(pendingIntent, startDate);
+        }
+        else if (event.getRepeated() == RepeatType.DAILY) {
+            scheduleRepeating(pendingIntent, startDate, dailyInterval);
+        }
+        else if(event.getRepeated() == RepeatType.WEEKLY){
+            scheduleRepeating(pendingIntent, startDate, weeklyInterval);
+        }
+        else if(event.getRepeated() == RepeatType.MONTHLY){
+            scheduleRepeating(pendingIntent, startDate, monthlyInterval);
+        }
+        else if(event.getRepeated() == RepeatType.ANNUALLY){
+            scheduleRepeating(pendingIntent, startDate, yearlyInterval);
+        }
     }
 }
