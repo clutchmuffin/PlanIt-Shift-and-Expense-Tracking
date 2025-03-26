@@ -76,13 +76,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="got alarm screen to show up when a shift is added">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmSounder.java" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/AlarmActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/AlarmActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/AlarmReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/model/NotificationSender.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -668,7 +664,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742954797530</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode">
+      <option name="closed" value="true" />
+      <created>1742957695731</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1742957695731</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -706,7 +710,8 @@
     <MESSAGE value="first iteration using phone's own clock app didnt work, moving on to my own alarm screen" />
     <MESSAGE value="started work on own alarm screen" />
     <MESSAGE value="got alarm screen to show up when a shift is added" />
-    <option name="LAST_COMMIT_MESSAGE" value="got alarm screen to show up when a shift is added" />
+    <MESSAGE value="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode" />
+    <option name="LAST_COMMIT_MESSAGE" value="getting correct screens to show up but running into troubles with getting an activity to start when in idle mode" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
