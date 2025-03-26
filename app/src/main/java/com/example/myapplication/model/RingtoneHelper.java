@@ -7,6 +7,11 @@ import android.net.Uri;
 
 public class RingtoneHelper {
     private static Ringtone ringtone;
+
+    /**
+     * Plays the user's ringtone to help wake them up for an alarm
+     * @param context --> the context that allows the ringtone to be played
+     */
     public static void playRingtone(Context context) {
         Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         if (alarmUri == null) {
@@ -18,6 +23,9 @@ public class RingtoneHelper {
         }
     }
 
+    /**
+     * Stops the user's ringtone
+      */
     public static void stopRingtone() {
         if (ringtone != null && ringtone.isPlaying()) {
             ringtone.stop();

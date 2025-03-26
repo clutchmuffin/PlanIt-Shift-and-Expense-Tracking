@@ -201,6 +201,11 @@ public class NotificationSender {
                 pendIntent);
     }
 
+    /**
+     * Gets the integer hour and minute from a String time
+     * @param time --> the String time to be converted
+     * @return --> an array which has the hour in place 0 and the minute in place 1
+     */
     private int[] getTime(String time){
         int hour = 0, minute = 0;
         try{
@@ -213,12 +218,19 @@ public class NotificationSender {
         return new int[]{hour, minute};
     }
 
+    /**
+     * Schedules an alarm for a shift if that shift has an alarm with it
+     * @param event --> the shift that an alarm will be scheduled for
+     * @param job --> the job that the shift belongs to
+     */
     public void scheduleAlarm(CalendarEvent event, String job){
         if(event.getAlarmType() != AlarmType.NONE){
             Intent intent = new Intent(context, AlarmReceiver.class);
             int[] times = getTime(event.getBegin_time());
             int hour = times[0];
             int minute = times[1];
+
+            // Extra information that will be needed when the alarm is sent
             String inHours = "";
             intent.putExtra("jobName", job);
             intent.putExtra("shiftName", event.getName());
@@ -227,6 +239,7 @@ public class NotificationSender {
             intent.putExtra("endDate", event.getEnd_date());
             intent.putExtra("alarmID",event.getAlarmID());
 
+            // How early before the shift to schedule the alarm
             switch (event.getAlarmType()) {
                 case ONE_HOUR: {
                     hour -= 1;
@@ -253,14 +266,18 @@ public class NotificationSender {
 
             long startDate = getMilliDateTime(event.getBegin_date(),hour,minute);
             scheduleEvent(event, startDate, pendingIntent);
-
         }
         else
             return;
     }
 
+    /**
+     * Schedules either and alarm or notification for 'event' at time 'startDate' using 'pendingIntent'
+     * @param event --> the shift that is being scheduled for
+     * @param startDate --> when to schedule the alarm/notification
+     * @param pendingIntent --> what action is scheduled
+     */
     private void scheduleEvent(CalendarEvent event, long startDate, PendingIntent pendingIntent){
-        // Schedules a notification to go off at 6am the day of the added shift if the shift isn't repeating
         if (event.getRepeated() == RepeatType.NEVER) {
             scheduleOnce(pendingIntent, startDate);
         }

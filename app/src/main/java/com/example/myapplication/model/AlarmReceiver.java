@@ -39,6 +39,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmIntent.putExtra("endDate", endDate);
         alarmIntent.putExtra("alarmID", ID);
 
+        // Play phone's ringtone to wake up the user
         RingtoneHelper.playRingtone(context);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
@@ -46,6 +47,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 alarmIntent,
                 PendingIntent.FLAG_IMMUTABLE);
 
+        // The notification that will be used to wake the user and allow them to tap on it which sends them to the alarm screen
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationSender.alarm_channel)
                 .setSmallIcon(R.drawable.baseline_add_alert_24)
                 .setContentIntent(pendingIntent)

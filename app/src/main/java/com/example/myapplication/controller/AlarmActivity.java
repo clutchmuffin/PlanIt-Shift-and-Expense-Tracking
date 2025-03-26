@@ -34,6 +34,9 @@ public class AlarmActivity extends AppCompatActivity {
         populateDetails();
     }
 
+    /**
+     * Initialize all parts of the content view that will be changed
+     */
     private void initialize(){
         dismissButton = findViewById(R.id.dismissButton);
         dismissButton.setOnClickListener(l -> dismissAlarm());
@@ -53,6 +56,9 @@ public class AlarmActivity extends AppCompatActivity {
         ID = shiftInfo.getIntExtra("alarmID", ID);
     }
 
+    /**
+     * Adds details to the alarm screen so the user knows what they are doing for that shift
+     */
     private void populateDetails(){
         tvJobName.setText(jobName);
         tvShiftName.setText(shiftName);
@@ -60,7 +66,11 @@ public class AlarmActivity extends AppCompatActivity {
         tvShiftEnd.setText("Ends " + endDate + " at: " + shiftEnd);
     }
 
+    /**
+     * Dismisses the alarm and sends the user to MainActivity
+     */
     private void dismissAlarm(){
+        // Cancel alarm notification
         NotificationManager notifManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Intent notification = new Intent(this, AlarmReceiver.class);
         PendingIntent notificationPending = PendingIntent.getBroadcast(this,
@@ -71,6 +81,7 @@ public class AlarmActivity extends AppCompatActivity {
             notificationPending.cancel();
             notifManager.cancel(ID);
         }
+        // Stop the user's ringtone
         RingtoneHelper.stopRingtone();
 
         // When the user clicks dismiss, launch the Main Activity
