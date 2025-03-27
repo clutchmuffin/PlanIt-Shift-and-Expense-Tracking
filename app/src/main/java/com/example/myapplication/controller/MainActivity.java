@@ -28,7 +28,7 @@ import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView jobRecyclerView;
     private JobListAdapter jobListAdapter;
     private BottomNavigationView bottomNav;
-    private FloatingActionButton fabAddJob;
+    private ExtendedFloatingActionButton fabAddJob;
     private List<Job> jobs;
     private String currentUserId;
 
