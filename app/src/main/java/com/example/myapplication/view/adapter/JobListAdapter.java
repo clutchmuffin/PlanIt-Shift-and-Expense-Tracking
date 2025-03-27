@@ -19,6 +19,7 @@ import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.controller.JobDetailActivity;
 import com.example.myapplication.model.NotificationSender;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -53,7 +54,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         holder.jobEmployer.setText(job.getEmployer());
 
         int color = job.getColor();
-        holder.jobCard.setBackgroundColor(Color.argb(128,
+        holder.jobCard.setCardBackgroundColor(Color.argb(128,
                 Color.red(color),
                 Color.green(color),
                 Color.blue(color)));
@@ -108,7 +109,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
 
     public static class JobViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitle, jobEmployer;
-        ImageButton jobDelete;
+        MaterialButton jobDelete;
         MaterialCardView jobCard;
         View colorAccent;
 
