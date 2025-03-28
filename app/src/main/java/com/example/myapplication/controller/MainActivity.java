@@ -27,6 +27,7 @@ import com.example.myapplication.model.Job;
 import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.view.adapter.JobListAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -136,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog createAddJobDialog() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_job, null);
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        // Create the Material Alert Dialog
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle("Add New Job")
                 .setView(dialogView)
                 .setPositiveButton("Add", null)
