@@ -47,7 +47,7 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/detailJobTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/detailJobSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                         android:layout_height="1dp"
                         android:layout_marginBottom="16dp"/>
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/detailJobEmployer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                         android:layout_marginBottom="8dp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/detailJobLocation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                         android:layout_marginBottom="8dp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/detailJobPayRate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                         android:layout_marginBottom="8dp" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/detailJobColor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Events Section -->
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Events"
@@ -129,7 +129,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Expenses Section -->
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Expenses"
