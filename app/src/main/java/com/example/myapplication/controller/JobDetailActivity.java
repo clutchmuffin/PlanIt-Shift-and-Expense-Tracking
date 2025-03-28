@@ -32,7 +32,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,8 +58,8 @@ public class JobDetailActivity extends AppCompatActivity {
     private RecyclerView expenseRecyclerView;
     private EventListAdapter eventListAdapter;
     private ExpenseListAdapter expenseListAdapter;
-    private FloatingActionButton fabAddButton;
-    private FloatingActionButton fabAddExpense;
+    private ExtendedFloatingActionButton fabAddButton;
+    private ExtendedFloatingActionButton fabAddExpense;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private LocalDate beginDate;
