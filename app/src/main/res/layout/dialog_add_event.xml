@@ -1,131 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:spacing="8dp">
 
         <!-- Event Name -->
-        <EditText
-            android:id="@+id/editEventName"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event Name"
-            android:inputType="text"
-            android:minHeight="48dp" />
+            app:hintEnabled="true"
+            android:layout_marginBottom="8dp"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="2dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="@color/white">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editEventName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="Event Name"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:minHeight="48dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Begin Date/Time -->
+        <!-- Begin Date/Time Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Begin"
+            android:textSize="17sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Display Selected Date -->
-        <TextView
-            android:id="@+id/tvBeginDate"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No date selected"
-            android:textSize="16sp"
-            android:padding="8dp" />
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
 
-        <!-- Select Date Button -->
-        <Button
-            android:id="@+id/btnSelectBeginDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:text="Select Date" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        <!-- Display Selected Start Time -->
-        <TextView
-            android:id="@+id/tvSelectedStartTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No start time selected"
-            android:textSize="16sp"
-            android:padding="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        <!-- Select Start Time Button -->
-        <Button
-            android:id="@+id/btnSelectStartTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:text="Select Start Time" />
+                    <!-- Display Selected Date -->
+                    <TextView
+                        android:id="@+id/tvBeginDate"
+                        android:layout_width="172dp"
+                        android:layout_height="wrap_content"
+                        android:text="No date selected"
+                        android:textSize="16sp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+                        android:padding="8dp" />
 
-        <!-- End Date/Time -->
+                    <!-- Select Date Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectBeginDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="Select Date"
+                        android:layout_marginBottom="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Display Selected Start Time -->
+                    <TextView
+                        android:id="@+id/tvSelectedStartTime"
+                        android:layout_width="172dp"
+                        android:layout_height="wrap_content"
+                        android:text="No start time selected"
+                        android:textSize="16sp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+                        android:padding="8dp" />
+
+                    <!-- Select Start Time Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectStartTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="Select Time" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- End Date/Time Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="End"
+            android:textSize="17sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Display Selected Date -->
-        <TextView
-            android:id="@+id/tvEndDate"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No date selected"
-            android:textSize="16sp"
-            android:padding="8dp" />
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
 
-        <!-- Select Date Button -->
-        <Button
-            android:id="@+id/btnSelectEndDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:text="Select Date" />
-
-        <!-- Display Selected End Time -->
-        <TextView
-            android:id="@+id/tvSelectedEndTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No end time selected"
-            android:textSize="16sp"
-            android:padding="8dp" />
-
-        <!-- Select End Time Button -->
-        <Button
-            android:id="@+id/btnSelectEndTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:text="Select End Time" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:padding="8dp"
-                android:text="Alarm: "
-                android:textSize="16sp" />
-
-            <Spinner
-                android:id="@+id/alarmPicker"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                android:background="@drawable/rounded_alarm_spinner" />
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
+                    <!-- Display Selected Date -->
+                    <TextView
+                        android:id="@+id/tvEndDate"
+                        android:layout_width="172dp"
+                        android:layout_height="wrap_content"
+                        android:text="No date selected"
+                        android:textSize="16sp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+                        android:padding="8dp" />
+
+                    <!-- Select Date Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectEndDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="Select Date"
+                        android:layout_marginBottom="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Display Selected End Time -->
+                    <TextView
+                        android:id="@+id/tvSelectedEndTime"
+                        android:layout_width="172dp"
+                        android:layout_height="wrap_content"
+                        android:text="No end time selected"
+                        android:textSize="16sp"
+                        android:textStyle="bold|italic"
+                        android:textAlignment="center"
+                        android:padding="8dp" />
+
+                    <!-- Select End Time Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectEndTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="Select Time" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Alarm Section -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="30sp"
+                    android:padding="8dp"
+                    android:text="Set Alarm: "
+                    android:textStyle="bold|italic"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/alarmPicker"
+                    android:layout_marginStart="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_alarm_spinner" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Repeat Section -->
         <TextView
@@ -133,45 +221,59 @@
             android:layout_height="wrap_content"
             android:text="Repeat"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <!-- Repeat Type Options -->
-        <RadioGroup
-            android:id="@+id/radioGroupRepeatType"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="8dp">
 
-            <RadioButton
-                android:id="@+id/radioNeverRepeat"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:checked="true"
-                android:text="No repeat" />
+            <RadioGroup
+                android:id="@+id/radioGroupRepeatType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
 
-            <RadioButton
-                android:id="@+id/radioDaily"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:text="Daily"/>
+                <RadioButton
+                    android:id="@+id/radioNeverRepeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="No repeat"
+                    android:minHeight="35dp" />
 
-            <RadioButton
-                android:id="@+id/radioWeekly"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:text="Weekly"/>
+                <RadioButton
+                    android:id="@+id/radioDaily"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Daily"
+                    android:minHeight="35dp" />
 
-            <RadioButton
-                android:id="@+id/radioMonthly"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:text="Monthly"/>
+                <RadioButton
+                    android:id="@+id/radioWeekly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weekly"
+                    android:minHeight="35dp" />
 
-            <RadioButton
-                android:id="@+id/radioYearly"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:text="Yearly"/>
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/radioMonthly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monthly"
+                    android:minHeight="35dp" />
+
+                <RadioButton
+                    android:id="@+id/radioYearly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yearly"
+                    android:minHeight="35dp" />
+            </RadioGroup>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
