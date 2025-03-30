@@ -26,7 +26,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardMaxElevation="50dp"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,7 +106,9 @@
                 android:layout_height="200dp"
                 android:layout_marginBottom="16dp"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/eventRecyclerView"
@@ -112,7 +116,8 @@
                     android:layout_height="match_parent"
                     android:padding="8dp"
                     android:scrollbars="vertical"
-                    android:clipToPadding="false"/>
+                    android:clipToPadding="false"
+                    android:background="#F5F7FA"/>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Expenses Section -->
@@ -122,7 +127,9 @@
                 android:text="@string/expenses"
                 android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -137,7 +144,8 @@
                     android:layout_height="match_parent"
                     android:padding="8dp"
                     android:scrollbars="vertical"
-                    android:clipToPadding="false"/>
+                    android:clipToPadding="false"
+                    android:background="#F5F7FA"/>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -147,7 +155,7 @@
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
+        android:layout_margin="20dp"
         android:text="@string/add_event"
         android:textAlignment="viewStart"
         app:icon="@drawable/ic_add"
@@ -159,7 +167,7 @@
         android:id="@+id/fabAddExp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
+        android:layout_margin="20dp"
         android:text="@string/add_expense"
         app:icon="@drawable/ic_add"
         app:layout_anchor="@id/expenseRecyclerView"
