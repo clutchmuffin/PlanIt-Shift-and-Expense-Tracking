@@ -17,7 +17,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Shift Tracker"
+        app:title="Plan It"
         app:titleCentered="false">
         <!-- Optional user avatar on the right side -->
         <ImageView
