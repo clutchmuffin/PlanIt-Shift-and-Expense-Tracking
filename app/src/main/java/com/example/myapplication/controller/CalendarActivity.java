@@ -146,8 +146,25 @@ public class CalendarActivity extends AppCompatActivity {
                 if (day.getPosition() == DayPosition.MonthDate) {
                     container.textView.setVisibility(View.VISIBLE);
                     container.textView.setTextColor(Color.BLACK);
+
+                    // Check if there are events for this day
+                    String dateString = day.getDate().format(DATE_FORMATTER);
+                    Log.d(TAG, "Checking events for date: " + dateString);
+                    boolean hasEvents = false;
+
+                    for (CalendarEvent event : allEvents) {
+                        Log.d(TAG, "Event date: " + event.getBegin_date() + ", Calendar day: " + dateString);
+                        if (event.getBegin_date().equals(dateString)) {
+                            hasEvents = true;
+                            break;
+                        }
+                    }
+
+                    // Show indicator only if events exist
+                    container.eventIndicator.setVisibility(hasEvents ? View.VISIBLE : View.INVISIBLE);
                 } else {
                     container.textView.setVisibility(View.INVISIBLE);
+                    container.eventIndicator.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -191,10 +208,12 @@ public class CalendarActivity extends AppCompatActivity {
     public class DayViewContainer extends ViewContainer {
         public CalendarDay day;
         public TextView textView;
+        public View eventIndicator;
 
         public DayViewContainer(View view) {
             super(view);
             textView = view.findViewById(R.id.calendarDayText);
+            eventIndicator = view.findViewById(R.id.eventIndicator);
 
             view.setOnClickListener(v -> {
                 if (day != null) {
