@@ -11,7 +11,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:windowFullscreen">false</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:fitsSystemWindows">false</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

@@ -27,4 +27,6 @@
     <string name="leftarrow">LeftArrow</string>
     <string name="rightarrow">RightArrow</string>
     <string name="events">Events</string>
+    <string name="add_event">Add Event</string>
+    <string name="expenses">Expenses</string>
 </resources>

@@ -4,22 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
-
-    <!-- Top App Bar -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/detailAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/deep_blue"
-            app:title="Job Details"
-            app:titleCentered="false"
-            app:titleTextColor="@android:color/white"/>
-    </com.google.android.material.appbar.AppBarLayout>
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
     <!-- Content -->
     <androidx.core.widget.NestedScrollView
@@ -38,6 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                app:cardMaxElevation="50dp"
                 app:cardElevation="2dp"
                 app:cardCornerRadius="12dp">
 
@@ -106,7 +93,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Events"
+                android:text="@string/events"
                 android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_marginBottom="8dp"
@@ -132,7 +119,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expenses"
+                android:text="@string/expenses"
                 android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_marginBottom="8dp"/>
@@ -160,8 +147,9 @@
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Add Event"
+        android:layout_margin="0dp"
+        android:text="@string/add_event"
+        android:textAlignment="viewStart"
         app:icon="@drawable/ic_add"
         app:layout_anchor="@id/eventRecyclerView"
         app:layout_anchorGravity="bottom|end"
@@ -171,8 +159,8 @@
         android:id="@+id/fabAddExp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Add Expense"
+        android:layout_margin="0dp"
+        android:text="@string/add_expense"
         app:icon="@drawable/ic_add"
         app:layout_anchor="@id/expenseRecyclerView"
         app:layout_anchorGravity="bottom|end"
