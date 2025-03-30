@@ -65,18 +65,32 @@
           <theme>@style/Theme.ShiftTracker</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_event.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_event_card.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_shared_card.xml">
+        <config>
+          <theme>@style/Theme.ShiftTracker</theme>
+        </config>
+      </layout>
     </layouts>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="removing colour method calls for events, not yet implemented">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_shared_calendar.xml" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="rearranging NewSharedActivity trying to get event list dropdown to show">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedEventAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_event_card.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharedCalendarActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharedCalendarActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_calendar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_calendar.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,8 +126,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="layoutResourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -135,12 +149,12 @@
     }
   }
 }</component>
-  <component name="GitLabMergeRequestsSettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;first&quot;: &quot;https://git.cs.usask.ca/evz405/cmpt370team14.git&quot;,
-    &quot;second&quot;: &quot;06f4d54d-b60e-4469-8740-ab40951f1d30&quot;
+  <component name="GitLabMergeRequestsSettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "first": "https://git.cs.usask.ca/evz405/cmpt370team14.git",
+    "second": "78591753-c99f-4316-82b1-05d43b4ca517"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -167,7 +181,8 @@
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
     "git-widget-placeholder": "parker",
-    "kotlin-language-version-configured": "true"
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.updates"
   }
 }]]></component>
   <component name="RunManager">
@@ -405,7 +420,31 @@
       <option name="project" value="LOCAL" />
       <updated>1742876670070</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="adding ability to edit existing shared calendars">
+      <option name="closed" value="true" />
+      <created>1743018551039</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1743018551039</updated>
+    </task>
+    <task id="LOCAL-00021" summary="updating adapter after editing existing shared calendar">
+      <option name="closed" value="true" />
+      <created>1743019049094</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1743019049094</updated>
+    </task>
+    <task id="LOCAL-00022" summary="rearranging NewSharedActivity trying to get event list dropdown to show">
+      <option name="closed" value="true" />
+      <created>1743020844486</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1743020844486</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -439,19 +478,22 @@
     <MESSAGE value="made WeeklyNotificationReceiver only read user specific shifts" />
     <MESSAGE value="fixed some issues with shared cal creation, but db access not getting any events" />
     <MESSAGE value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed join option to separate view as activity, but it only shows a blank screen, issues with OnCreate()?" />
+    <MESSAGE value="adding ability to edit existing shared calendars" />
+    <MESSAGE value="updating adapter after editing existing shared calendar" />
+    <MESSAGE value="rearranging NewSharedActivity trying to get event list dropdown to show" />
+    <option name="LAST_COMMIT_MESSAGE" value="rearranging NewSharedActivity trying to get event list dropdown to show" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.example.myapplication">
           <value>
-            <CheckInfo lastCheckTimestamp="1743016136080" />
+            <CheckInfo lastCheckTimestamp="1743363492644" />
           </value>
         </entry>
         <entry key="com.example.myapplication.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1743016136079" />
+            <CheckInfo lastCheckTimestamp="1743363492643" />
           </value>
         </entry>
       </map>

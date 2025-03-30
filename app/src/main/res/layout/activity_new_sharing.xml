@@ -62,18 +62,14 @@
             android:layout_below="@id/InputName"
             android:text="TextView" />
 
-        <TextView
-            android:id="@+id/dropDown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textView2"
-            android:layout_centerInParent="true"
-            android:background="@android:drawable/editbox_background"
-            android:drawableRight="@android:drawable/arrow_down_float"
-            android:drawablePadding="16dp"
-            android:hint="@string/select_jobs"
-            android:padding="12dp" />
     </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sharedEventRecycle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/button2"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayout" />
 
     <Button
         android:id="@+id/button2"

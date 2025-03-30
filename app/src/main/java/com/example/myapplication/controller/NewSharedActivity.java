@@ -2,6 +2,8 @@ package com.example.myapplication.controller;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +20,7 @@ import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.SharedCal;
 import com.example.myapplication.view.adapter.SharedAdapter;
+import com.example.myapplication.view.adapter.SharedEventAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -37,16 +40,14 @@ public class NewSharedActivity extends AppCompatActivity {
     private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNav;
     private TextInputEditText nameInput;
-    private ListView jobList;
     private Button button;
-    private TextView dropDownText;
     private boolean[] selectedEvents;
     private ArrayList<CalendarEvent> events;
-    private String[] eventNames;
     private ArrayList<Integer> eventList;
     public static final String EXTRA_SHARED = "com.example.myapplication.SHARED";
     private String currentUserId;
-    private SharedAdapter sharedAdapter;
+    private SharedEventAdapter adapter;
+    private RecyclerView recycler;
     private SharedCal sharedCal;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -59,7 +60,9 @@ public class NewSharedActivity extends AppCompatActivity {
         topAppBar = findViewById(R.id.topAppBar);
         nameInput = findViewById(R.id.nameInput);
         button = findViewById(R.id.button2);
-        dropDownText = findViewById(R.id.dropDown);
+        recycler = findViewById(R.id.sharedEventRecycle);
+
+        recycler.setLayoutManager(new LinearLayoutManager(this));
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         currentUserId = prefs.getString("userId", null);
@@ -69,6 +72,7 @@ public class NewSharedActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         setupBottomNavigation();
         sharedCal = getIntent().getSerializableExtra(EXTRA_SHARED, SharedCal.class);
         if (sharedCal != null) {
@@ -79,8 +83,7 @@ public class NewSharedActivity extends AppCompatActivity {
         }
     }
     private void loadEventsFromFirestore() {
-        events.clear();
-
+        events = new ArrayList<>();
         db.collection("Jobs")
                 .whereEqualTo("userId", currentUserId)
                 .get()
@@ -103,65 +106,9 @@ public class NewSharedActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e(TAG, "Error loading jobs", e));
     }
     public void listEvents() {
-        events = new ArrayList<>();
         loadEventsFromFirestore();
-        eventList = new ArrayList<>();
-        eventNames = new String[events.size()];
-        int i = 0;
-        for (CalendarEvent e : events) {
-            eventNames[i] = e.getName();
-            i++;
-        }
-        selectedEvents = new boolean[eventNames.length];
-
-        dropDownText.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(NewSharedActivity.this);
-                builder.setTitle("Select Events");
-                builder.setCancelable(false);
-                builder.setMultiChoiceItems(eventNames, selectedEvents, (dialog, which, isChecked) -> {
-                    if (isChecked) {
-                        eventList.add(which);
-                        Collections.sort(eventList);
-                    }
-                    else {
-                        eventList.remove(Integer.valueOf(which));
-                    }
-                });
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (int j = 0; j < eventList.size(); j++) {
-                            stringBuilder.append(eventNames[j]);
-                            if (j != eventList.size() - 1) {
-                                stringBuilder.append(",");
-                            }
-                        }
-                        dropDownText.setText(stringBuilder.toString());
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        for (int j = 0; j < selectedEvents.length; j++) {
-                            selectedEvents[j] = false;
-                            eventList.clear();
-                            dropDownText.setText("");
-                        }
-                    }
-                });
-                builder.show();
-            }
-        });
+        adapter = new SharedEventAdapter(events);
+        recycler.setAdapter(adapter);
     }
     public void createNew() {
         listEvents();
@@ -181,14 +128,10 @@ public class NewSharedActivity extends AppCompatActivity {
                         // First shared calendar, initialize counter
                         sharedCounterId = 1;
                         transaction.set(db.collection("counters").document("shared"),
-                                java.util.Collections.singletonMap("nextId", 2));
+                                Collections.singletonMap("nextId", 2));
                     }
 
-                    ArrayList<CalendarEvent> toAdd = new ArrayList<>();
-
-                    for (int j = 0; j < eventList.size(); j++) {
-                        toAdd.add(events.get(eventList.get(j)));
-                    }
+                    ArrayList<CalendarEvent> toAdd = new ArrayList<>(adapter.getSelected());
 
                     String sharedId = "shared_" + sharedCounterId;
                     newShared[0] = new SharedCal(Objects.requireNonNull(nameInput.getText()).toString().trim(), sharedId, currentUserId, toAdd);
@@ -197,7 +140,7 @@ public class NewSharedActivity extends AppCompatActivity {
 
                     return sharedId;
                 }).addOnSuccessListener(jobId -> {
-                    sharedAdapter.notifyDataSetChanged();
+                   // sharedAdapter.notifyDataSetChanged();
                 });
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
@@ -216,15 +159,13 @@ public class NewSharedActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     ArrayList<CalendarEvent> calEvents = cal.getEvents();
-                                    for (int j = 0; j < eventList.size(); j++) {
-                                        calEvents.add(events.get(eventList.get(j)));
-                                    }
+                                    calEvents.addAll(adapter.getSelected());
                                     DocumentReference ref = db.collection("Shared").document(cal.getSharedId());
                                     ref.update("events", calEvents);
                                     if (nameInput.getText() != null) {
                                         ref.update("name", nameInput.getText().toString().trim());
                                     }
-                                    sharedAdapter.notifyDataSetChanged();
+                                   // sharedAdapter.notifyDataSetChanged();
                                 }
                             } else {
                                 Log.e("SharingMainActivity", "Error getting documents: ", task.getException());

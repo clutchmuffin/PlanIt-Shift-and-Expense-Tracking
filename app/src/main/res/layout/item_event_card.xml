@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/eventName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Name"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Date Range -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/eventDateRange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Date Range"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/eventTimeRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20sp"
+                android:hint="Time Range"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp" />
+
+            <!-- Net Pay -->
+            <TextView
+                android:id="@+id/netPay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20sp"
+                android:text="@string/dollar"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <!-- Repeat Info -->
+        <TextView
+            android:id="@+id/eventRepeatInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Repeat Info"
+            android:textSize="12sp"
+            android:textStyle="italic" />
+
+        <!-- Additional Details (e.g., monthly type, weekly days) -->
+
+        <TextView
+            android:id="@+id/eventAdditionalInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Additional Info"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical|end"
+        android:layout_marginRight="16dp" />
+
+</LinearLayout>
