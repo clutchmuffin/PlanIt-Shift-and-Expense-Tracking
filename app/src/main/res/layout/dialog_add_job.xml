@@ -23,6 +23,8 @@
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:boxBackgroundColor="@color/white">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editJobTitle"
@@ -44,6 +46,8 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
             app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editJobSubtitle"
@@ -65,6 +69,8 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
             app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editJobEmployer"
@@ -86,6 +92,8 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
             app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editJobLocation"
@@ -107,6 +115,8 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
             app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editPayRate"
@@ -128,6 +138,8 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
             app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editJobColor"

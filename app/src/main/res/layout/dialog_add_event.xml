@@ -22,6 +22,8 @@
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:boxBackgroundColor="@color/white">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editEventName"

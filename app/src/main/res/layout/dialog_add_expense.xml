@@ -23,7 +23,9 @@
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
-            app:boxBackgroundColor="@color/white">
+            app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editExpenseDescription"
                 android:layout_width="match_parent"
@@ -44,6 +46,8 @@
             app:boxStrokeWidth="2dp"
             app:boxStrokeWidthFocused="2dp"
             app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="outline"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editExpenseAmount"
