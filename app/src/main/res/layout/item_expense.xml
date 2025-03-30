@@ -30,16 +30,16 @@
             app:layout_constraintEnd_toStartOf="@id/expenseDeleteBtn"
             tools:text="Office supplies"/>
 
-        <com.google.android.material.textview.MaterialTextView
+        <com.google.android.material.chip.Chip
             android:id="@+id/expenseAmount"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="@color/black"
             android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/expenseDescription"
-            app:layout_constraintEnd_toStartOf="@id/expenseDeleteBtn"
+            app:chipIcon="@drawable/ic_money"
             tools:text="$24.99"/>
 
         <ImageButton
@@ -49,7 +49,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Delete expense"
             android:src="@android:drawable/ic_menu_delete"
-            app:tint="?attr/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

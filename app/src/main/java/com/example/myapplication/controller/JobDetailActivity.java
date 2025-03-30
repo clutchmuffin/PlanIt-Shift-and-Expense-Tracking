@@ -120,7 +120,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String colorHex = String.format("#%06X", (0xFFFFFF & job.getColor()));
         tvColor.setText("Color: " + colorHex);
         tvColor.setTextColor(job.getColor());
-        tvPayRate.setText("$" + job.getPayRate());
+        tvPayRate.setText("Payrate: $" + job.getPayRate() + "/hr");
     }
 
     private void setupEventRecyclerView() {
