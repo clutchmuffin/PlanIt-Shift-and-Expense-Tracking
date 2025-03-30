@@ -42,8 +42,10 @@ public class CalendarActivity extends AppCompatActivity {
 
     private static final String TAG = "CalendarActivity";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
     private String currentUserId;
     private CalendarView calendarView;
+    private YearMonth currentVisibleMonth;
     private RecyclerView dailyEventRecyclerView;
     private dailyEventListAdapter dailyEventListAdapter;
     private List<CalendarEvent> allEvents = new ArrayList<>();
@@ -67,6 +69,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         initializeViews();
         setupCalendarDateRange();
+        setupMonthNavigation();
         setupDayOfWeekHeaders();
         setupCalendarDayBinder();
         setupDailyEventsRecyclerView();
@@ -86,6 +89,30 @@ public class CalendarActivity extends AppCompatActivity {
 
         calendarView.setup(startMonth, endMonth, firstDayOfWeek);
         calendarView.scrollToMonth(currentMonth);
+    }
+
+    private void setupMonthNavigation() {
+        TextView monthTextView = findViewById(R.id.MonthYearText);
+        View previousMonthImage = findViewById(R.id.PreviousMonthImage);
+        View nextMonthImage = findViewById(R.id.NextMonthImage);
+
+        // Set up arrow click listeners
+        previousMonthImage.setOnClickListener(v -> {
+            YearMonth previousMonth = currentVisibleMonth.minusMonths(1);
+            calendarView.scrollToMonth(previousMonth);
+        });
+
+        nextMonthImage.setOnClickListener(v -> {
+            YearMonth nextMonth = currentVisibleMonth.plusMonths(1);
+            calendarView.scrollToMonth(nextMonth);
+        });
+
+        // Add month change listener
+        calendarView.setMonthScrollListener(month -> {
+            currentVisibleMonth = month.getYearMonth();
+            monthTextView.setText(currentVisibleMonth.format(monthTitleFormatter));
+            return null;
+        });
     }
 
     private void setupDayOfWeekHeaders() {
