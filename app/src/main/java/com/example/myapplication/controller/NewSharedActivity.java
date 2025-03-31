@@ -87,21 +87,32 @@ public class NewSharedActivity extends AppCompatActivity {
         }
     }
     private ArrayList<CalendarEvent> loadEventsFromFirestore() {
-        db.collectionGroup("Events").whereEqualTo("userId", currentUserId).get()
+        db.collectionGroup("Events").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        events.clear();
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
                             CalendarEvent event = doc.toObject(CalendarEvent.class);
-                            events.add(event);
+                            assert event != null;
+                            if (Objects.equals(event.getUserId(), currentUserId)) {
+                                events.add(event);
+                            }
+                        }
+                        if (adapter != null) {
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            adapter = new SharedEventAdapter(events);
+                            recycler.setAdapter(adapter);
                         }
                     }
                 });
         return events;
     }
     public void listEvents() {
-        adapter = new SharedEventAdapter(loadEventsFromFirestore());
+        adapter = new SharedEventAdapter(events);
         recycler.setAdapter(adapter);
+        loadEventsFromFirestore();
     }
     public void createNew() {
         listEvents();

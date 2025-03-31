@@ -37,6 +37,7 @@ public class SharedEventAdapter extends RecyclerView.Adapter<SharedEventAdapter.
 
     public SharedEventAdapter(ArrayList<CalendarEvent> events) {
         this.events = events != null ? events : new ArrayList<>();
+        this.selected = new ArrayList<>();
     }
 
     @NonNull
