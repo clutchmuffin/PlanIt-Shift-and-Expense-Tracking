@@ -3,22 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <!-- Top App Bar -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/detailAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:title="Job Details"
-        app:titleTextColor="@android:color/white"/>
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
     <!-- Content -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,76 +20,95 @@
             android:orientation="vertical">
 
             <!-- Job Details Section -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp"
+                app:cardMaxElevation="50dp"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0">
 
-                <TextView
-                    android:id="@+id/detailJobTitle"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/job_title"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/detailJobSubtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/job_subtitle"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_marginBottom="4dp" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/detailJobTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/job_title"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
 
-                <TextView
-                    android:id="@+id/detailJobEmployer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/employer"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_marginBottom="4dp" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/detailJobSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/job_subtitle"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                        android:layout_marginBottom="16dp" />
 
-                <TextView
-                    android:id="@+id/detailJobLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/location"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_marginBottom="4dp" />
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:id="@+id/detailJobPayRate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pay_rate"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_marginBottom="4dp" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/detailJobEmployer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/employer"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:layout_marginBottom="8dp" />
 
-                <TextView
-                    android:id="@+id/detailJobColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/color"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </LinearLayout>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/detailJobLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/location"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:layout_marginBottom="8dp" />
 
-                        <!-- Events Section -->
-            <TextView
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/detailJobPayRate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pay_rate"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:layout_marginBottom="8dp" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/detailJobColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/color"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Events Section -->
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Events"
+                android:text="@string/events"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"/>
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"/>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/eventRecyclerView"
@@ -103,24 +116,27 @@
                     android:layout_height="match_parent"
                     android:padding="8dp"
                     android:scrollbars="vertical"
-                    android:clipToPadding="false"/>
-            </androidx.cardview.widget.CardView>
+                    android:clipToPadding="false"
+                    android:background="#F5F7FA"/>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Expenses Section -->
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expenses"
+                android:text="@string/expenses"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"/>
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_marginBottom="8dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"/>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginBottom="16dp"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
+                app:cardCornerRadius="12dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/expenseRecyclerView"
@@ -128,29 +144,33 @@
                     android:layout_height="match_parent"
                     android:padding="8dp"
                     android:scrollbars="vertical"
-                    android:clipToPadding="false"/>
-            </androidx.cardview.widget.CardView>
+                    android:clipToPadding="false"
+                    android:background="#F5F7FA"/>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- FABs remain unchanged -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <!-- FABs -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="20dp"
+        android:text="@string/add_event"
+        android:textAlignment="viewStart"
+        app:icon="@drawable/ic_add"
         app:layout_anchor="@id/eventRecyclerView"
         app:layout_anchorGravity="bottom|end"
-        android:src="@drawable/ic_add"
         android:contentDescription="@string/add_shift"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddExp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="20dp"
+        android:text="@string/add_expense"
+        app:icon="@drawable/ic_add"
         app:layout_anchor="@id/expenseRecyclerView"
         app:layout_anchorGravity="bottom|end"
-        android:src="@drawable/ic_add"
         android:contentDescription="@string/add_expense"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

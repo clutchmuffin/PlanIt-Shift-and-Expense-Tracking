@@ -1,5 +1,6 @@
 package com.example.myapplication.view.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
@@ -10,13 +11,20 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.controller.JobDetailActivity;
+import com.example.myapplication.model.NotificationSender;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import org.checkerframework.checker.units.qual.N;
 
 import java.util.List;
 
@@ -24,10 +32,12 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
 
     private static final String TAG = "MainActivity";
     private List<Job> jobs;
+    private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public JobListAdapter(List<Job> jobs) {
+    public JobListAdapter(List<Job> jobs, Context context) {
         this.jobs = jobs;
+        this.context = context;
     }
 
     @NonNull
@@ -44,7 +54,7 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         holder.jobEmployer.setText(job.getEmployer());
 
         int color = job.getColor();
-        holder.jobCard.setBackgroundColor(Color.argb(128,
+        holder.jobCard.setCardBackgroundColor(Color.argb(128,
                 Color.red(color),
                 Color.green(color),
                 Color.blue(color)));
@@ -59,6 +69,16 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         holder.jobDelete.setOnClickListener(
                 v -> {
                     if (job.getJobId() != null) {
+                        db.collection("Jobs").document(job.getJobId())
+                                .collection("Events").get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            CalendarEvent event = document.toObject(CalendarEvent.class);
+                                            cancelNotification(event);
+                                        }
+                                    }
+                                });
                         db.collection("Jobs").document(job.getJobId())
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
@@ -81,9 +101,15 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
         return jobs.size();
     }
 
+    private void cancelNotification(CalendarEvent event){
+        NotificationSender notifSender = new NotificationSender(context);
+        notifSender.cancelNotification(event);
+        notifSender.updateWeeklyNotif();
+    }
+
     public static class JobViewHolder extends RecyclerView.ViewHolder {
         TextView jobTitle, jobEmployer;
-        ImageButton jobDelete;
+        MaterialButton jobDelete;
         MaterialCardView jobCard;
         View colorAccent;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/eventCard"
@@ -7,89 +7,83 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardElevation="4dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="8dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E0E0E0">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="horizontal">
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventName"
+            android:hint="Event Name"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Date Range -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/eventName"
-                android:hint="Event Name"
-                android:layout_width="match_parent"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/eventDateRange"
+                android:hint="Date Range"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/Widget.Material3.Chip.Suggestion"
+                app:chipCornerRadius="8dp"/>
 
-            <!-- Date Range -->
-            <LinearLayout
+            <com.google.android.material.chip.Chip
+                android:id="@+id/eventTimeRange"
+                android:hint="Time Range"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginStart="2dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/Widget.Material3.Chip.Suggestion"
+                app:chipCornerRadius="8dp"/>
 
-                <TextView
-                    android:id="@+id/eventDateRange"
-                    android:hint="Date Range"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="16sp"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <TextView
-                    android:id="@+id/eventTimeRange"
-                    android:hint="Time Range"
-                    android:layout_marginLeft="20sp"
-                    android:textSize="16sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <!-- Net Pay -->
-                <TextView
-                    android:id="@+id/netPay"
-                    android:text="@string/dollar"
-                    android:layout_marginLeft="20sp"
-                    android:textSize="16sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
-
-            <!-- Repeat Info -->
-            <TextView
-                android:id="@+id/eventRepeatInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="italic"
-                android:hint="Repeat Info"
-                android:textSize="12sp"/>
-
-            <!-- Additional Details (e.g., monthly type, weekly days) -->
-            <TextView
-                android:id="@+id/eventAdditionalInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Additional Info"
-                android:textSize="12sp"
-                android:visibility="gone"/>
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/eventDeleteBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="20dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete event" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <!-- Net Pay -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/netPay"
+                android:text="@string/dollar"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <!-- Repeat Info -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/eventRepeatInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:textStyle="italic"
+                android:hint="Repeat"
+                android:textSize="12sp"/>
+
+            <ImageButton
+                android:id="@+id/eventDeleteBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="150dp"
+                android:src="@android:drawable/ic_menu_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Delete event" />
+
+        </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

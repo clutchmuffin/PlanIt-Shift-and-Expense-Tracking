@@ -42,8 +42,10 @@ public class CalendarActivity extends AppCompatActivity {
 
     private static final String TAG = "CalendarActivity";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM yyyy");
     private String currentUserId;
     private CalendarView calendarView;
+    private YearMonth currentVisibleMonth;
     private RecyclerView dailyEventRecyclerView;
     private dailyEventListAdapter dailyEventListAdapter;
     private List<CalendarEvent> allEvents = new ArrayList<>();
@@ -67,6 +69,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         initializeViews();
         setupCalendarDateRange();
+        setupMonthNavigation();
         setupDayOfWeekHeaders();
         setupCalendarDayBinder();
         setupDailyEventsRecyclerView();
@@ -86,6 +89,30 @@ public class CalendarActivity extends AppCompatActivity {
 
         calendarView.setup(startMonth, endMonth, firstDayOfWeek);
         calendarView.scrollToMonth(currentMonth);
+    }
+
+    private void setupMonthNavigation() {
+        TextView monthTextView = findViewById(R.id.MonthYearText);
+        View previousMonthImage = findViewById(R.id.PreviousMonthImage);
+        View nextMonthImage = findViewById(R.id.NextMonthImage);
+
+        // Set up arrow click listeners
+        previousMonthImage.setOnClickListener(v -> {
+            YearMonth previousMonth = currentVisibleMonth.minusMonths(1);
+            calendarView.scrollToMonth(previousMonth);
+        });
+
+        nextMonthImage.setOnClickListener(v -> {
+            YearMonth nextMonth = currentVisibleMonth.plusMonths(1);
+            calendarView.scrollToMonth(nextMonth);
+        });
+
+        // Add month change listener
+        calendarView.setMonthScrollListener(month -> {
+            currentVisibleMonth = month.getYearMonth();
+            monthTextView.setText(currentVisibleMonth.format(monthTitleFormatter));
+            return null;
+        });
     }
 
     private void setupDayOfWeekHeaders() {
@@ -119,8 +146,25 @@ public class CalendarActivity extends AppCompatActivity {
                 if (day.getPosition() == DayPosition.MonthDate) {
                     container.textView.setVisibility(View.VISIBLE);
                     container.textView.setTextColor(Color.BLACK);
+
+                    // Check if there are events for this day
+                    String dateString = day.getDate().format(DATE_FORMATTER);
+                    Log.d(TAG, "Checking events for date: " + dateString);
+                    boolean hasEvents = false;
+
+                    for (CalendarEvent event : allEvents) {
+                        Log.d(TAG, "Event date: " + event.getBegin_date() + ", Calendar day: " + dateString);
+                        if (event.getBegin_date().equals(dateString)) {
+                            hasEvents = true;
+                            break;
+                        }
+                    }
+
+                    // Show indicator only if events exist
+                    container.eventIndicator.setVisibility(hasEvents ? View.VISIBLE : View.INVISIBLE);
                 } else {
                     container.textView.setVisibility(View.INVISIBLE);
+                    container.eventIndicator.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -164,10 +208,12 @@ public class CalendarActivity extends AppCompatActivity {
     public class DayViewContainer extends ViewContainer {
         public CalendarDay day;
         public TextView textView;
+        public View eventIndicator;
 
         public DayViewContainer(View view) {
             super(view);
             textView = view.findViewById(R.id.calendarDayText);
+            eventIndicator = view.findViewById(R.id.eventIndicator);
 
             view.setOnClickListener(v -> {
                 if (day != null) {
