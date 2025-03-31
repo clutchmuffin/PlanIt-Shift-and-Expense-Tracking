@@ -43,9 +43,7 @@ public class NewSharedActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private TextInputEditText nameInput;
     private Button button;
-    private boolean[] selectedEvents;
     private ArrayList<CalendarEvent> events;
-    private ArrayList<Integer> eventList;
     public static final String EXTRA_SHARED = "com.example.myapplication.SHARED";
     private String currentUserId;
     private SharedEventAdapter adapter;
@@ -78,6 +76,8 @@ public class NewSharedActivity extends AppCompatActivity {
         }
 
         setupBottomNavigation();
+
+        // Are we editing a previous calendar or making a brand new one?
         sharedCal = getIntent().getSerializableExtra(EXTRA_SHARED, SharedCal.class);
         if (sharedCal != null) {
             editExisting(sharedCal);
@@ -86,7 +86,10 @@ public class NewSharedActivity extends AppCompatActivity {
             createNew();
         }
     }
+
+
     private ArrayList<CalendarEvent> loadEventsFromFirestore() {
+        // look through events for ones with our user ID
         db.collectionGroup("Events").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -95,6 +98,7 @@ public class NewSharedActivity extends AppCompatActivity {
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
                             CalendarEvent event = doc.toObject(CalendarEvent.class);
                             assert event != null;
+                            // if the user id matches, add to list of events
                             if (Objects.equals(event.getUserId(), currentUserId)) {
                                 events.add(event);
                             }
@@ -117,6 +121,9 @@ public class NewSharedActivity extends AppCompatActivity {
     public void createNew() {
         listEvents();
         adapter.notifyDataSetChanged();
+        button.setText("Create");
+
+        // user has entered info and calendar is ready to be created
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +143,7 @@ public class NewSharedActivity extends AppCompatActivity {
                                 Collections.singletonMap("nextId", 2));
                     }
 
+                    // get selected events from recyclerview
                     ArrayList<CalendarEvent> toAdd = new ArrayList<>(adapter.getSelected());
 
                     String sharedId = "shared_" + sharedCounterId;
@@ -144,8 +152,8 @@ public class NewSharedActivity extends AppCompatActivity {
                     transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
 
                     return sharedId;
-                }).addOnSuccessListener(jobId -> {
                 });
+                // calendar created, go to view it
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
                 v.getContext().startActivity(intent);
@@ -156,17 +164,24 @@ public class NewSharedActivity extends AppCompatActivity {
     public void editExisting(SharedCal cal) {
         listEvents();
         adapter.notifyDataSetChanged();
+        button.setText("Confirm");
+
+        // user has entered changes, ready to update database
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // find the calendar we are working with
                 db.collection("Shared").whereEqualTo("sharedId", cal.getSharedId())
                         .get().addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
+                                    // add newly selected events to this calendar's list
                                     ArrayList<CalendarEvent> calEvents = cal.getEvents();
                                     calEvents.addAll(adapter.getSelected());
+
                                     DocumentReference ref = db.collection("Shared").document(cal.getSharedId());
                                     ref.update("events", calEvents);
+                                    // only update name if user entered something new
                                     if (nameInput.getText() != null) {
                                         ref.update("name", nameInput.getText().toString().trim());
                                     }
@@ -175,6 +190,7 @@ public class NewSharedActivity extends AppCompatActivity {
                                 Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
                             }
                         });
+                // go view the updated calendar
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
                 v.getContext().startActivity(intent);

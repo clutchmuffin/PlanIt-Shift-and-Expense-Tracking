@@ -86,10 +86,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="changed firestore query in newsharedactivity but it still doesnt work lol">
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="finally fixed firestore query! thank goodness">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedEventAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedEventAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -459,7 +457,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743380243787</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="finally fixed firestore query! thank goodness">
+      <option name="closed" value="true" />
+      <created>1743383944874</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1743383944874</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -498,7 +504,8 @@
     <MESSAGE value="rearranging NewSharedActivity trying to get event list dropdown to show" />
     <MESSAGE value="trying to switch from dialog to recycler for event list display for shared cals" />
     <MESSAGE value="changed firestore query in newsharedactivity but it still doesnt work lol" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed firestore query in newsharedactivity but it still doesnt work lol" />
+    <MESSAGE value="finally fixed firestore query! thank goodness" />
+    <option name="LAST_COMMIT_MESSAGE" value="finally fixed firestore query! thank goodness" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
