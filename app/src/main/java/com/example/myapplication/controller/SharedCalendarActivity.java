@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,12 +48,13 @@ public class SharedCalendarActivity extends AppCompatActivity {
     private List<CalendarEvent> allEvents = new ArrayList<>();
     private SharedCal cal;
     public static final String EXTRA_SHARED = "com.example.myapplication.SHARED";
+    private Button editButton;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
+        setContentView(R.layout.activity_shared_calendar);
 
         // Get current user ID
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
@@ -72,6 +74,17 @@ public class SharedCalendarActivity extends AppCompatActivity {
         setupCalendarDayBinder();
         setupDailyEventsRecyclerView();
         loadEventsFromFirestore();
+
+        editButton = findViewById(R.id.button3);
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), NewSharedActivity.class);
+                intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, cal);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     private void initializeViews() {
