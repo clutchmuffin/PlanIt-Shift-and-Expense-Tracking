@@ -21,6 +21,7 @@ import com.example.myapplication.model.Job;
 import com.example.myapplication.model.SharedCal;
 import com.example.myapplication.view.adapter.SharedAdapter;
 import com.example.myapplication.view.adapter.SharedEventAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,6 +64,8 @@ public class NewSharedActivity extends AppCompatActivity {
         button = findViewById(R.id.button2);
         recycler = findViewById(R.id.sharedEventRecycle);
 
+        events = new ArrayList<>();
+
         recycler.setLayoutManager(new LinearLayoutManager(this));
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
@@ -82,36 +86,26 @@ public class NewSharedActivity extends AppCompatActivity {
             createNew();
         }
     }
-    private void loadEventsFromFirestore() {
-        events = new ArrayList<>();
-        db.collection("Jobs")
-                .whereEqualTo("userId", currentUserId)
-                .get()
-                .addOnSuccessListener(jobsSnapshot -> {
-                    for (DocumentSnapshot jobDoc : jobsSnapshot.getDocuments()) {
-                        // Fetch events for each job one after another
-                        db.collection("Jobs")
-                                .document(jobDoc.getId())
-                                .collection("Events")
-                                .get()
-                                .addOnSuccessListener(eventsSnapshot -> {
-                                    for (DocumentSnapshot eventDoc : eventsSnapshot.getDocuments()) {
-                                        CalendarEvent event = eventDoc.toObject(CalendarEvent.class);
-                                        events.add(event);
-                                    }
-                                })
-                                .addOnFailureListener(e -> Log.e(TAG, "Error loading events", e));
+    private ArrayList<CalendarEvent> loadEventsFromFirestore() {
+        db.collectionGroup("Events").whereEqualTo("userId", currentUserId).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            CalendarEvent event = doc.toObject(CalendarEvent.class);
+                            events.add(event);
+                        }
                     }
-                })
-                .addOnFailureListener(e -> Log.e(TAG, "Error loading jobs", e));
+                });
+        return events;
     }
     public void listEvents() {
-        loadEventsFromFirestore();
-        adapter = new SharedEventAdapter(events);
+        adapter = new SharedEventAdapter(loadEventsFromFirestore());
         recycler.setAdapter(adapter);
     }
     public void createNew() {
         listEvents();
+        adapter.notifyDataSetChanged();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +134,6 @@ public class NewSharedActivity extends AppCompatActivity {
 
                     return sharedId;
                 }).addOnSuccessListener(jobId -> {
-                   // sharedAdapter.notifyDataSetChanged();
                 });
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
@@ -151,6 +144,7 @@ public class NewSharedActivity extends AppCompatActivity {
     }
     public void editExisting(SharedCal cal) {
         listEvents();
+        adapter.notifyDataSetChanged();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,13 +159,11 @@ public class NewSharedActivity extends AppCompatActivity {
                                     if (nameInput.getText() != null) {
                                         ref.update("name", nameInput.getText().toString().trim());
                                     }
-                                   // sharedAdapter.notifyDataSetChanged();
                                 }
                             } else {
                                 Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
                             }
                         });
-
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
                 v.getContext().startActivity(intent);

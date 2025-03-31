@@ -86,11 +86,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="rearranging NewSharedActivity trying to get event list dropdown to show">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedEventAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_event_card.xml" afterDir="false" />
+    <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="trying to switch from dialog to recycler for event list display for shared cals">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingMainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/SharingMainActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -444,7 +443,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743020844486</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="trying to switch from dialog to recycler for event list display for shared cals">
+      <option name="closed" value="true" />
+      <created>1743377738874</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1743377738874</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +488,8 @@
     <MESSAGE value="adding ability to edit existing shared calendars" />
     <MESSAGE value="updating adapter after editing existing shared calendar" />
     <MESSAGE value="rearranging NewSharedActivity trying to get event list dropdown to show" />
-    <option name="LAST_COMMIT_MESSAGE" value="rearranging NewSharedActivity trying to get event list dropdown to show" />
+    <MESSAGE value="trying to switch from dialog to recycler for event list display for shared cals" />
+    <option name="LAST_COMMIT_MESSAGE" value="trying to switch from dialog to recycler for event list display for shared cals" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
