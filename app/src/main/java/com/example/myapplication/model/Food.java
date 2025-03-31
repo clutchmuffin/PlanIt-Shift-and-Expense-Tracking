@@ -46,8 +46,6 @@ public class Food extends AppCompatActivity {
         setContentView(R.layout.activity_food);
 
         recyclerView = findViewById(R.id.recyclerView);
-        // totalFoodExpense = findViewById(R.id.totalFoodExpense);
-        //mainBalanceText = findViewById(R.id.mainBalance);
         pieChart = findViewById(R.id.pieFoodChart);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
