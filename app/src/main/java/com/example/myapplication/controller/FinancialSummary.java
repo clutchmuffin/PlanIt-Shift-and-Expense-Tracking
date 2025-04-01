@@ -55,7 +55,7 @@ public class FinancialSummary extends AppCompatActivity {
     private double totalNetpayAmount = 0.0;
 
     private final int selectedYear = 2025; // Change as needed
-    private final int selectedMonth = 3;   // Change as needed (1 = January, 12 = December)
+    private final int selectedMonth = 4;   // Change as needed (1 = January, 12 = December)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -254,14 +254,16 @@ public class FinancialSummary extends AppCompatActivity {
 
 
     private void loadFoodExpenses() {
-
         progressDialog.show();
 
-        db.collection("Jobs").whereEqualTo("userId", currentUserId) // Filter jobs by current user
+        // Define start and end of the selected month
+        String monthStart = String.format("%04d-%02d-01", selectedYear, selectedMonth);
+        String monthEnd = String.format("%04d-%02d-31", selectedYear, selectedMonth);
+
+        db.collection("Jobs").whereEqualTo("userId", currentUserId) // Filter by user ID
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        final double[] totalFoodExpenseAmount = {0.0};
                         allExpenses.clear();
                         List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
 
@@ -270,6 +272,8 @@ public class FinancialSummary extends AppCompatActivity {
                             Task<QuerySnapshot> expenseTask = db.collection("Jobs")
                                     .document(jobId)
                                     .collection("EXP")
+                                    .whereGreaterThanOrEqualTo("startDate", monthStart) // Start of month
+                                    .whereLessThanOrEqualTo("startDate", monthEnd) // End of month
                                     .get();
                             expenseFetchTasks.add(expenseTask);
                         }
@@ -282,16 +286,14 @@ public class FinancialSummary extends AppCompatActivity {
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     allExpenses.add(expense);
-                                                    totalFoodExpenseAmount[0] += expense.getAmount();
-
                                                 }
                                             }
                                         }
                                     }
+
+                                    // Notify adapter after all tasks are completed
                                     adapter.notifyDataSetChanged();
                                     progressDialog.dismiss();
-
-
                                 });
                     } else {
                         Log.e(TAG, "Error fetching jobs for current user", task.getException());
@@ -352,6 +354,7 @@ public class FinancialSummary extends AppCompatActivity {
     private double fetchExpensesForMonth(int year, int month) {
         db.collection("Jobs").whereEqualTo("userId", currentUserId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                allExpenses.clear();
                 List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
                 totalExpenseAmount = 0.0;
 
@@ -373,6 +376,7 @@ public class FinancialSummary extends AppCompatActivity {
                                         //if the expense range is within the month then just add the netPay to the total
                                         if (isExpenseInMonth(startDate,endDate,year,month,repeatType)) {
                                             totalExpenseAmount += amount;
+
                                         } else{
                                             //if it is not within the month like if it spills into the next days then calculate how much you are earning for the current month only
                                             if (amount != null && startDate != null && repeatType != null &&
@@ -386,6 +390,7 @@ public class FinancialSummary extends AppCompatActivity {
                 }
 
                 Tasks.whenAllComplete(expenseFetchTasks).addOnCompleteListener(allTasks -> {
+
                     totalExpensesTextView.setText("Total Monthly Expenses Pay: $" + totalExpenseAmount);
 
                     fetchNetPayForMonth(selectedYear,selectedMonth);
