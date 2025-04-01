@@ -113,12 +113,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6f828f23-62ae-4b80-b813-b73aed830fb0" name="Changes" comment="cleaning some things up">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/view/adapter/SharedAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_new_sharing.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_new_sharing.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_shared_calendar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_shared_calendar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_sharing_join.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_sharing_join.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/bottom_navigation_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/bottom_navigation_menu.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/myapplication/controller/NewSharedActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +204,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "com.google.services.firebase.aqiPopupShown": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "parker",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/parke/Downloads",
     "settings.editor.selected.configurable": "preferences.updates"
@@ -498,7 +493,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743383944874</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="cleaning up UI">
+      <option name="closed" value="true" />
+      <created>1743534773830</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1743534773831</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -513,7 +516,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Initial commit" />
     <MESSAGE value="got some notifications to show, but having a problem with scheduling new shifts" />
     <MESSAGE value="figured out issues with scheduling new shifts, and notifications now have distinct IDs" />
     <MESSAGE value="finally getting alarmmanager to send notifications after a time period, but notifIDs are now not changing" />
@@ -538,19 +540,20 @@
     <MESSAGE value="trying to switch from dialog to recycler for event list display for shared cals" />
     <MESSAGE value="changed firestore query in newsharedactivity but it still doesnt work lol" />
     <MESSAGE value="finally fixed firestore query! thank goodness" />
-    <option name="LAST_COMMIT_MESSAGE" value="finally fixed firestore query! thank goodness" />
+    <MESSAGE value="cleaning up UI" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaning up UI" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.example.myapplication">
           <value>
-            <CheckInfo lastCheckTimestamp="1743363492644" />
+            <CheckInfo lastCheckTimestamp="1743534754992" />
           </value>
         </entry>
         <entry key="com.example.myapplication.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1743363492643" />
+            <CheckInfo lastCheckTimestamp="1743534754995" />
           </value>
         </entry>
       </map>

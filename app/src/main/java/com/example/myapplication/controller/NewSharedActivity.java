@@ -150,6 +150,15 @@ public class NewSharedActivity extends AppCompatActivity {
                     newShared[0] = new SharedCal(Objects.requireNonNull(nameInput.getText()).toString().trim(), sharedId, currentUserId, toAdd);
                     // Save the calendar with its ID
                     transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
+                    for (CalendarEvent event : toAdd) {
+                        // Use the stored document ID
+                        db.collection("Shared").document(sharedId)
+                                .collection("Events")
+                                .document()
+                                .set(event)
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
+                                .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
+                    }
 
                     return sharedId;
                 });
@@ -184,6 +193,15 @@ public class NewSharedActivity extends AppCompatActivity {
                                     // only update name if user entered something new
                                     if (nameInput.getText() != null) {
                                         ref.update("name", nameInput.getText().toString().trim());
+                                    }
+                                    for (CalendarEvent event : calEvents) {
+                                        // Use the stored document ID
+                                        db.collection("Shared").document(cal.getSharedId())
+                                                .collection("Events")
+                                                .document()
+                                                .set(event)
+                                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
+                                                .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
                                     }
                                 }
                             } else {
