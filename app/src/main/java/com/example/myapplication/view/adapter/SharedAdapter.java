@@ -34,6 +34,8 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
         SharedCal sharedCal = sharedList.get(position);
 
         holder.sharedTitle.setText(sharedCal.getName());
+        String people = sharedCal.getMembers().size() + " member(s)";
+        holder.sharedPeople.setText(people);
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
