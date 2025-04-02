@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class SharedCalendarActivity extends AppCompatActivity {
     private static final String TAG = "CalendarActivity";
@@ -69,6 +70,8 @@ public class SharedCalendarActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        currentSharedId = cal.getSharedId();
 
         initializeViews();
         setupCalendarDateRange();
@@ -191,26 +194,33 @@ public class SharedCalendarActivity extends AppCompatActivity {
     private void loadEventsFromFirestore() {
         allEvents.clear();
 
-        db.collection("Shared")
-                .whereEqualTo("sharedId", currentSharedId)
+        db.collection("Shared").document(currentSharedId) // Fetch only the correct Shared document
                 .get()
-                .addOnSuccessListener(jobsSnapshot -> {
-                    for (DocumentSnapshot jobDoc : jobsSnapshot.getDocuments()) {
-                        // Fetch events for each job one after another
-                        db.collection("Events")
-                                .get()
-                                .addOnSuccessListener(eventsSnapshot -> {
-                                    for (DocumentSnapshot eventDoc : eventsSnapshot.getDocuments()) {
-                                        CalendarEvent event = eventDoc.toObject(CalendarEvent.class);
-                                        allEvents.add(event);
-                                    }
-                                    // Update UI after each job's events are loaded
-                                    dailyEventListAdapter.notifyDataSetChanged();
-                                })
-                                .addOnFailureListener(e -> Log.e(TAG, "Error loading events", e));
+                .addOnSuccessListener(sharedDoc -> {
+                    if (sharedDoc.exists()) {
+                        SharedCal sharedCal = sharedDoc.toObject(SharedCal.class);
+                        if (sharedCal != null) {
+                            // Now fetch the correct "Events" subcollection
+                            db.collection("Shared").document(currentSharedId).collection("Events")
+                                    .get()
+                                    .addOnSuccessListener(eventsSnapshot -> {
+                                        allEvents.clear(); // Prevent duplicate entries
+                                        for (DocumentSnapshot eventDoc : eventsSnapshot.getDocuments()) {
+                                            CalendarEvent event = eventDoc.toObject(CalendarEvent.class);
+                                            if (event != null) {
+                                                allEvents.add(event);
+                                            }
+                                        }
+                                        Log.d(TAG, "Loaded " + allEvents.size() + " events");
+                                        dailyEventListAdapter.notifyDataSetChanged(); // Update UI
+                                    })
+                                    .addOnFailureListener(e -> Log.e(TAG, "Error loading events", e));
+                        }
+                    } else {
+                        Log.w(TAG, "Shared document does not exist!");
                     }
                 })
-                .addOnFailureListener(e -> Log.e(TAG, "Error loading jobs", e));
+                .addOnFailureListener(e -> Log.e(TAG, "Error loading shared document", e));
     }
 
 

@@ -1,12 +1,13 @@
 package com.example.myapplication.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 
 
-public class CalendarEvent {
+public class CalendarEvent implements Serializable {
     private String name;
 
     private int payRate;
