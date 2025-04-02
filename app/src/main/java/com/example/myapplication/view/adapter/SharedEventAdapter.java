@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -56,15 +57,22 @@ public class SharedEventAdapter extends RecyclerView.Adapter<SharedEventAdapter.
         holder.tvRepeatType.setText(event.getRepeated().toString());
         holder.tvNetPay.setText("$" + event.calculatePay());
 
-        holder.itemView.setOnClickListener(v -> {
-            if (selected.contains(event)) {
-                selected.remove(event);
-                holder.checkbox.setSelected(false);
-            }
-            else {
+        // Ensure checkbox correctly reflects selection state
+        holder.checkbox.setChecked(selected.contains(event));
+
+        // Toggle selection when clicking the checkbox
+        holder.checkbox.setOnClickListener(v -> {
+            if (holder.checkbox.isChecked()) {
                 selected.add(event);
-                holder.checkbox.setSelected(true);
+            } else {
+                selected.remove(event);
             }
+            Log.d(TAG, "Selected events count: " + selected.size()); // Debug log
+        });
+
+        // Also toggle when clicking the itemView (optional)
+        holder.itemView.setOnClickListener(v -> {
+            holder.checkbox.performClick(); // Simulate checkbox click when clicking row
         });
     }
 
@@ -78,7 +86,8 @@ public class SharedEventAdapter extends RecyclerView.Adapter<SharedEventAdapter.
     }
 
     static class SharedEventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay, checkbox;
+        TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay;
+        CheckBox checkbox;
 
         public SharedEventViewHolder(@NonNull View itemView) {
             super(itemView);

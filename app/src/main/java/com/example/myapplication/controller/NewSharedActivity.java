@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -128,7 +129,6 @@ public class NewSharedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Use a transaction to generate a counter-based shared ID
-                final SharedCal[] newShared = new SharedCal[1];
                 db.runTransaction(transaction -> {
                     DocumentSnapshot counterDoc = transaction.get(db.collection("counters").document("shared"));
 
@@ -147,20 +147,27 @@ public class NewSharedActivity extends AppCompatActivity {
                     ArrayList<CalendarEvent> toAdd = new ArrayList<>(adapter.getSelected());
 
                     String sharedId = "shared_" + sharedCounterId;
-                    newShared[0] = new SharedCal(Objects.requireNonNull(nameInput.getText()).toString().trim(), sharedId, currentUserId, toAdd);
+                    SharedCal newShared = new SharedCal(Objects.requireNonNull(nameInput.getText()).toString().trim(), sharedId, currentUserId, toAdd);
                     // Save the calendar with its ID
-                    transaction.set(db.collection("Shared").document(sharedId), newShared[0]);
+                    Log.d(TAG, "Attempting to save shared calendar with ID: " + sharedId);
                     for (CalendarEvent event : toAdd) {
+                        Log.d(TAG, "Saving event: " + event.toString());
+                    }
+                    DocumentReference sharedDocRef = db.collection("Shared").document(sharedId);
+                    transaction.set(db.collection("Shared").document(sharedId), newShared);
+                    Log.d(TAG, "Total events to add: " + toAdd.size());
+                    for (CalendarEvent event : toAdd) {
+                        Log.d(TAG, "Processing event: " + event.getName());
                         // Use the stored document ID
-                        db.collection("Shared").document(sharedId)
-                                .collection("Events")
-                                .document()
-                                .set(event)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
-                                .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
+                        DocumentReference eventRef = sharedDocRef.collection("Events").document();
+                        transaction.set(eventRef, event);
                     }
 
                     return sharedId;
+                }).addOnSuccessListener(sharedId -> {
+                    Log.d(TAG, "Shared Calendar created successfully with ID: " + sharedId);
+                }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Error creating shared calendar", e);
                 });
                 // calendar created, go to view it
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
@@ -179,35 +186,41 @@ public class NewSharedActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<CalendarEvent> calEvents = new ArrayList<>(cal.getEvents());
                 // find the calendar we are working with
-                db.collection("Shared").whereEqualTo("sharedId", cal.getSharedId())
-                        .get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    // add newly selected events to this calendar's list
-                                    ArrayList<CalendarEvent> calEvents = cal.getEvents();
-                                    calEvents.addAll(adapter.getSelected());
+                DocumentReference sharedDocRef = db.collection("Shared").document(cal.getSharedId());
 
-                                    DocumentReference ref = db.collection("Shared").document(cal.getSharedId());
-                                    ref.update("events", calEvents);
-                                    // only update name if user entered something new
-                                    if (nameInput.getText() != null) {
-                                        ref.update("name", nameInput.getText().toString().trim());
-                                    }
-                                    for (CalendarEvent event : calEvents) {
-                                        // Use the stored document ID
-                                        db.collection("Shared").document(cal.getSharedId())
-                                                .collection("Events")
-                                                .document()
-                                                .set(event)
-                                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
-                                                .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
-                                    }
-                                }
-                            } else {
-                                Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
-                            }
-                        });
+                db.runTransaction(transaction -> {
+                    // Get the existing shared document
+                    DocumentSnapshot sharedSnapshot = transaction.get(sharedDocRef);
+
+                    // Update SharedCal details
+                    String updatedName = Objects.requireNonNull(nameInput.getText()).toString().trim();
+                    calEvents.addAll(adapter.getSelected());
+                    SharedCal updatedSharedCal = new SharedCal(updatedName, cal.getSharedId(), currentUserId, calEvents);
+
+                    transaction.set(sharedDocRef, updatedSharedCal); // Update SharedCal document
+
+                    // Log update confirmation
+                    Log.d(TAG, "Updating SharedCal: " + cal.getSharedId());
+
+                    // Add new events
+                    CollectionReference eventsCollection = sharedDocRef.collection("Events");
+                    Log.d(TAG, "Total events to add: " + calEvents.size());
+                    for (CalendarEvent event : calEvents) {
+                        Log.d(TAG, "Processing event: " + event.getName());
+                        DocumentReference newEventRef = eventsCollection.document();
+                        transaction.set(newEventRef, event);
+                        Log.d(TAG, "Added event: " + event.getName());
+                    }
+
+                    return null;
+                }).addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Successfully updated shared calendar: " + cal.getSharedId());
+                }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Error updating shared calendar", e);
+                });
+
                 // go view the updated calendar
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
