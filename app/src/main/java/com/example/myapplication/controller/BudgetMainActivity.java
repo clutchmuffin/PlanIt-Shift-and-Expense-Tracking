@@ -179,6 +179,9 @@ public class BudgetMainActivity extends AppCompatActivity {
                     List<Integer> colors = new ArrayList<>();
 
                     for (Map.Entry<String, Object> entry : budgetData.entrySet()) {
+                        if ("financialSummary".equals(entry.getKey())) {
+                            continue; // Skip financialSummary field
+                        }
                         if (entry.getValue() instanceof Map) {
                             Map<String, Object> categoryMap = (Map<String, Object>) entry.getValue();
 
