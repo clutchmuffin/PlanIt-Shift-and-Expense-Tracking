@@ -462,24 +462,6 @@ public class JobDetailActivity extends AppCompatActivity {
     }
 
     private void createAndSaveExpense(View dialogView, AlertDialog dialog) {
-        /*EditText etDescription = dialogView.findViewById(R.id.editExpenseDescription);
-        EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);
-
-        String description = etDescription.getText().toString().trim();
-        int amount = 0;
-
-        try {
-            amount = Integer.parseInt(etAmount.getText().toString().trim());
-        } catch (NumberFormatException e) {
-            etAmount.setError("Invalid amount");
-            return;
-        }
-
-        Expense newExpense = new Expense(description, amount);
-        job.addExpense(newExpense);
-        expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
-        saveExpenseToFirestore(newExpense);
-        dialog.dismiss();*/
 
         EditText etName = dialogView.findViewById(R.id.editExpenseDescription);
         EditText etAmount = dialogView.findViewById(R.id.editExpenseAmount);

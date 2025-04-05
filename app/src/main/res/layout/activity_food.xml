@@ -46,7 +46,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/addIncome"
+            android:id="@+id/addBudget"
             android:background="@color/green_normal"
             android:text="Add Income"
             android:layout_weight="1"

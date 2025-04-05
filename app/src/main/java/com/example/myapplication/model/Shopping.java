@@ -45,8 +45,6 @@ private String currentUserId;
         setContentView(R.layout.activity_shopping);
 
         recyclerView = findViewById(R.id.recyclerView);
-        // totalFoodExpense = findViewById(R.id.totalFoodExpense);
-        //mainBalanceText = findViewById(R.id.mainBalance);
         pieChart = findViewById(R.id.pieShoppingChart);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

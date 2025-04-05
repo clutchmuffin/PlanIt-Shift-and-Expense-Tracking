@@ -43,8 +43,7 @@ public class Traveling extends AppCompatActivity {
         setContentView(R.layout.activity_traveling);
 
         recyclerView = findViewById(R.id.recyclerView);
-        // totalFoodExpense = findViewById(R.id.totalFoodExpense);
-        //mainBalanceText = findViewById(R.id.mainBalance);
+        ;
         pieChart = findViewById(R.id.pieTravelingChart);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

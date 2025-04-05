@@ -100,7 +100,7 @@ public class FinancialSummary extends AppCompatActivity {
         // Fetch and display data
         //fetchData();
         fetchExpensesForMonth(selectedYear,selectedMonth);
-        loadFoodExpenses();
+        loadFinancialExpenses();
     }
 
 
@@ -175,7 +175,7 @@ public class FinancialSummary extends AppCompatActivity {
 
                             // Fetch total net pay
                             fetchNetPay();
-                            loadFoodExpenses();
+
                         });
                     }
                 });
@@ -253,7 +253,7 @@ public class FinancialSummary extends AppCompatActivity {
 
 
 
-    private void loadFoodExpenses() {
+    private void loadFinancialExpenses() {
 
         progressDialog.show();
 
