@@ -12,6 +12,7 @@ import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.controller.JobDetailActivity;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.NotificationSender;
@@ -91,6 +92,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                                 });
                     }
                 });
+
+        holder.eventEdit.setOnClickListener(
+                v -> {
+                    if (context instanceof JobDetailActivity) {
+                        ((JobDetailActivity) context).showEditEventDialog(event, position);
+                    }
+                });
     }
 
     @Override
@@ -106,7 +114,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay;
-        ImageButton eventDelete;
+        ImageButton eventDelete, eventEdit;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -116,6 +124,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             tvRepeatType = itemView.findViewById(R.id.eventRepeatInfo);
             tvNetPay = itemView.findViewById(R.id.netPay);
             eventDelete = itemView.findViewById(R.id.eventDeleteBtn);
+            eventEdit = itemView.findViewById(R.id.eventEditBtn);
         }
     }
 }

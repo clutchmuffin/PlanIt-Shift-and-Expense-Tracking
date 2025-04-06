@@ -404,11 +404,6 @@ public class JobDetailActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
-
     private void saveEventToFirestore(CalendarEvent event) {
         if (job.getJobId() != null && !job.getJobId().isEmpty()) {
             // Use the stored document ID
@@ -418,6 +413,241 @@ public class JobDetailActivity extends AppCompatActivity {
                 .set(event)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Event saved successfully"))
                 .addOnFailureListener(e -> Log.e(TAG, "Error saving event", e));
+        }
+    }
+
+    /** EDIT EVENT **/
+    public void showEditEventDialog(CalendarEvent event, int position) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_event, null);
+        AlertDialog dialog = createEditEventDialog(dialogView, event, position);
+        dialog.show();
+    }
+
+    private AlertDialog createEditEventDialog(View dialogView, CalendarEvent event, int position) {
+        // Create an AlertDialog similar to createEventDialog but for editing
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Edit Shift")
+                .setView(dialogView)
+                .setPositiveButton("Update", null)
+                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
+                .create();
+
+        // Find and set up the dialog controls (same as in createEventDialog)
+        Button btnSelectBeginDate = dialogView.findViewById(R.id.btnSelectBeginDate);
+        Button btnSelectEndDate = dialogView.findViewById(R.id.btnSelectEndDate);
+        Button btnSelectStartTime = dialogView.findViewById(R.id.btnSelectStartTime);
+        Button btnSelectEndTime = dialogView.findViewById(R.id.btnSelectEndTime);
+        TextView tvBeginDate = dialogView.findViewById(R.id.tvBeginDate);
+        TextView tvEndDate = dialogView.findViewById(R.id.tvEndDate);
+        TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
+        TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
+        EditText etName = dialogView.findViewById(R.id.editEventName);
+        RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
+        Spinner alarmPicker = dialogView.findViewById(R.id.alarmPicker);
+
+        // Set up alarm options same as in createEventDialog
+        List<String> alarmOptions = new ArrayList<>();
+        alarmOptions.add("NONE");
+        alarmOptions.add("1 hour before start");
+        alarmOptions.add("2 hours before start");
+        alarmOptions.add("3 hours before start");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                R.layout.alarm_spinner,
+                alarmOptions
+        );
+        alarmPicker.setAdapter(adapter);
+
+        // Pre-fill dialog with event data
+        etName.setText(event.getName());
+        tvBeginDate.setText(event.getBegin_date());
+        tvEndDate.setText(event.getEnd_date());
+        tvSelectedStartTime.setText(event.getBegin_time());
+        tvSelectedEndTime.setText(event.getEnd_time());
+
+        // Parse dates and times for the date/time picker
+        beginDate = LocalDate.parse(event.getBegin_date(), DATE_FORMATTER);
+        endDate = LocalDate.parse(event.getEnd_date(), DATE_FORMATTER);
+        beginTime = LocalTime.parse(event.getBegin_time(), TIME_FORMATTER);
+        endTime = LocalTime.parse(event.getEnd_time(), TIME_FORMATTER);
+
+        // Set repeat type
+        switch (event.getRepeated()) {
+            case NEVER:
+                radioGroupRepeatType.check(R.id.radioNeverRepeat);
+                break;
+            case DAILY:
+                radioGroupRepeatType.check(R.id.radioDaily);
+                break;
+            case WEEKLY:
+                radioGroupRepeatType.check(R.id.radioWeekly);
+                break;
+            case MONTHLY:
+                radioGroupRepeatType.check(R.id.radioMonthly);
+                break;
+            case ANNUALLY:
+                radioGroupRepeatType.check(R.id.radioYearly);
+                break;
+        }
+
+        // Set alarm type
+        int alarmPosition = 0;
+        switch (event.getAlarmType()) {
+            case NONE:
+                alarmPosition = 0;
+                break;
+            case ONE_HOUR:
+                alarmPosition = 1;
+                break;
+            case TWO_HOUR:
+                alarmPosition = 2;
+                break;
+            case THREE_HOUR:
+                alarmPosition = 3;
+                break;
+        }
+        alarmPicker.setSelection(alarmPosition);
+
+        // Set up button listeners same as in createEventDialog
+        btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
+        btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
+        btnSelectStartTime.setOnClickListener(v -> showTimePicker(tvSelectedStartTime, true));
+        btnSelectEndTime.setOnClickListener(v -> showTimePicker(tvSelectedEndTime, false));
+
+        // Set up positive button click listener for updating the event
+        dialog.setOnShowListener(dialogInterface -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                if (validateEventInput(dialogView)) {
+                    updateEvent(dialogView, dialog, event, position);
+                }
+            });
+        });
+
+        return dialog;
+    }
+
+    private void updateEvent(View dialogView, AlertDialog dialog, CalendarEvent originalEvent, int position) {
+        EditText etName = dialogView.findViewById(R.id.editEventName);
+        RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
+        Spinner alarmPicker = dialogView.findViewById(R.id.alarmPicker);
+
+        String name = etName.getText().toString().trim();
+        RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
+        AlarmType alarmType = getAlarmType(alarmPicker);
+
+        // Create an updated event with the same IDs but new data
+        CalendarEvent updatedEvent = new CalendarEvent(
+                name,
+                originalEvent.getUserId(),
+                job.getPayRate(),
+                beginDate.format(DATE_FORMATTER),
+                endDate.format(DATE_FORMATTER),
+                beginTime.format(TIME_FORMATTER),
+                endTime.format(TIME_FORMATTER),
+                repeatType,
+                originalEvent.getNotifID(),
+                originalEvent.getAlarmID(),
+                alarmType
+        );
+
+        // Check for conflicts with other events (excluding the current event being edited)
+        checkForConflictsAndUpdateEvent(originalEvent, updatedEvent, position, dialog);
+    }
+
+    private void checkForConflictsAndUpdateEvent(CalendarEvent originalEvent, CalendarEvent updatedEvent, int position, AlertDialog dialog) {
+        db.collection("Jobs")
+                .whereEqualTo("userId", currentUserId)
+                .get()
+                .addOnCompleteListener(jobTask -> {
+                    if (jobTask.isSuccessful()) {
+                        List<Task<QuerySnapshot>> eventTasks = new ArrayList<>();
+
+                        for (QueryDocumentSnapshot jobDoc : jobTask.getResult()) {
+                            Task<QuerySnapshot> eventTask = jobDoc.getReference().collection("Events")
+                                    .get();
+                            eventTasks.add(eventTask);
+                        }
+
+                        Tasks.whenAllComplete(eventTasks).addOnCompleteListener(allEventsTask -> {
+                            boolean conflict = false;
+
+                            for (Task<QuerySnapshot> eventTask : eventTasks) {
+                                if (eventTask.isSuccessful()) {
+                                    for (QueryDocumentSnapshot eventDoc : eventTask.getResult()) {
+                                        CalendarEvent otherEvent = eventDoc.toObject(CalendarEvent.class);
+
+                                        // Skip the current event being edited when checking for conflicts
+                                        if (otherEvent.getBegin_date().equals(originalEvent.getBegin_date()) &&
+                                                otherEvent.getBegin_time().equals(originalEvent.getBegin_time()) &&
+                                                otherEvent.getEnd_date().equals(originalEvent.getEnd_date()) &&
+                                                otherEvent.getEnd_time().equals(originalEvent.getEnd_time())) {
+                                            continue;
+                                        }
+
+                                        if (hasConflict(updatedEvent, otherEvent)) {
+                                            conflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (conflict) {
+                                new AlertDialog.Builder(this)
+                                        .setTitle("Scheduling Conflict")
+                                        .setMessage("This shift overlaps with an existing shift")
+                                        .setPositiveButton("Edit", (d, which) -> d.dismiss())
+                                        .show();
+                            } else {
+                                // Update local array
+                                job.getEvents().set(position, updatedEvent);
+                                eventListAdapter.notifyItemChanged(position);
+
+                                // Update in Firestore
+                                updateEventInFirestore(originalEvent, updatedEvent);
+
+                                // Update notifications
+                                NotificationSender notificationSender = new NotificationSender(this);
+                                notificationSender.cancelNotification(originalEvent);
+                                notificationSender.scheduleDailyNotification(updatedEvent, job.getEmployer());
+                                notificationSender.updateWeeklyNotif();
+                                notificationSender.scheduleAlarm(updatedEvent, job.getEmployer());
+
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+    }
+
+    private void updateEventInFirestore(CalendarEvent originalEvent, CalendarEvent updatedEvent) {
+        if (job.getJobId() != null && !job.getJobId().isEmpty()) {
+            // Find the event document by matching fields
+            db.collection("Jobs").document(job.getJobId())
+                    .collection("Events")
+                    .whereEqualTo("begin_date", originalEvent.getBegin_date())
+                    .whereEqualTo("begin_time", originalEvent.getBegin_time())
+                    .whereEqualTo("end_date", originalEvent.getEnd_date())
+                    .whereEqualTo("end_time", originalEvent.getEnd_time())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Get the document ID of the matching event
+                            String eventDocId = queryDocumentSnapshots.getDocuments().get(0).getId();
+
+                            // Update the event in Firestore
+                            db.collection("Jobs").document(job.getJobId())
+                                    .collection("Events")
+                                    .document(eventDocId)
+                                    .set(updatedEvent)
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Event updated successfully"))
+                                    .addOnFailureListener(e -> Log.e(TAG, "Error updating event", e));
+                        } else {
+                            Log.e(TAG, "Could not find event document to update");
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e(TAG, "Error querying for event to update", e));
         }
     }
 
