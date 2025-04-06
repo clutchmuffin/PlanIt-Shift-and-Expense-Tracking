@@ -309,9 +309,9 @@ public class JobDetailActivity extends AppCompatActivity {
                 repeatType,
                 notifID,
                 alarmID,
-                alarmType
+                alarmType,
+                job.getColor()
         );
-
 
         checkForConflictsAndSaveEvent(newEvent, dialog);
     }
@@ -548,7 +548,8 @@ public class JobDetailActivity extends AppCompatActivity {
                 repeatType,
                 originalEvent.getNotifID(),
                 originalEvent.getAlarmID(),
-                alarmType
+                alarmType,
+                job.getColor()
         );
 
         // Check for conflicts with other events (excluding the current event being edited)

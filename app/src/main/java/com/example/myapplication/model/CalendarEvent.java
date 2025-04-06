@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-
-
 public class CalendarEvent implements Serializable {
     private String name;
 
@@ -45,10 +43,11 @@ public class CalendarEvent implements Serializable {
     private int notifID;
     private int alarmID;
     private AlarmType alarmType;
+    private int jobColor;
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int notifID, int alarmID, AlarmType alarmType) {
+    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int notifID, int alarmID, AlarmType alarmType, int jobColor) {
         this.name = n;
         this.userId = uid;
         this.payRate = pay_rate;
@@ -70,6 +69,7 @@ public class CalendarEvent implements Serializable {
         this.notifID = notifID;
         this.alarmID = alarmID;
         this.alarmType = alarmType;
+        this.jobColor = jobColor; // Set the job color
     }
 
     public CalendarEvent(String n, String uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
@@ -193,5 +193,13 @@ public class CalendarEvent implements Serializable {
 
     public int getAlarmID(){
         return alarmID;
+    }
+
+    public int getJobColor() {
+        return jobColor;
+    }
+
+    public void setJobColor(int jobColor) {
+        this.jobColor = jobColor;
     }
 }
