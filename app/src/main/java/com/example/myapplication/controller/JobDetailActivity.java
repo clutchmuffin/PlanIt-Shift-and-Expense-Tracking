@@ -519,7 +519,6 @@ public class JobDetailActivity extends AppCompatActivity {
         saveExpenseToFirestore(newExpense);
         job.addExpense(newExpense);
         expenseListAdapter.notifyItemInserted(job.getExpenses().size() - 1);
-        showExpenses();
         dialog.dismiss();
 
     }
@@ -578,25 +577,6 @@ public class JobDetailActivity extends AppCompatActivity {
             tvTime.setText(selectedTime.format(TIME_FORMATTER));
         });
     }
-
-    private void showExpenses() {
-        db.collection("Jobs").document(job.getTitle()).collection("EXP")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        job.getExpenses().clear(); // Clear existing data to avoid duplicates
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            EXP expense = document.toObject(EXP.class);
-                            job.addExpense(expense);
-                        }
-                        expenseListAdapter.notifyDataSetChanged(); // Notify adapter about the changes
-                    } else {
-                        Log.e("JobDetailActivity", "Error getting documents: ", task.getException());
-                    }
-                });
-    }
-
-
 
     /**
      * Checks if two events overlap in time
