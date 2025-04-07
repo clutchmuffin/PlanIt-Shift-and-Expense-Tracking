@@ -110,7 +110,7 @@ public class Food extends AppCompatActivity {
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     foodExpenses.add(expense);
-                                                    totalFoodExpenseAmount[0] += expense.getAmount();
+                                                    totalFoodExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
                                                 }
                                             }
                                         } else {

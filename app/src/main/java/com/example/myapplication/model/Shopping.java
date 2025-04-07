@@ -113,7 +113,7 @@ private String currentUserId;
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     shoppingExpenses.add(expense);
-                                                    totalShoppingExpenseAmount[0] += expense.getAmount();
+                                                    totalShoppingExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
                                                 }
                                             }
                                         }

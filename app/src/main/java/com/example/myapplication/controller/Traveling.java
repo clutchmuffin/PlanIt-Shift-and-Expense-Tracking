@@ -114,7 +114,7 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     travelingExpenses.add(expense);
-                                                    totalTravelingExpenseAmount[0] += expense.getAmount();
+                                                    totalTravelingExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
                                                     hasExpenses = true;
                                                 }
                                             }

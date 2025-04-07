@@ -114,15 +114,15 @@ public class Entertainment extends AppCompatActivity {
                                 .addOnCompleteListener(allTask -> {
                                     for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
                                         if (expenseTask.isSuccessful()) {
-                                            double jobEntertainmentExpense = 0.0;
+//                                            double jobEntertainmentExpense = 0.0;
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
                                                     entertainmentExpenses.add(expense);
-                                                    jobEntertainmentExpense += expense.getAmount();
+                                                    totalEntertainmentExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
                                                 }
                                             }
-                                            totalEntertainmentExpenseAmount[0] += jobEntertainmentExpense;
+//                                            totalEntertainmentExpenseAmount[0] += jobEntertainmentExpense;
                                         } else {
                                             Log.e(TAG, "Error fetching expenses", expenseTask.getException());
                                         }
