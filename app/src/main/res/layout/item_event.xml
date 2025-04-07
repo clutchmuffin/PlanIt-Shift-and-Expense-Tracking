@@ -76,10 +76,19 @@
                 android:textSize="12sp"/>
 
             <ImageButton
+                android:id="@+id/eventEditBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="95dp"
+                android:src="@android:drawable/ic_menu_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Edit event" />
+
+            <ImageButton
                 android:id="@+id/eventDeleteBtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="150dp"
+                android:layout_marginStart="1dp"
                 android:src="@android:drawable/ic_menu_delete"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Delete event" />
