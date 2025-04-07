@@ -70,7 +70,7 @@ public class BudgetMainActivity extends AppCompatActivity {
         entertainment.setOnClickListener(v -> startActivity(new Intent(this, Entertainment.class)));
         traveling.setOnClickListener(v -> startActivity(new Intent(this, Traveling.class)));
         updateBudget.setOnClickListener(v -> startActivity(new Intent(this, SetBudget.class)));
-        financialSummary.setOnClickListener(v -> startActivity(new Intent(this, FinancialSummary.class)));
+        financialSummary.setOnClickListener(v -> startActivity(new Intent(this, JobSummaryActivity.class)));
 
         // Load pie chart
         getBudgetData(currentUserId);

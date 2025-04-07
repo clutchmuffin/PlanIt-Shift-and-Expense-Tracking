@@ -82,12 +82,6 @@ public class MainActivity extends AppCompatActivity {
         fabAddJob = findViewById(R.id.fabAddJob);
         fabAddJob.setOnClickListener(v -> showAddJobDialog());
 
-        // Set click listener on user avatar
-        ImageView userAvatar = findViewById(R.id.userAvatar);
-        userAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, JobSummaryActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void setupRecyclerView() {
