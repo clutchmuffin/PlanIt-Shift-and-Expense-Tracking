@@ -1,96 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/eventCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="8dp" app:cardElevation="4dp" app:cardCornerRadius="8dp">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/expenseDescription"
+            android:hint="Description"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!--  Date Range  -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/expenseDescription"
-                android:hint="Description"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/eventDateRange"
+                android:hint="Date Range"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/Widget.Material3.Chip.Suggestion"
+                app:chipCornerRadius="8dp"/>
 
-            <!--  Date Range  -->
-            <LinearLayout
+            <!-- Repeat Info -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/eventRepeatInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginStart="5dp"
+                android:textStyle="italic"
+                android:hint="Repeat"
+                android:textSize="12sp"/>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/eventDateRange"
-                    android:hint="Date Range"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    style="@style/Widget.Material3.Chip.Suggestion"
-                    app:chipCornerRadius="8dp"/>
-                <!-- The rate of the expense-->
+            <ImageButton
+                android:id="@+id/expenseDeleteBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="60dp"
+                android:src="@android:drawable/ic_menu_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Delete expense" />
 
-                <!--  total expenses for the duration  -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/expenseAmount"
-                    android:layout_marginLeft="60dp"
-                    android:text="@string/dollar"
-                    android:textSize="16sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            </LinearLayout>
-            <!--  Repeat Info  -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- Net Pay -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/expenseRate"
-                    android:text="@string/dollar"
-                    android:textSize="16sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                <!-- Repeat Info -->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/eventRepeatInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:textStyle="italic"
-                    android:hint="Repeat"
-                    android:textSize="12sp"/>
-
-
-                <!--  Additional Details (e.g., monthly type, weekly days)  -->
-                <TextView
-                    android:id="@+id/eventAdditionalInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Additional Info"
-                    android:textSize="12sp"
-                    android:visibility="gone"/>
-            </LinearLayout>
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/expenseDeleteBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="160dp"
-            android:layout_marginTop="10dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete expense" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Net Pay -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/expenseRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dollar"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="16sp" />
+
+            <!--  total expenses for the duration  -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/expenseAmount"
+                android:text="@string/dollar"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

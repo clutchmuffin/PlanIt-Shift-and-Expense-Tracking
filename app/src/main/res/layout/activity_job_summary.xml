@@ -79,7 +79,7 @@
 
         <!-- Existing summary card content -->
         <LinearLayout
-            android:layout_width="381dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/round"
             android:gravity="center"
