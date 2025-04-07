@@ -92,7 +92,7 @@ public class Entertainment extends AppCompatActivity {
     }
     private void loadEntertainmentExpenses() {
         progressDialog.show();
-        db.collection("Jobs")
+        db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
