@@ -32,10 +32,10 @@
             android:name=".controller.SetBudget"
             android:exported="false" />
         <activity
-            android:name=".model.Food"
+            android:name=".controller.Food"
             android:exported="false" />
         <activity
-            android:name=".model.Shopping"
+            android:name=".controller.Shopping"
             android:exported="false" /> <!-- CalendarActivity declaration -->
         <activity
             android:name=".controller.LoginActivity"

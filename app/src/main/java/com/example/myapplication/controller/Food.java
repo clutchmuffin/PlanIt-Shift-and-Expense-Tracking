@@ -1,4 +1,4 @@
-package com.example.myapplication.model;
+package com.example.myapplication.controller;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,13 +9,11 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
-import com.example.myapplication.controller.LoginActivity;
-import com.example.myapplication.controller.SetBudget;
+import com.example.myapplication.model.EXP;
 import com.example.myapplication.view.adapter.ExpenseListAdapter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
