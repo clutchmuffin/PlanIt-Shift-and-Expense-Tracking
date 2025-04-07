@@ -31,7 +31,6 @@ public class BudgetMainActivity extends AppCompatActivity {
     private PieChart pieChart;
     private ProgressDialog progressDialog;
     private String currentUserId;
-
     private Button food, shopping, entertainment, traveling, updateBudget, financialSummary;
 
     @Override

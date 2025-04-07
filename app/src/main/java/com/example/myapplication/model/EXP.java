@@ -87,6 +87,15 @@ public class EXP implements Serializable {
         LocalDate end = LocalDate.parse(endDate);      // Assuming endDate is a String
 
         long days = ChronoUnit.DAYS.between(start, end) + 1;  // +1 to include both start and end dates
+        long occurrences = getOccurrences(days);
+
+        double totalExpense = amount * occurrences;
+        double expenseRate = amount; // Average daily expense rate
+
+        return Arrays.asList(expenseRate, totalExpense);
+    }
+
+    private long getOccurrences(long days) {
         long occurrences = 1;  // Default to one-time expense
 
         // Determine occurrences based on the repeat type
@@ -109,11 +118,7 @@ public class EXP implements Serializable {
 
         if (occurrences < 1){
             occurrences = 1;}
-
-        double totalExpense = amount * occurrences;
-        double expenseRate = amount; // Average daily expense rate
-
-        return Arrays.asList(expenseRate, totalExpense);
+        return occurrences;
     }
 
 

@@ -18,8 +18,7 @@ import java.util.List;
 
 public class dailyEventListAdapter extends RecyclerView.Adapter<dailyEventListAdapter.dailyEventViewHolder> {
 
-    private List<CalendarEvent> dailyEvents;
-
+    private final List<CalendarEvent> dailyEvents;
 
     public dailyEventListAdapter(List<CalendarEvent> events) {
         this.dailyEvents = events != null ? events : new ArrayList<>();

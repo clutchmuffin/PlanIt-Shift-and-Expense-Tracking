@@ -33,7 +33,7 @@ public class Traveling extends AppCompatActivity {
     private TextView addIncome, mainBalanceText;
     private PieChart pieChart;
     private String currentUserId;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "TravelingActivity";
     private ProgressDialog progressDialog;
 
@@ -43,12 +43,11 @@ public class Traveling extends AppCompatActivity {
         setContentView(R.layout.activity_traveling);
 
         recyclerView = findViewById(R.id.recyclerView);
-        ;
         pieChart = findViewById(R.id.pieTravelingChart);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         travelingExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter((ArrayList<EXP>) travelingExpenses, null);
+        adapter = new ExpenseListAdapter(travelingExpenses, null);
         recyclerView.setAdapter(adapter);
 
 SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);

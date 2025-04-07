@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,7 +34,7 @@ public class Entertainment extends AppCompatActivity {
     private List<EXP> entertainmentExpenses;
     private TextView totalEntertainmentExpense, addIncome;
     private PieChart pieChart;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
     private ProgressDialog progressDialog;
     private String currentUserId;
@@ -53,7 +52,7 @@ public class Entertainment extends AppCompatActivity {
 
         // Initialize expense list and adapter
         entertainmentExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter((ArrayList<EXP>) entertainmentExpenses, null);
+        adapter = new ExpenseListAdapter(entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
 

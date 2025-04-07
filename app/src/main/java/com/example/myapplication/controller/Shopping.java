@@ -32,7 +32,7 @@ public class Shopping extends AppCompatActivity {
     private List<EXP> shoppingExpenses;
     private TextView addBudget, mainBalanceText;
     private PieChart pieChart;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "ShoppingActivity";
 
     private ProgressDialog progressDialog;
@@ -48,7 +48,7 @@ private String currentUserId;
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         shoppingExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter((ArrayList<EXP>) shoppingExpenses, null);
+        adapter = new ExpenseListAdapter(shoppingExpenses, null);
         recyclerView.setAdapter(adapter);
 
         // Retrieve user ID from SharedPreferences

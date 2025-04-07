@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,10 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.SharedCal;
 import com.example.myapplication.view.adapter.SharedAdapter;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -30,7 +24,6 @@ import java.util.Objects;
 public class SharingMainActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private MaterialToolbar topAppBar;
     private RecyclerView sharedRecyclerView;
     private SharedAdapter sharedListAdapter;
     private BottomNavigationView bottomNav;
@@ -43,7 +36,6 @@ public class SharingMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharingmain);
 
-        topAppBar = findViewById(R.id.topAppBar);
         sharedRecyclerView = findViewById(R.id.sharedRecyclerView);
         bottomNav = findViewById(R.id.bottomNav);
         createbutton = findViewById(R.id.createbutton);
@@ -84,20 +76,12 @@ public class SharingMainActivity extends AppCompatActivity {
         sharedListAdapter = new SharedAdapter(sharedCals);
         sharedRecyclerView.setAdapter(sharedListAdapter);
 
-        createbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SharingMainActivity.this, NewSharedActivity.class));
-                sharedListAdapter.notifyDataSetChanged();
-            }
+        createbutton.setOnClickListener(v -> {
+            startActivity(new Intent(SharingMainActivity.this, NewSharedActivity.class));
+            sharedListAdapter.notifyDataSetChanged();
         });
 
-        joinbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SharingMainActivity.this, SharingJoinActivity.class));
-            }
-        });
+        joinbutton.setOnClickListener(v -> startActivity(new Intent(SharingMainActivity.this, SharingJoinActivity.class)));
 
     }
 

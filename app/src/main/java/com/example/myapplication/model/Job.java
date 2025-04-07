@@ -13,9 +13,9 @@ public class Job implements Serializable {
     private int pay_rate;
     private String userId;
     private String jobId;
-    private ArrayList<CalendarEvent> events;
+    private final ArrayList<CalendarEvent> events;
+    private final ArrayList<EXP> expense_list;
     private ArrayList<EventSlot> eventSlots;
-    private ArrayList<EXP> expense_list;
 
     public Job() {
         this.events = new ArrayList<>();

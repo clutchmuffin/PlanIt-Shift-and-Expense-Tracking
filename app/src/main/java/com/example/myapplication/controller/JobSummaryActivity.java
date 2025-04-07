@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.EXP;
-import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.view.adapter.JobSummaryAdapter;
 import com.github.mikephil.charting.charts.PieChart;
@@ -23,12 +21,9 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -330,6 +325,8 @@ public class JobSummaryActivity extends AppCompatActivity {
             return 0.0;
         }
 
+        LocalDate periodStart;
+        LocalDate periodEnd;
         long totalOccurrences = 0;
 
         switch (repeatType) {
@@ -341,8 +338,8 @@ public class JobSummaryActivity extends AppCompatActivity {
                 break;
             case "DAILY":
                 // Count days in this month
-                LocalDate periodStart = expStartDate.isBefore(monthStart) ? monthStart : expStartDate;
-                LocalDate periodEnd = expEndDate.isAfter(monthEnd) ? monthEnd : expEndDate;
+                periodStart = expStartDate.isBefore(monthStart) ? monthStart : expStartDate;
+                periodEnd = expEndDate.isAfter(monthEnd) ? monthEnd : expEndDate;
                 totalOccurrences = ChronoUnit.DAYS.between(periodStart, periodEnd.plusDays(1));
                 break;
             case "WEEKLY":
@@ -448,11 +445,11 @@ public class JobSummaryActivity extends AppCompatActivity {
     
     // Class to hold job summary data
     public static class JobSummaryData {
-        private Job job;
+        private final Job job;
         private double hoursWorked = 0.0;
         private double earnings = 0.0;
         private double expenses = 0.0;
-        private Map<String, Double> expenseDetails = new HashMap<>();
+        private final Map<String, Double> expenseDetails = new HashMap<>();
         private boolean hasEvents = false;
         private boolean hasExpenses = false;
         

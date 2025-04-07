@@ -9,9 +9,8 @@ public class SharedCal implements Serializable {
     private ArrayList<String> members;
     private ArrayList<CalendarEvent> events;
 
-    public SharedCal() {
+    public SharedCal() {}
 
-    }
     public SharedCal(String n, String id, String m, ArrayList<CalendarEvent> j) {
         this.name = n;
         this.members = new ArrayList<>();

@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.model.EXP;
-import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -18,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenseListAdapter extends RecyclerView.Adapter<ExpenseListAdapter.ExpenseViewHolder> {
-    private List<EXP> expenses;
-    private Job job;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final List<EXP> expenses;
+    private final Job job;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public ExpenseListAdapter(List<EXP> expenses, Job job) {
         this.expenses = expenses != null ? expenses : new ArrayList<>();
@@ -74,16 +73,12 @@ public class ExpenseListAdapter extends RecyclerView.Adapter<ExpenseListAdapter.
                                                     notifyItemRemoved(position);
                                                     Log.d("JobDetailActivity", "Expense successfully deleted from Firestore");
                                                 })
-                                                .addOnFailureListener(e -> {
-                                                    Log.e("JobDetailActivity", "Error deleting expense from Firestore", e);
-                                                });
+                                                .addOnFailureListener(e -> Log.e("JobDetailActivity", "Error deleting expense from Firestore", e));
                                     } else {
                                         Log.e("JobDetailActivity", "Could not find expense document to delete");
                                     }
                                 })
-                                .addOnFailureListener(e -> {
-                                    Log.e("JobDetailActivity", "Error querying for expense to delete", e);
-                                });
+                                .addOnFailureListener(e -> Log.e("JobDetailActivity", "Error querying for expense to delete", e));
                     }
                 }
         );

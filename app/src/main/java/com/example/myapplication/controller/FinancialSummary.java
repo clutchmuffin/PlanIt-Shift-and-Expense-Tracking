@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class FinancialSummary extends AppCompatActivity {
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private PieChart pieChart;
     private TextView totalExpensesTextView;
     private TextView totalNetPayTextView;
@@ -389,8 +389,6 @@ public class FinancialSummary extends AppCompatActivity {
                     totalExpensesTextView.setText("Total Monthly Expenses Pay: $" + totalExpenseAmount);
 
                     fetchNetPayForMonth(selectedYear,selectedMonth);
-;
-
                 });
             }
         });
