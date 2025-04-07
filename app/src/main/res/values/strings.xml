@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ShiftTracker</string>
+    <string name="app_name">PlanIt</string>
     <string name="user_avatar">User</string>
     <string name="text_jobs">Jobs</string>
     <string name="text_calendar">Calendar</string>
