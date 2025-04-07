@@ -12,6 +12,7 @@ public class EXP implements Serializable {
     private RepeatType repeatType = RepeatType.NEVER; // Default to one-off
     private String startDate;
     private String endDate;
+    private String dateCreated;
 
     public EXP() {}
 
@@ -19,6 +20,7 @@ public class EXP implements Serializable {
         this.description = description;
         this.amount = amount;
         this.repeatType = RepeatType.NEVER;
+        this.dateCreated = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public EXP(String description, double amount, RepeatType repeatType, String startDate, String endDate) {
@@ -27,6 +29,7 @@ public class EXP implements Serializable {
         this.repeatType = repeatType;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.dateCreated = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public String getDescription() {
@@ -67,6 +70,16 @@ public class EXP implements Serializable {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    // Getter for dateCreated
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    // Setter for dateCreated
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public List<Double> calculateExpenseDetails() {
