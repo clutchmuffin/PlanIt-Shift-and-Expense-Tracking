@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.content.SharedPreferences;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottomNav);
         fabAddJob = findViewById(R.id.fabAddJob);
         fabAddJob.setOnClickListener(v -> showAddJobDialog());
+
+        // Set click listener on user avatar
+        ImageView userAvatar = findViewById(R.id.userAvatar);
+        userAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, JobSummaryActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void setupRecyclerView() {
@@ -217,11 +225,11 @@ public class MainActivity extends AppCompatActivity {
     private void saveJobToFirestore(Job newJob) {
         // Set the user ID for the job
         newJob.setUserId(currentUserId);
-    
+
         // Use a transaction to generate a counter-based job ID
         db.runTransaction(transaction -> {
             DocumentSnapshot counterDoc = transaction.get(db.collection("counters").document("jobs"));
-            
+
             int jobCounterId;
             if (counterDoc.exists()) {
                 jobCounterId = counterDoc.getLong("nextId").intValue();
@@ -229,16 +237,16 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // First job, initialize counter
                 jobCounterId = 1;
-                transaction.set(db.collection("counters").document("jobs"), 
-                    java.util.Collections.singletonMap("nextId", 2));
+                transaction.set(db.collection("counters").document("jobs"),
+                        java.util.Collections.singletonMap("nextId", 2));
             }
-            
+
             String jobId = "job_" + jobCounterId;
             newJob.setJobId(jobId);
-            
+
             // Save the job with its ID
             transaction.set(db.collection("Jobs").document(jobId), newJob);
-            
+
             return jobId;
         }).addOnSuccessListener(jobId -> {
             // Add the job to the local list
