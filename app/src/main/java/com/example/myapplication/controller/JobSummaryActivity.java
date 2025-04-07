@@ -28,6 +28,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import org.checkerframework.checker.units.qual.C;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -398,38 +400,48 @@ public class JobSummaryActivity extends AppCompatActivity {
 
     private void updatePieChart() {
         ArrayList<PieEntry> entries = new ArrayList<>();
-        double total = totalEarnings + totalExpenses;
         
-        // Only proceed if we have data
-        if (total > 0) {
-            if (totalEarnings > 0) {
-                entries.add(new PieEntry((float) totalEarnings, "Earnings"));
+        // Only proceed if we have earnings
+        if (totalEarnings > 0) {
+            double amountSpent = totalExpenses;
+            double amountLeft = totalEarnings - totalExpenses;
+            
+            // Handle case where expenses exceed earnings
+            if (amountLeft < 0) {
+                amountLeft = 0;
             }
             
-            if (totalExpenses > 0) {
-                entries.add(new PieEntry((float) totalExpenses, "Expenses"));
+            if (amountSpent > 0) {
+                entries.add(new PieEntry((float) amountSpent, "Amount Spent"));
+            }
+            
+            if (amountLeft > 0) {
+                entries.add(new PieEntry((float) amountLeft, "Amount Left"));
             }
             
             PieDataSet dataSet = new PieDataSet(entries, "");
             
             int[] pieColors = {
-                Color.rgb(76, 175, 80),  // Green for earnings
-                Color.rgb(244, 67, 54)   // Red for expenses
+                Color.rgb(244, 67, 54),   // Red for amount spent
+                Color.rgb(33, 150, 243),  // Blue for amount left
+//                Color.rgb(76, 175, 80)    // Green for amount left
             };
             dataSet.setColors(pieColors);
             
             PieData data = new PieData(dataSet);
-            data.setValueFormatter(new PercentFormatter(summaryPieChart));
+            // data.setValueFormatter(new PercentFormatter(summaryPieChart));
             data.setValueTextSize(11f);
             data.setValueTextColor(Color.WHITE);
             
             summaryPieChart.setData(data);
+            summaryPieChart.setUsePercentValues(false);
+            summaryPieChart.setCenterText("Earnings\nBreakdown");
             summaryPieChart.invalidate();
             
             summaryPieChart.animateY(1000);
         } else {
             summaryPieChart.clear();
-            summaryPieChart.setNoDataText("No data available for this month");
+            summaryPieChart.setNoDataText("No earnings available for this month");
             summaryPieChart.invalidate();
         }
     }
