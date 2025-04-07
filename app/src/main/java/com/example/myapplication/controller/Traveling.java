@@ -160,12 +160,12 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
                         Map<String, Object> budgetData = documentSnapshot.getData();
                         if (budgetData != null && budgetData.containsKey("traveling")) {
                             Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("traveling");
-                            Double budget = (Double) foodCategory.get("budgetAmount");
-                            Double totalExp = (Double) foodCategory.get("totalExpenses");
+                            Number budget = (Number) foodCategory.get("budgetAmount");
+                            Number totalExp = (Number) foodCategory.get("totalExpenses");
 
                             if (budget != null && totalExp != null) {
-                                double remaining = budget - totalExp;
-                                updatePieChart(totalExp, remaining);
+                                double remaining = budget.doubleValue() - totalExp.doubleValue();
+                                updatePieChart(totalExp.doubleValue(), remaining);
                             } else {
                                 Log.e(TAG, "Budget or totalExpenses for traveling is null");
                             }
@@ -180,26 +180,45 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         List<PieEntry> entries = new ArrayList<>();
         entries.add(new PieEntry((float) spent, "Spent"));
         entries.add(new PieEntry((float) remaining, "Remaining"));
-
-        PieDataSet dataSet = new PieDataSet(entries, "Traveling Budget Breakdown");
-
+    
+        PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(Color.RED, Color.parseColor("#2E9797"));
-        dataSet.setValueTextSize(17f);
+        dataSet.setValueTextSize(16f);
         dataSet.setValueTextColor(Color.WHITE);
-
+    
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
+        
+        // Match Financial Summary styling
         pieChart.getDescription().setEnabled(false);
-        pieChart.setDrawEntryLabels(true);
+        pieChart.setDrawEntryLabels(false);
         pieChart.setUsePercentValues(false);
+        
+        pieChart.setCenterText("Traveling\nBudget\nBreakdown");
+        pieChart.setCenterTextSize(14f);
+        pieChart.setDrawCenterText(true);
+        
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(Color.WHITE);
+        pieChart.setHoleRadius(58f);
+        pieChart.setTransparentCircleRadius(61f);
 
+        // Consistent sizing parameters
+        pieChart.setExtraOffsets(10f, 10f, 10f, 10f);
+        pieChart.setMinimumHeight(500);
+        pieChart.setMinimumWidth(500);
+    
         Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
         legend.setTextSize(12f);
         legend.setFormSize(12f);
         legend.setTextColor(Color.BLACK);
-        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-
-        pieChart.invalidate(); // Refresh the chart
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setDrawInside(false);
+    
+        pieChart.animateY(1000);
+        pieChart.invalidate();
     }
 }

@@ -133,7 +133,7 @@ public class JobSummaryActivity extends AppCompatActivity {
     private void setupPieChart() {
         summaryPieChart.setUsePercentValues(true);
         summaryPieChart.getDescription().setEnabled(false);
-        summaryPieChart.setExtraOffsets(5, 10, 5, 5);
+        summaryPieChart.setExtraOffsets(10, 10, 10, 10);
         
         summaryPieChart.setDragDecelerationFrictionCoef(0.95f);
         
@@ -156,7 +156,7 @@ public class JobSummaryActivity extends AppCompatActivity {
         
         summaryPieChart.getLegend().setEnabled(true);
         summaryPieChart.getLegend().setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        summaryPieChart.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        summaryPieChart.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         summaryPieChart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
         summaryPieChart.getLegend().setDrawInside(false);
     }

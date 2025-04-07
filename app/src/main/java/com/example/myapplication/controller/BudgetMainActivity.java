@@ -17,6 +17,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Food;
 import com.example.myapplication.model.Shopping;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -133,20 +134,43 @@ public class BudgetMainActivity extends AppCompatActivity {
     }
 
     private void updatePieChart(List<PieEntry> entries, List<Integer> colors, int totalExpenses, int remainingBudget) {
-        PieDataSet dataSet = new PieDataSet(entries, "Budget Overview");
+        PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(colors);
-        dataSet.setValueTextSize(14f);
-
+        dataSet.setValueTextSize(16f);
+        dataSet.setValueTextColor(Color.WHITE);
+    
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
-
+    
         pieChart.setUsePercentValues(false);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setCenterText("Used: $" + totalExpenses + "\nLeft: $" + remainingBudget);
+        pieChart.setCenterText("Budget Overview\n Used: $" + totalExpenses + "\nLeft: $" + remainingBudget);
+        pieChart.setCenterTextSize(14f);
+        
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(Color.WHITE);
+        pieChart.setHoleRadius(58f);
+        pieChart.setTransparentCircleRadius(61f);
+
+        // Consistent sizing parameters
+        pieChart.setExtraOffsets(10f, 10f, 10f, 10f);
+        pieChart.setMinimumHeight(500);
+        pieChart.setMinimumWidth(500);
+        
+        pieChart.setDrawEntryLabels(false);
         pieChart.setEntryLabelTextSize(12f);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setHoleRadius(40f);
-        pieChart.setTransparentCircleRadius(45f);
+        
+        // Set legend properties
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
+        legend.setTextSize(12f);
+        legend.setFormSize(12f);
+        legend.setTextColor(Color.BLACK);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+//        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setDrawInside(false);
+        
         pieChart.animateY(1000);
         pieChart.invalidate();
     }
