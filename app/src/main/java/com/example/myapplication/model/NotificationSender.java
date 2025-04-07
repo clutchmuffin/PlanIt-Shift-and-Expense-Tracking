@@ -2,10 +2,15 @@ package com.example.myapplication.model;
 
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
+
+import com.example.myapplication.controller.AlarmActivity;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -16,13 +21,25 @@ import java.util.TimeZone;
 
 public class NotificationSender {
     private final Context context;
+    private final AlarmManager manager;
     public static String daily_channel_name = "dailyNotif";
     public static String daily_channel_desc = "a notification channel that gets used to send notifications for every shift";
     public static String weekly_channel_name = "weeklyNotif";
-    public static String weekly_channel_desc = "a notification that gets used to send weekly notifications";
+    public static String weekly_channel_desc = "a notification channel that gets used to send weekly notifications";
+    public static String alarm_channel = "alarmChannel";
+    public static String alarm_channel_desc = "a notification channel that gets used to send alarm notifications";
+
+    private long dailyInterval = 1000 * 60 * 60 * 24;
+    private long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
+    private long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
+    private long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
+
+    private static final String TAG = "NotificationSender";
+
 
     public NotificationSender(Context context) {
         this.context = context;
+        manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
     /**
@@ -54,27 +71,7 @@ public class NotificationSender {
                 intent,
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
 
-        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        // Schedules a notification to go off at 6am the day of the added shift if the shift isn't repeating
-        if (event.getRepeated() == RepeatType.NEVER) {
-            scheduleOnce(pendintent, milliStartDate, manager);
-        }
-        else if (event.getRepeated() == RepeatType.DAILY) {
-            long dailyInterval = 1000 * 60 * 60 * 24;
-            scheduleRepeating(pendintent, milliStartDate, dailyInterval, manager);
-        }
-        else if(event.getRepeated() == RepeatType.WEEKLY){
-            long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
-            scheduleRepeating(pendintent, milliStartDate, weeklyInterval, manager);
-        }
-        else if(event.getRepeated() == RepeatType.MONTHLY){
-            long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
-            scheduleRepeating(pendintent, milliStartDate, monthlyInterval, manager);
-        }
-        else if(event.getRepeated() == RepeatType.ANNUALLY){
-            long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
-            scheduleRepeating(pendintent, milliStartDate, yearlyInterval, manager);
-        }
+        scheduleEvent(event,milliStartDate,pendintent);
 
     }
 
@@ -88,8 +85,13 @@ public class NotificationSender {
     private long getMilliDateTime(String date, int hour, int minute){
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(date, dateFormatter);
-        ZonedDateTime dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
-
+        ZonedDateTime dateTime;
+        if(hour < 0){
+            hour = hour+24;
+            dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
+            return dateTime.toInstant().toEpochMilli() - dailyInterval;
+        }
+        dateTime = localDate.atTime(hour, minute).atZone(TimeZone.getDefault().toZoneId());
         return dateTime.toInstant().toEpochMilli();
     }
 
@@ -116,32 +118,10 @@ public class NotificationSender {
         return nextSunday;
     }
 
-    private Calendar findLastSunday(){
-        Calendar currTime = Calendar.getInstance();
-        Calendar lastSunday = Calendar.getInstance();
-        lastSunday.set(Calendar.SECOND, 0);
-        lastSunday.set(Calendar.MINUTE,0);
-        lastSunday.set(Calendar.HOUR, 6);
-        lastSunday.set(Calendar.AM_PM, Calendar.AM);
-        lastSunday.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-
-        if(!currTime.after(lastSunday)){
-            int dayDiff = (7 + currTime.get(Calendar.DAY_OF_WEEK) - lastSunday.get(Calendar.DAY_OF_WEEK)) % 7;
-
-            if(dayDiff == 0){
-                dayDiff = -7;
-            }
-            lastSunday.add(Calendar.DAY_OF_MONTH, dayDiff);
-        }
-        return lastSunday;
-    }
-
     /**
      * Updates the weekly notification that gets sent every Sunday
      */
     public void updateWeeklyNotif(){
-        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
         Intent intent = new Intent(context, WeeklyNotificationReceiver.class);
 
         // Information that will be needed for the notification to send correct data
@@ -164,26 +144,48 @@ public class NotificationSender {
      * @param event --> the event that was deleted
      */
     public void cancelNotification(CalendarEvent event){
-            Intent intent = new Intent(context, NotificationReceiver.class);
-            PendingIntent pendintent = PendingIntent.getBroadcast(context,
-                    event.getNotifID(),
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE);
-            AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            manager.cancel(pendintent);
+        // Cancel notification associated with this event
+        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context,
+                event.getNotifID(),
+                notificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        if(notificationPendingIntent != null) {
+            Log.d(TAG, "Canceled notification for: " + event.getName());
+            notificationPendingIntent.cancel();
+            notifManager.cancel(event.getNotifID());
+        }
+        else
+            Log.e(TAG, "Error canceling notification for " + event.getName());
+
+        // Cancel alarm associated with this event
+        Intent alarmIntent = new Intent(context,AlarmReceiver.class);
+        PendingIntent alarmPendingIntent = PendingIntent.getActivity(context,
+                event.getAlarmID(),
+                alarmIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        if(alarmPendingIntent != null){
+            Log.d(TAG, "Canceled alarm for: " + event.getName());
+            alarmPendingIntent.cancel();
+            notifManager.cancel(event.getAlarmID());
+        }
+        else
+            Log.e(TAG, "Error canceling alarm for " + event.getName());
     }
 
     /**
      * Schedules a daily notification on startDate
      * @param pendIntent --> what should be scheduled
      * @param startDate --> the date to schedule the notification
-     * @param manager --> the alarm manager that schedules the notification
      */
-    private void scheduleOnce(PendingIntent pendIntent, long startDate, AlarmManager manager){
-        manager.setAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                startDate,
-                pendIntent);
+    private void scheduleOnce(PendingIntent pendIntent, long startDate){
+        if(startDate >= System.currentTimeMillis()) {
+            manager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    startDate,
+                    pendIntent);
+        }
     }
 
     /**
@@ -191,12 +193,105 @@ public class NotificationSender {
      * @param pendIntent --> what should be scheduled
      * @param startDate --> the date to start the notification scheduling
      * @param interval --> time between notifications
-     * @param manager --> the alarm manager that schedules the notification
      */
-    private void scheduleRepeating(PendingIntent pendIntent, long startDate, long interval, AlarmManager manager){
+    private void scheduleRepeating(PendingIntent pendIntent, long startDate, long interval){
         manager.setRepeating(AlarmManager.RTC_WAKEUP,
                 startDate,
                 interval,
                 pendIntent);
+    }
+
+    /**
+     * Gets the integer hour and minute from a String time
+     * @param time --> the String time to be converted
+     * @return --> an array which has the hour in place 0 and the minute in place 1
+     */
+    private int[] getTime(String time){
+        int hour = 0, minute = 0;
+        try{
+            String[] times = time.split(":");
+            hour = Integer.parseInt(times[0]);
+            minute = Integer.parseInt(times[1]);
+        } catch (NumberFormatException e){
+            hour = 0;
+        }
+        return new int[]{hour, minute};
+    }
+
+    /**
+     * Schedules an alarm for a shift if that shift has an alarm with it
+     * @param event --> the shift that an alarm will be scheduled for
+     * @param job --> the job that the shift belongs to
+     */
+    public void scheduleAlarm(CalendarEvent event, String job){
+        if(event.getAlarmType() != AlarmType.NONE){
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            int[] times = getTime(event.getBegin_time());
+            int hour = times[0];
+            int minute = times[1];
+
+            // Extra information that will be needed when the alarm is sent
+            String inHours = "";
+            intent.putExtra("jobName", job);
+            intent.putExtra("shiftName", event.getName());
+            intent.putExtra("startTime", event.getBegin_time());
+            intent.putExtra("endTime", event.getEnd_time());
+            intent.putExtra("endDate", event.getEnd_date());
+            intent.putExtra("alarmID",event.getAlarmID());
+
+            // How early before the shift to schedule the alarm
+            switch (event.getAlarmType()) {
+                case ONE_HOUR: {
+                    hour -= 1;
+                    inHours = "one hour!";
+                    break;
+                }
+                case TWO_HOUR: {
+                    hour -= 2;
+                    inHours = "two hours!";
+                    break;
+                }
+                case THREE_HOUR: {
+                    hour -= 3;
+                    inHours = "three hours!";
+                    break;
+                }
+            }
+            intent.putExtra("inHours",inHours);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    event.getAlarmID(),
+                    intent,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
+
+            long startDate = getMilliDateTime(event.getBegin_date(),hour,minute);
+            scheduleEvent(event, startDate, pendingIntent);
+        }
+        else
+            return;
+    }
+
+    /**
+     * Schedules either and alarm or notification for 'event' at time 'startDate' using 'pendingIntent'
+     * @param event --> the shift that is being scheduled for
+     * @param startDate --> when to schedule the alarm/notification
+     * @param pendingIntent --> what action is scheduled
+     */
+    private void scheduleEvent(CalendarEvent event, long startDate, PendingIntent pendingIntent){
+        if (event.getRepeated() == RepeatType.NEVER) {
+            scheduleOnce(pendingIntent, startDate);
+        }
+        else if (event.getRepeated() == RepeatType.DAILY) {
+            scheduleRepeating(pendingIntent, startDate, dailyInterval);
+        }
+        else if(event.getRepeated() == RepeatType.WEEKLY){
+            scheduleRepeating(pendingIntent, startDate, weeklyInterval);
+        }
+        else if(event.getRepeated() == RepeatType.MONTHLY){
+            scheduleRepeating(pendingIntent, startDate, monthlyInterval);
+        }
+        else if(event.getRepeated() == RepeatType.ANNUALLY){
+            scheduleRepeating(pendingIntent, startDate, yearlyInterval);
+        }
     }
 }

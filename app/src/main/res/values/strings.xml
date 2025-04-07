@@ -14,7 +14,7 @@
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="add_shift">Add Shift</string>
-    <string name="add_expense">Add Expense</string>
+    <string name="add_expense">Expense</string>
     <string name="pay_rate">Pay Rate</string>
     <string name="dollar">$</string>
     <string name="channel_name">dailyNotif</string>
@@ -25,4 +25,10 @@
     <string name="sharing">Sharing</string>
     <string name="budget">Budget</string>
     <string name="select_jobs">Select Events</string>
+    <string name="leftarrow">LeftArrow</string>
+    <string name="rightarrow">RightArrow</string>
+    <string name="events">Events</string>
+    <string name="add_event">Event</string>
+    <string name="expenses">Expenses</string>
+    <string name="budget">Budget</string>
 </resources>

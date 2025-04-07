@@ -40,7 +40,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NameField" />
+            android:text="Calendar Name" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/InputName"
@@ -60,24 +60,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/InputName"
-            android:text="TextView" />
+            android:text="Add Events" />
 
-        <TextView
-            android:id="@+id/dropDown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textView2"
-            android:layout_centerInParent="true"
-            android:background="@android:drawable/editbox_background"
-            android:drawablePadding="16dp"
-            android:hint="@string/select_jobs"
-            android:padding="12dp" />
     </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sharedEventRecycle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayout" />
 
     <Button
         android:id="@+id/button2"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round"
         android:text="Create"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"

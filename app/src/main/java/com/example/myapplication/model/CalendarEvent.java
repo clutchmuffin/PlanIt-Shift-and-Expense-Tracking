@@ -1,17 +1,18 @@
 package com.example.myapplication.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 
 
-public class CalendarEvent {
+public class CalendarEvent implements Serializable {
     private String name;
 
-    private int pay_rate;
+    private int payRate;
 
-    private int net_pay;
+    private int netPay;
 
     private String userId;
 
@@ -42,19 +43,21 @@ public class CalendarEvent {
     // for events repeated a certain number of times, how many reps?
     private int repetition_step, repeated_reps;
     private int notifID;
+    private int alarmID;
+    private AlarmType alarmType;
 
     public CalendarEvent() {}
 
-    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int ID) {
+    public CalendarEvent(String n, String uid, int pay_rate, String begin, String end, String begin_time, String end_time, RepeatType repeated, int notifID, int alarmID, AlarmType alarmType) {
         this.name = n;
         this.userId = uid;
-        this.pay_rate = pay_rate;
+        this.payRate = pay_rate;
         this.begin_date = begin;
         this.end_date = end;
         this.begin_time = begin_time;
         this.end_time = end_time;
         this.repeated = repeated;
-        this.net_pay = calculatePay();
+        this.netPay = calculatePay();
 
         this.begin_tz = 0;
         this.end_tz = 0;
@@ -64,7 +67,9 @@ public class CalendarEvent {
         this.repeated_reps = 0;
         this.repetition_step = 0;
 
-        this.notifID = ID;
+        this.notifID = notifID;
+        this.alarmID = alarmID;
+        this.alarmType = alarmType;
     }
 
     public CalendarEvent(String n, String uid, String begin, String end, int b_tz, int e_tz, RepeatType repeat, MonthlyRepeatType monthly, RepeatUntilType until, String until_date, int reps, int step) {
@@ -117,12 +122,14 @@ public class CalendarEvent {
     }
 
     public int getPayRate() {
-        return pay_rate;
+        return payRate;
     }
+    public void setPayRate(int value) { this.payRate = value; }
 
     public int getNetPay() {
-        return net_pay;
+        return netPay;
     }
+    public void setNetPay(int value) { this.netPay = value;}
 
     public RepeatType getRepeated() {
         return repeated;
@@ -177,6 +184,14 @@ public class CalendarEvent {
         }
 
         // Calculate pay (round to nearest integer)
-        return (int) Math.round(totalHours * pay_rate);
+        return (int) Math.round(totalHours * payRate);
+    }
+
+    public AlarmType getAlarmType(){
+        return alarmType;
+    }
+
+    public int getAlarmID(){
+        return alarmID;
     }
 }

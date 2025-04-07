@@ -7,15 +7,19 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
+import com.example.myapplication.model.AlarmType;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.EXP;
 import com.example.myapplication.model.Expense;
@@ -29,7 +33,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,8 +59,8 @@ public class JobDetailActivity extends AppCompatActivity {
     private RecyclerView expenseRecyclerView;
     private EventListAdapter eventListAdapter;
     private ExpenseListAdapter expenseListAdapter;
-    private FloatingActionButton fabAddButton;
-    private FloatingActionButton fabAddExpense;
+    private ExtendedFloatingActionButton fabAddButton;
+    private ExtendedFloatingActionButton fabAddExpense;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private LocalDate beginDate;
@@ -117,7 +121,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String colorHex = String.format("#%06X", (0xFFFFFF & job.getColor()));
         tvColor.setText("Color: " + colorHex);
         tvColor.setTextColor(job.getColor());
-        tvPayRate.setText("$" + job.getPayRate());
+        tvPayRate.setText("Payrate: $" + job.getPayRate() + "/hr");
     }
 
     private void setupEventRecyclerView() {
@@ -127,7 +131,7 @@ public class JobDetailActivity extends AppCompatActivity {
         String jobId = job.getJobId();
 
         // Set the adapter.
-        eventListAdapter = new EventListAdapter(job.getEvents(), job);
+        eventListAdapter = new EventListAdapter(job.getEvents(), job, this);
         eventRecyclerView.setAdapter(eventListAdapter);
 
         // First check if job has documentId
@@ -218,6 +222,21 @@ public class JobDetailActivity extends AppCompatActivity {
         TextView tvSelectedStartTime = dialogView.findViewById(R.id.tvSelectedStartTime);
         TextView tvSelectedEndTime = dialogView.findViewById(R.id.tvSelectedEndTime);
 
+        List<String> alarmOptions = new ArrayList<>();
+        alarmOptions.add("NONE");
+        alarmOptions.add("1 hour before start");
+        alarmOptions.add("2 hours before start");
+        alarmOptions.add("3 hours before start");
+
+        Spinner alarmPicker = dialogView.findViewById(R.id.alarmPicker);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                R.layout.alarm_spinner,
+                alarmOptions
+        );
+        alarmPicker.setAdapter(adapter);
+
+
         btnSelectBeginDate.setOnClickListener(v -> showDatePicker(tvBeginDate, true));
         btnSelectEndDate.setOnClickListener(v -> showDatePicker(tvEndDate, false));
         btnSelectStartTime.setOnClickListener(v -> showTimePicker(tvSelectedStartTime, true));
@@ -271,10 +290,14 @@ public class JobDetailActivity extends AppCompatActivity {
     private void createAndSaveEvent(View dialogView, AlertDialog dialog) {
         EditText etName = dialogView.findViewById(R.id.editEventName);
         RadioGroup radioGroupRepeatType = dialogView.findViewById(R.id.radioGroupRepeatType);
+        Spinner alarmPicker = dialogView.findViewById(R.id.alarmPicker);
 
         String name = etName.getText().toString().trim();
         RepeatType repeatType = getSelectedRepeatType(radioGroupRepeatType);
-        int ID = getNewEventID();
+        int notifID = getNewEventID();
+        int alarmID = getNewAlarmID();
+        AlarmType alarmType = getAlarmType(alarmPicker);
+        System.out.println(alarmType);
 
         CalendarEvent newEvent = new CalendarEvent(
                 name,
@@ -285,10 +308,29 @@ public class JobDetailActivity extends AppCompatActivity {
                 beginTime.format(TIME_FORMATTER),
                 endTime.format(TIME_FORMATTER),
                 repeatType,
-                ID
+                notifID,
+                alarmID,
+                alarmType
         );
 
+
         checkForConflictsAndSaveEvent(newEvent, dialog);
+    }
+
+    private AlarmType getAlarmType(Spinner alarmPicker) {
+        String picked = alarmPicker.getSelectedItem().toString();
+        switch (picked) {
+            case "NONE":
+                return AlarmType.NONE;
+            case "1 hour before start":
+                return AlarmType.ONE_HOUR;
+            case "2 hours before start":
+                return AlarmType.TWO_HOUR;
+            case "3 hours before start":
+                return AlarmType.THREE_HOUR;
+            default:
+                return AlarmType.NONE;
+        }
     }
 
     private RepeatType getSelectedRepeatType(RadioGroup radioGroupRepeatType) {
@@ -356,6 +398,7 @@ public class JobDetailActivity extends AppCompatActivity {
                     NotificationSender notificationSender = new NotificationSender(this);
                     notificationSender.scheduleDailyNotification(newEvent, job.getEmployer());
                     notificationSender.updateWeeklyNotif();
+                    notificationSender.scheduleAlarm(newEvent, job.getEmployer());
                 }
             });
             }
@@ -599,6 +642,20 @@ public class JobDetailActivity extends AppCompatActivity {
         }
         int newID = sharedPref.getInt("dailyNotif", 3);
         editor.putInt("dailyNotif", newID + 1);
+        editor.apply();
+        return newID;
+    }
+
+    private int getNewAlarmID(){
+        // Find a notification ID for the new shift to be added
+        SharedPreferences sharedPref = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if(sharedPref.getAll().isEmpty()){
+            editor.putInt("alarmID", 1);
+            editor.apply();
+        }
+        int newID = sharedPref.getInt("alarmID", 1);
+        editor.putInt("alarmID", newID + 1);
         editor.apply();
         return newID;
     }

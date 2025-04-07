@@ -34,7 +34,9 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
         SharedCal sharedCal = sharedList.get(position);
 
         holder.sharedTitle.setText(sharedCal.getName());
-        holder.sharedPeople.setText(sharedCal.getMembers());
+        String people = sharedCal.getMembers().size() + " member(s)";
+        holder.sharedPeople.setText(people);
+        holder.sharedCode.setText(sharedCal.getSharedId());
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
@@ -49,13 +51,14 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
     }
 
     static class SharedViewHolder extends RecyclerView.ViewHolder {
-        TextView sharedTitle, sharedPeople;
+        TextView sharedTitle, sharedPeople, sharedCode;
         View colourAccent;
         public SharedViewHolder(@NonNull View itemView) {
             super(itemView);
 
             sharedTitle = itemView.findViewById(R.id.sharedTitle);
             sharedPeople = itemView.findViewById(R.id.sharedPeople);
+            sharedCode = itemView.findViewById(R.id.sharedCode);
         }
     }
 }

@@ -12,13 +12,13 @@
     <item
         android:id="@+id/nav_budget"
         android:enabled="true"
-        android:icon="@drawable/ic_calendar"
-        android:title="Budget"/>
+        android:icon="@drawable/ic_money"
+        android:title="@string/budget" />
     <item
         android:id="@+id/nav_sharing"
         android:enabled="true"
-        android:icon="@drawable/ic_calendar"
-        android:title="@string/sharing"/>
+        android:icon="?attr/actionModeShareDrawable"
+        android:title="@string/sharing" />
 
 
 </menu>

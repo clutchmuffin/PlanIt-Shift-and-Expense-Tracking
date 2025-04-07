@@ -1,11 +1,13 @@
 package com.example.myapplication.view.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -38,6 +40,7 @@ public class dailyEventListAdapter extends RecyclerView.Adapter<dailyEventListAd
         holder.tvTimeRange.setText(event.getBegin_time().substring(0,5) + " - " + event.getEnd_time().substring(0,5));
         holder.tvRepeatType.setText(event.getRepeated().toString());
         holder.tvNetPay.setText("$" + event.calculatePay());
+
     }
 
     @Override
@@ -47,9 +50,11 @@ public class dailyEventListAdapter extends RecyclerView.Adapter<dailyEventListAd
 
     public static class dailyEventViewHolder extends RecyclerView.ViewHolder {
         TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay;
+        CardView card;
 
         public dailyEventViewHolder(@NonNull View itemView) {
             super(itemView);
+            card = itemView.findViewById(R.id.eventCard);
             tvDateRange = itemView.findViewById(R.id.eventDateRange);
             tvName = itemView.findViewById(R.id.eventName);
             tvTimeRange = itemView.findViewById(R.id.eventTimeRange);
