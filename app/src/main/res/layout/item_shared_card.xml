@@ -1,59 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/jobCard"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sharedCalendarCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="15dp"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0.5dp"
+    app:strokeColor="#E0E0E0" >
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-
         android:padding="16dp">
 
-        <!-- Accent view (color-coded circle) -->
-        <View
+        <!-- Modern color accent indicator -->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/colorAccent"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/circle_background" />
+            android:background="@drawable/circle_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Job Title and Subtitle -->
-        <LinearLayout
+        <!-- Calendar Title -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/sharedTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_marginStart="16dp"
+            android:text="@string/shared_title"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/colorAccent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Shared People -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/sharedPeople"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/sharedPeople"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/sharedTitle" />
 
-            <TextView
-                android:id="@+id/sharedTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/shared_title"
-                android:textStyle="bold"/>
+        <!-- Sharing Code with Icon -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/codeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Sharing Code:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textColor="?android:attr/textColorTertiary"
+            app:layout_constraintStart_toEndOf="@id/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/sharedPeople" />
 
-            <!-- Employer -->
-            <TextView
-                android:id="@+id/sharedPeople"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sharedPeople"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/sharedCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="ABC123"
+            android:fontFamily="monospace"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/codeLabel"
+            app:layout_constraintTop_toTopOf="@id/codeLabel"
+            app:layout_constraintBottom_toBottomOf="@id/codeLabel" />
 
-            <TextView
-                android:id="@+id/sharedCode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
