@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id ("com.android.application")
     id("com.google.gms.google-services")
 }
 
@@ -39,30 +39,30 @@ android {
 }
 
 dependencies {
+
+    // Main dependencies
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
-    implementation(libs.firebase.firestore)
     implementation(libs.activity)
     implementation(libs.cardview.v7)
+    implementation(platform(libs.firebase.bom))                 // Firebase BoM
+    implementation(libs.firebase.auth)                          // Firebase Authentication
+    implementation(libs.google.firebase.firestore)              // Firestore
+    implementation("androidx.core:core-ktx:1.15.0")             // NotificationCompat
+    implementation("com.kizitonwose.calendar:view:2.6.2")       // View Calendar library
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")  // Chart library
+
+    // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-
-    // Import the Firebase BoM
-    implementation(platform(libs.firebase.bom))
-    // Add the dependency for the Firebase SDK for Google Analytics
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.auth)
-    implementation(libs.google.firebase.firestore)
-
-    //import NotificationCompat
-    implementation("androidx.core:core-ktx:1.15.0")
-
-    // The view calendar library for Android
-    implementation("com.kizitonwose.calendar:view:2.6.2")
-
-    //The Pie Chart library for Android
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    androidTestImplementation(libs.rules)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.uiautomator)
+    androidTestImplementation(libs.espresso.core.v351)
+    androidTestImplementation(libs.espresso.contrib) {
+        exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    }
+    androidTestImplementation(libs.espresso.intents)
 }
