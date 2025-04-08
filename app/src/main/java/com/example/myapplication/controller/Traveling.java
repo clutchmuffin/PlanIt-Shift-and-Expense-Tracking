@@ -139,7 +139,7 @@ public class Traveling extends AppCompatActivity {
                     Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("traveling");
                     foodCategory.put("totalExpenses", totalExp);
 
-                    docRef.update("food", foodCategory)
+                    docRef.update("traveling", foodCategory)
                             .addOnSuccessListener(aVoid -> {
                                 Log.d(TAG, "Food expenses updated successfully");
                                 showBudgetAndPieChart(); // Refresh chart after update
