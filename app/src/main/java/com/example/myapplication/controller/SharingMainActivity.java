@@ -81,7 +81,10 @@ public class SharingMainActivity extends AppCompatActivity {
             sharedListAdapter.notifyDataSetChanged();
         });
 
-        joinbutton.setOnClickListener(v -> startActivity(new Intent(SharingMainActivity.this, SharingJoinActivity.class)));
+        joinbutton.setOnClickListener(v -> {
+            startActivity(new Intent(SharingMainActivity.this, SharingJoinActivity.class));
+            sharedListAdapter.notifyDataSetChanged();
+        });
 
     }
 

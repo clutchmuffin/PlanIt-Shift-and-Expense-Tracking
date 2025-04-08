@@ -45,13 +45,13 @@ public class SharingJoinActivity extends AppCompatActivity {
             if (input.getText() != null) {
                 String code = input.getText().toString();
 
-                db.collection("Shared").whereEqualTo("sharedId", code)
+                db.collection("Shared").whereEqualTo("code", code)
                         .get().addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     SharedCal shared = document.toObject(SharedCal.class);
                                     shared.addMember(currentUserId);
-                                    DocumentReference ref = db.collection("Shared").document(code);
+                                    DocumentReference ref = db.collection("Shared").document(shared.getSharedId());
                                     ref.update("members", shared.getMembers());
                                     Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                                     intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, shared);
