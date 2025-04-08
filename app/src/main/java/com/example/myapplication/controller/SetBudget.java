@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 public class SetBudget extends AppCompatActivity {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -34,7 +33,7 @@ public class SetBudget extends AppCompatActivity {
     private EditText foodBudget, travelingBudget, entertainmentBudget, shoppingBudget;
     private String currentUserId;
     private static final String TAG = "SetBudget";
-
+    private int categoriesUpdated = 0;  // Counter to track category updates
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +73,8 @@ public class SetBudget extends AppCompatActivity {
     }
 
     private void modifyBudget(boolean isAddition) {
+        categoriesUpdated = 0;  // Reset the counter on each modification attempt
+
         for (Map.Entry<String, EditText> entry : budgetFields.entrySet()) {
             EditText field = entry.getValue();
 
@@ -125,9 +126,8 @@ public class SetBudget extends AppCompatActivity {
                     }}, SetOptions.merge())
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(SetBudget.this, category + " budget updated!", Toast.LENGTH_SHORT).show();
-                        // After updating the budget, update the expenses for that category
                         updateBudgetExpenses();
-                        goToMainMenu();
+                        incrementCategoryCounter();
                     })
                     .addOnFailureListener(e -> Toast.makeText(SetBudget.this, "Update failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         });
@@ -145,11 +145,17 @@ public class SetBudget extends AppCompatActivity {
                 }}, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(SetBudget.this, category + " budget reset!", Toast.LENGTH_SHORT).show();
-                    // After resetting the budget, update the expenses for that category
                     updateBudgetExpenses();
-                    goToMainMenu();
+                    incrementCategoryCounter();
                 })
                 .addOnFailureListener(e -> Toast.makeText(SetBudget.this, "Failed to reset " + category + ": " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void incrementCategoryCounter() {
+        categoriesUpdated++;
+        if (categoriesUpdated == budgetFields.size()) {
+            goToMainMenu();  // Only go to the main menu when all categories have been processed
+        }
     }
 
     private void goToMainMenu() {
@@ -180,7 +186,6 @@ public class SetBudget extends AppCompatActivity {
         }
     }
 
-    // Method to update expenses for all categories
     private void updateBudgetExpenses() {
         db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
