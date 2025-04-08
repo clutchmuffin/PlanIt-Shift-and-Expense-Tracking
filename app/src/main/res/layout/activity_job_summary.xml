@@ -33,7 +33,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Previous Month"
+            android:contentDescription="@string/previous_month"
             android:src="@drawable/ic_chevron_left" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="April 2025"
+            android:text="@string/april_2025"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -52,7 +52,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Next Month"
+            android:contentDescription="@string/next_month"
             android:src="@drawable/ic_chevron_right" />
     </LinearLayout>
 
@@ -89,7 +89,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Monthly Summary"
+                android:text="@string/monthly_summary"
                 android:textColor="#E91E63"
                 android:textSize="18sp" />
 
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Total Earnings: $0.00"
+                android:text="@string/total_earnings_0_00"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Total Expenses: $0.00"
+                android:text="@string/total_expenses_0_00"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -118,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Net Income: $0.00"
+                android:text="@string/net_income_0_00"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -132,7 +132,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Job Details"
+        android:text="@string/job_details"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -140,6 +140,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/jobSummaryRecyclerView"
+        android:contentDescription="@string/summary_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"

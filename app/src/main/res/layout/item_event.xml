@@ -19,7 +19,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/eventName"
-            android:hint="Event Name"
+            android:hint="@string/full_name"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -32,7 +32,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/eventDateRange"
-                android:hint="Date Range"
+                android:hint="@string/date_range"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -42,7 +42,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/eventTimeRange"
-                android:hint="Time Range"
+                android:hint="@string/time_range"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
                 android:textStyle="italic"
-                android:hint="Repeat"
+                android:hint="@string/repeat"
                 android:textSize="12sp"/>
 
             <ImageButton
@@ -82,7 +82,7 @@
                 android:layout_marginStart="95dp"
                 android:src="@android:drawable/ic_menu_edit"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Edit event" />
+                android:contentDescription="@string/edit" />
 
             <ImageButton
                 android:id="@+id/eventDeleteBtn"
@@ -91,7 +91,7 @@
                 android:layout_marginStart="1dp"
                 android:src="@android:drawable/ic_menu_delete"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Delete event" />
+                android:contentDescription="@string/delete_event" />
 
         </LinearLayout>
     </LinearLayout>

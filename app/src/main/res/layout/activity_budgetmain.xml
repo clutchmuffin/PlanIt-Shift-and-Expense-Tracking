@@ -54,14 +54,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Financial Summary" />
+                android:text="@string/financial_summary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/updateBudget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
-                android:text="Update Budget" />
+                android:text="@string/update_budget" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -83,7 +83,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Categories"
+                android:text="@string/categories"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="16dp"/>
 
@@ -99,40 +99,44 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:text="FOOD"
+                    android:text="@string/food"
                     app:icon="@drawable/ic_food"
                     app:iconGravity="textStart"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    tools:ignore="VisualLintButtonSize" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/traveling"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:text="TRAVELING"
+                    android:text="@string/traveling"
                     app:icon="@drawable/ic_travel"
                     app:iconGravity="textStart"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    tools:ignore="VisualLintButtonSize" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/entertainment"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:text="Enjoyment"
+                    android:text="@string/enjoyment"
                     app:icon="@drawable/ic_entertainment"
                     app:iconGravity="textStart"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    tools:ignore="VisualLintButtonSize" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/shopping"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
-                    android:text="SHOPPING"
+                    android:text="@string/shopping"
                     app:icon="@drawable/ic_shopping"
                     app:iconGravity="textStart"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    tools:ignore="VisualLintButtonSize" />
 
             </GridLayout>
         </LinearLayout>

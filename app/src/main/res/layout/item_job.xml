@@ -75,7 +75,7 @@
             android:insetBottom="0dp"
             app:iconPadding="0dp"
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:contentDescription="Delete job"
+            android:contentDescription="@string/delete_job"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

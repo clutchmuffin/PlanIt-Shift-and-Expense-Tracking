@@ -4,19 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <!-- Header: Container for day-of-week titles -->
-
-    <!-- Calendar View -->
-
-    <!-- Recycler View: Using layout_weight to fill remaining space -->
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
-        android:fitsSystemWindows="true"
+
         android:focusable="true"
         android:orientation="vertical">
 
@@ -97,15 +92,17 @@
             android:layout_marginBottom="8dp"
             android:background="@color/white"
             android:fontFamily="sans-serif-medium"
-            android:paddingStart="24dp"
+            android:padding="16dp"
             android:paddingTop="8dp"
             android:text="@string/events"
             android:textColor="@color/black"
-            android:textSize="26sp"></com.google.android.material.textview.MaterialTextView>
+            android:textSize="26sp">
+        </com.google.android.material.textview.MaterialTextView>
 
         <!-- Recycler View: Using layout_weight to fill remaining space -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dailyEventsRecyclerView"
+            android:contentDescription="@string/calendar_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
@@ -116,7 +113,7 @@
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Edit" />
+            android:text="@string/edit" />
     </LinearLayout>
 
 </LinearLayout>

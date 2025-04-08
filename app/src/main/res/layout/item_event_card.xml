@@ -15,7 +15,7 @@
             android:id="@+id/eventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event Name"
+            android:hint="@string/full_name"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Date Range"
+                android:hint="@string/date_range"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="16sp" />
 
@@ -38,8 +38,8 @@
                 android:id="@+id/eventTimeRange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20sp"
-                android:hint="Time Range"
+                android:layout_marginHorizontal="10sp"
+                android:hint="@string/time_range"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="16sp" />
 
@@ -48,7 +48,7 @@
                 android:id="@+id/netPay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20sp"
+                android:layout_marginHorizontal="10sp"
                 android:text="@string/dollar"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="16sp" />
@@ -60,7 +60,7 @@
             android:id="@+id/eventRepeatInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Repeat Info"
+            android:hint="@string/repeat_info"
             android:textSize="12sp"
             android:textStyle="italic" />
 
@@ -70,7 +70,7 @@
             android:id="@+id/eventAdditionalInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Additional Info"
+            android:hint="@string/additional_info"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -80,7 +80,7 @@
         android:id="@+id/checkBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical|end"
-        android:layout_marginRight="16dp" />
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginHorizontal="15dp" />
 
 </LinearLayout>

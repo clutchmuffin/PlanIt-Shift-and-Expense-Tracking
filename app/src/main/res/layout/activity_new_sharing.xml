@@ -40,7 +40,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calendar Name" />
+            android:text="@string/calendar_name" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/InputName"
@@ -52,7 +52,7 @@
                 android:id="@+id/nameInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name" />
+                android:hint="@string/full_name" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -60,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/InputName"
-            android:text="Add Events" />
+            android:text="@string/add_events" />
 
     </RelativeLayout>
 
@@ -79,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@drawable/round"
-        android:text="Create"
+        android:text="@string/create"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
