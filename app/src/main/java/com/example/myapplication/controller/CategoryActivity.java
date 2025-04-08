@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,31 +27,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Shopping extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity {
+
+    public static final String EXTRA_CATEGORY = "BUDGET_CATEGORY";
 
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
-    private List<EXP> shoppingExpenses;
+    private List<EXP> expenses = new ArrayList<>();
     private TextView addBudget;
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ProgressDialog progressDialog;
     private String currentUserId;
-
-    private static final String TAG = "ShoppingActivity";
+    private String categoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shopping);
+        setContentView(R.layout.activity_food); // Same layout for all categories
+
+        categoryName = getIntent().getStringExtra(EXTRA_CATEGORY);
+        if (categoryName == null) {
+            finish(); // prevent crash if no category passed
+            return;
+        }
 
         recyclerView = findViewById(R.id.recyclerView);
-        pieChart = findViewById(R.id.pieShoppingChart);
+        pieChart = findViewById(R.id.pieChart);
         addBudget = findViewById(R.id.addBudget);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        shoppingExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter((ArrayList<EXP>) shoppingExpenses, null);
+        adapter = new ExpenseListAdapter(expenses, null);
         recyclerView.setAdapter(adapter);
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
@@ -66,99 +71,99 @@ public class Shopping extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
+        progressDialog.setMessage("Loading " + categoryName + " data...");
         progressDialog.setCancelable(false);
 
-        addBudget.setOnClickListener(v -> openSetBudget("shopping"));
+        addBudget.setOnClickListener(v -> openSetBudget());
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshShoppingData();
+        progressDialog.show();
+        loadExpenses();
     }
 
-    private void openSetBudget(String category) {
+    private void openSetBudget() {
         Intent intent = new Intent(this, SetBudget.class);
-        intent.putExtra("BUDGET_CATEGORY", category);
+        intent.putExtra(EXTRA_CATEGORY, categoryName);
         startActivity(intent);
     }
 
-    private void refreshShoppingData() {
-        progressDialog.setMessage("Refreshing shopping data...");
-        progressDialog.show();
-
+    private void loadExpenses() {
         db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        final double[] totalShoppingExpenseAmount = {0.0};
-                        shoppingExpenses.clear();
-                        List<Task<QuerySnapshot>> expenseFetchTasks = new ArrayList<>();
+                        expenses.clear();
+                        final double[] totalExpenseAmount = {0.0};
+                        List<Task<QuerySnapshot>> expenseTasks = new ArrayList<>();
 
-                        for (DocumentSnapshot jobDocument : task.getResult()) {
-                            String jobId = jobDocument.getId();
+                        for (DocumentSnapshot job : task.getResult()) {
+                            String jobId = job.getId();
                             Task<QuerySnapshot> expenseTask = db.collection("Jobs")
                                     .document(jobId)
                                     .collection("EXP")
-                                    .whereEqualTo("description", "Shopping")
+                                    .whereEqualTo("description", capitalize(categoryName))
                                     .get();
-                            expenseFetchTasks.add(expenseTask);
+                            expenseTasks.add(expenseTask);
                         }
 
-                        Tasks.whenAllComplete(expenseFetchTasks)
-                                .addOnCompleteListener(allTask -> {
-                                    for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
+                        Tasks.whenAllComplete(expenseTasks)
+                                .addOnCompleteListener(done -> {
+                                    for (Task<QuerySnapshot> expenseTask : expenseTasks) {
                                         if (expenseTask.isSuccessful()) {
-                                            for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
-                                                EXP expense = expenseDocument.toObject(EXP.class);
+                                            for (DocumentSnapshot expenseDoc : expenseTask.getResult()) {
+                                                EXP expense = expenseDoc.toObject(EXP.class);
                                                 if (expense != null) {
-                                                    shoppingExpenses.add(expense);
-                                                    totalShoppingExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
+                                                    expenses.add(expense);
+                                                    totalExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
                                                 }
                                             }
                                         }
                                     }
                                     adapter.notifyDataSetChanged();
-                                    updateBudgetTotalAndPieChart(totalShoppingExpenseAmount[0]);
+                                    updateBudget(totalExpenseAmount[0]);
                                 });
                     } else {
                         progressDialog.dismiss();
-                        Log.e(TAG, "Failed to fetch job data");
                     }
                 });
     }
 
-    private void updateBudgetTotalAndPieChart(double totalExp) {
+    private void updateBudget(double totalExp) {
         DocumentReference docRef = db.collection("budget").document(currentUserId);
-
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Map<String, Object> budgetData = documentSnapshot.getData();
-                if (budgetData != null && budgetData.containsKey("shopping")) {
-                    Map<String, Object> categoryMap = (Map<String, Object>) budgetData.get("shopping");
-                    categoryMap.put("totalExpenses", totalExp);
+                if (budgetData != null && budgetData.containsKey(categoryName)) {
+                    Map<String, Object> category = (Map<String, Object>) budgetData.get(categoryName);
+                    category.put("totalExpenses", totalExp);
 
-                    docRef.update("shopping", categoryMap)
-                            .addOnSuccessListener(aVoid -> {
-                                Number budget = (Number) categoryMap.get("budgetAmount");
-                                if (budget != null) {
-                                    double remaining = budget.doubleValue() - totalExp;
-                                    updatePieChart(totalExp, remaining);
-                                }
-                                progressDialog.dismiss();
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Failed to update shopping expenses", e);
-                                progressDialog.dismiss();
-                            });
+                    docRef.update(categoryName, category)
+                            .addOnSuccessListener(aVoid -> showPieChart(category))
+                            .addOnFailureListener(e -> progressDialog.dismiss());
+                } else {
+                    progressDialog.dismiss();
                 }
-            } else {
-                progressDialog.dismiss();
             }
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "Error reading budget data", e);
-            progressDialog.dismiss();
         });
+    }
+
+    private void showPieChart(Map<String, Object> category) {
+        Number budgetRaw = (Number) category.get("budgetAmount");
+        Number totalExpRaw = (Number) category.get("totalExpenses");
+
+        if (budgetRaw != null && totalExpRaw != null) {
+            double budget = budgetRaw.doubleValue();
+            double totalExp = totalExpRaw.doubleValue();
+            double remaining = budget - totalExp;
+
+            updatePieChart(totalExp, remaining);
+        }
+
+        progressDialog.dismiss();
     }
 
     private void updatePieChart(double spent, double remaining) {
@@ -173,34 +178,22 @@ public class Shopping extends AppCompatActivity {
 
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
-
         pieChart.getDescription().setEnabled(false);
-        pieChart.setDrawEntryLabels(false);
-        pieChart.setUsePercentValues(false);
-        pieChart.setCenterText("Shopping\nBudget\nBreakdown");
-        pieChart.setCenterTextSize(14f);
+        pieChart.setCenterText(capitalize(categoryName) + "\nBudget Breakdown");
         pieChart.setDrawCenterText(true);
-
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setHoleRadius(58f);
         pieChart.setTransparentCircleRadius(61f);
 
-        pieChart.setExtraOffsets(10f, 10f, 10f, 10f);
-        pieChart.setMinimumHeight(500);
-        pieChart.setMinimumWidth(500);
-
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);
-        legend.setTextSize(12f);
-        legend.setFormSize(12f);
-        legend.setTextColor(Color.BLACK);
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-        legend.setDrawInside(false);
-
         pieChart.animateY(1000);
         pieChart.invalidate();
+    }
+
+    private String capitalize(String word) {
+        if (word == null || word.isEmpty()) return word;
+        return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
     }
 }

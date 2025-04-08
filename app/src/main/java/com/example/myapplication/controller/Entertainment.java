@@ -6,8 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,10 +22,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,31 +32,29 @@ public class Entertainment extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
     private List<EXP> entertainmentExpenses;
-    private TextView totalEntertainmentExpense, addIncome;
+    private TextView addBudget;
     private PieChart pieChart;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
+
     private ProgressDialog progressDialog;
     private String currentUserId;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entertainment);
 
-        // Initialize UI components
         recyclerView = findViewById(R.id.recyclerView);
-        //totalEntertainmentExpense = findViewById(R.id.totalEntertainmentExpense);
         pieChart = findViewById(R.id.pieEntertainmentChart);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize expense list and adapter
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         entertainmentExpenses = new ArrayList<>();
         adapter = new ExpenseListAdapter((ArrayList<EXP>) entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
-
-        // Retrieve user ID from SharedPreferences
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         currentUserId = prefs.getString("userId", null);
 
@@ -67,22 +64,21 @@ public class Entertainment extends AppCompatActivity {
             return;
         }
 
-        // Initialize the ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
         progressDialog.setMessage("Loading Entertainment Data...");
         progressDialog.setCancelable(false);
 
+        addBudget = findViewById(R.id.addIncome);
+        addBudget.setOnClickListener(v -> openSetBudget("entertainment"));
+    }
 
-        addIncome = findViewById(R.id.addIncome);
-
-        addIncome.setOnClickListener(v -> openSetBudget("entertainment"));
-
-        // Load data
+    // Refresh data when user returns to screen
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressDialog.show();
         loadEntertainmentExpenses();
-        showBudgetAndPieChart();
-
-
     }
 
     private void openSetBudget(String category) {
@@ -90,8 +86,8 @@ public class Entertainment extends AppCompatActivity {
         intent.putExtra("BUDGET_CATEGORY", category);
         startActivity(intent);
     }
+
     private void loadEntertainmentExpenses() {
-        progressDialog.show();
         db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -114,7 +110,6 @@ public class Entertainment extends AppCompatActivity {
                                 .addOnCompleteListener(allTask -> {
                                     for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
                                         if (expenseTask.isSuccessful()) {
-//                                            double jobEntertainmentExpense = 0.0;
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
                                                 EXP expense = expenseDocument.toObject(EXP.class);
                                                 if (expense != null) {
@@ -122,28 +117,21 @@ public class Entertainment extends AppCompatActivity {
                                                     totalEntertainmentExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
                                                 }
                                             }
-//                                            totalEntertainmentExpenseAmount[0] += jobEntertainmentExpense;
-                                        } else {
-                                            Log.e(TAG, "Error fetching expenses", expenseTask.getException());
                                         }
                                     }
 
                                     adapter.notifyDataSetChanged();
-                                    //totalEntertainmentExpense.setText("BDT: " + totalEntertainmentExpenseAmount[0]);
                                     updateBudgetTotal(totalEntertainmentExpenseAmount[0]);
-
                                 });
                     } else {
-                        progressDialog.dismiss(); // Dismiss after data is fetched
-                        Log.e(TAG, "Error fetching jobs", task.getException());
+                        Log.e(TAG, "Failed to get Jobs documents", task.getException());
+                        progressDialog.dismiss();
                     }
                 });
     }
 
-
     private void updateBudgetTotal(double totalExp) {
         DocumentReference docRef = db.collection("budget").document(currentUserId);
-
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Map<String, Object> budgetData = documentSnapshot.getData();
@@ -151,10 +139,18 @@ public class Entertainment extends AppCompatActivity {
                     Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("entertainment");
                     foodCategory.put("totalExpenses", totalExp);
 
-                    docRef.update("entertainment", foodCategory)
-                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Entertainment expenses updated successfully"))
-                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update entertainment expenses", e));
+                    docRef.update("food", foodCategory)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Food expenses updated successfully");
+                                showBudgetAndPieChart(); // Refresh chart after update
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to update entertainment expenses", e);
+                                progressDialog.dismiss();
+                            });
                 }
+            } else {
+                progressDialog.dismiss();
             }
         });
     }
@@ -166,55 +162,55 @@ public class Entertainment extends AppCompatActivity {
                         Map<String, Object> budgetData = documentSnapshot.getData();
                         if (budgetData != null && budgetData.containsKey("entertainment")) {
                             Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("entertainment");
-                            Number budget = (Number) foodCategory.get("budgetAmount");
-                            Number totalExp = (Number) foodCategory.get("totalExpenses");
 
-                            if (budget != null && totalExp != null) {
-                                double remaining = budget.doubleValue() - totalExp.doubleValue();
-                                updatePieChart(totalExp.doubleValue(), remaining);
+                            Number budgetRaw = (Number) foodCategory.get("budgetAmount");
+                            Number totalExpRaw = (Number) foodCategory.get("totalExpenses");
+
+                            if (budgetRaw != null && totalExpRaw != null) {
+                                double budget = budgetRaw.doubleValue();
+                                double totalExp = totalExpRaw.doubleValue();
+                                double remaining = budget - totalExp;
+                                updatePieChart(totalExp, remaining);
                             } else {
                                 Log.e(TAG, "Budget or totalExpenses for entertainment is null");
                             }
                         }
-                    } progressDialog.dismiss(); // Dismiss after data is fetched
+                    }
+                    progressDialog.dismiss();
                 })
-                .addOnFailureListener(e -> Log.e(TAG, "Error fetching entertainment budget data", e));
-        progressDialog.dismiss(); // Dismiss after data is fetched
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching travel budget data", e);
+                    progressDialog.dismiss();
+                });
     }
-
 
     private void updatePieChart(double spent, double remaining) {
         List<PieEntry> entries = new ArrayList<>();
         entries.add(new PieEntry((float) spent, "Spent"));
         entries.add(new PieEntry((float) remaining, "Remaining"));
-    
+
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(Color.RED, Color.parseColor("#2E9797"));
         dataSet.setValueTextSize(16f);
         dataSet.setValueTextColor(Color.WHITE);
-    
+
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
-        
-        // Match Financial Summary styling
+
         pieChart.getDescription().setEnabled(false);
         pieChart.setDrawEntryLabels(false);
         pieChart.setUsePercentValues(false);
-        
         pieChart.setCenterText("Entertainment\nBudget\nBreakdown");
         pieChart.setCenterTextSize(14f);
         pieChart.setDrawCenterText(true);
-        
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setHoleRadius(58f);
         pieChart.setTransparentCircleRadius(61f);
-
-        // Consistent sizing parameters
         pieChart.setExtraOffsets(10f, 10f, 10f, 10f);
         pieChart.setMinimumHeight(500);
         pieChart.setMinimumWidth(500);
-    
+
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);
         legend.setTextSize(12f);
@@ -224,7 +220,7 @@ public class Entertainment extends AppCompatActivity {
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setDrawInside(false);
-    
+
         pieChart.animateY(1000);
         pieChart.invalidate();
     }

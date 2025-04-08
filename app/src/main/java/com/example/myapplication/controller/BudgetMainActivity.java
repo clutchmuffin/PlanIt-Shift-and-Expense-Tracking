@@ -69,8 +69,16 @@ public class BudgetMainActivity extends AppCompatActivity {
         traveling.setOnClickListener(v -> startActivity(new Intent(this, Traveling.class)));
         updateBudget.setOnClickListener(v -> startActivity(new Intent(this, SetBudget.class)));
         financialSummary.setOnClickListener(v -> startActivity(new Intent(this, JobSummaryActivity.class)));
+    }
 
-        // Load pie chart
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        progressDialog.show();
+
+        // Set up the real-time listener
         getBudgetData(currentUserId);
     }
 
@@ -79,71 +87,76 @@ public class BudgetMainActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
+        // Reference to the user's budget document in Firestore
         DocumentReference userBudgetRef = db.collection("budget").document(userId);
 
-        userBudgetRef.get().addOnSuccessListener(documentSnapshot -> {
+        // Adding real-time listener to the Firestore document
+        userBudgetRef.addSnapshotListener((snapshot, error) -> {
             progressDialog.dismiss();
 
-            if (!documentSnapshot.exists()) {
-                Toast.makeText(this, "No budget data found", Toast.LENGTH_SHORT).show();
+            if (error != null) {
+                Log.e("BudgetMainActivity", "Error getting budget data", error);
+                Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Map<String, Object> budgetData = documentSnapshot.getData();
-            if (budgetData == null) return;
+            if (snapshot != null && snapshot.exists()) {
+                Map<String, Object> budgetData = snapshot.getData();
+                if (budgetData == null) return;
 
-            int totalBudget = 0;
-            int totalExpenses = 0;
-            List<PieEntry> pieEntries = new ArrayList<>();
-            List<Integer> colors = new ArrayList<>();
+                int totalBudget = 0;
+                int totalExpenses = 0;
+                List<PieEntry> pieEntries = new ArrayList<>();
+                List<Integer> colors = new ArrayList<>();
 
-            for (Map.Entry<String, Object> entry : budgetData.entrySet()) {
-                if ("financialSummary".equals(entry.getKey())) continue;
+                for (Map.Entry<String, Object> entry : budgetData.entrySet()) {
+                    if ("financialSummary".equals(entry.getKey())) continue;
 
-                if (entry.getValue() instanceof Map) {
-                    Map<String, Object> categoryMap = (Map<String, Object>) entry.getValue();
+                    if (entry.getValue() instanceof Map) {
+                        Map<String, Object> categoryMap = (Map<String, Object>) entry.getValue();
 
-                    int budgetAmount = getIntFromMap(categoryMap, "budgetAmount");
-                    int expenses = getIntFromMap(categoryMap, "totalExpenses");
+                        int budgetAmount = getIntFromMap(categoryMap, "budgetAmount");
+                        int expenses = getIntFromMap(categoryMap, "totalExpenses");
 
-                    totalBudget += budgetAmount;
-                    totalExpenses += expenses;
+                        totalBudget += budgetAmount;
+                        totalExpenses += expenses;
 
-                    if (expenses > 0) {
-                        pieEntries.add(new PieEntry(expenses, entry.getKey()));
-                        colors.add(getCategoryColor(entry.getKey()));
+                        if (expenses > 0) {
+                            pieEntries.add(new PieEntry(expenses, entry.getKey()));
+                            colors.add(getCategoryColor(entry.getKey()));
+                        }
                     }
                 }
+
+                int remainingBudget = totalBudget - totalExpenses;
+                if (remainingBudget > 0) {
+                    pieEntries.add(new PieEntry(remainingBudget, "Remaining Budget"));
+                    colors.add(Color.GRAY);
+                }
+
+                // Update the pie chart
+                updatePieChart(pieEntries, colors, totalExpenses, remainingBudget);
+            } else {
+                Toast.makeText(this, "No budget data found", Toast.LENGTH_SHORT).show();
             }
-
-            int remainingBudget = totalBudget - totalExpenses;
-            if (remainingBudget > 0) {
-                pieEntries.add(new PieEntry(remainingBudget, "Remaining Budget"));
-                colors.add(Color.GRAY);
-            }
-
-            updatePieChart(pieEntries, colors, totalExpenses, remainingBudget);
-
-        }).addOnFailureListener(e -> {
-            progressDialog.dismiss();
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
 
     private void updatePieChart(List<PieEntry> entries, List<Integer> colors, int totalExpenses, int remainingBudget) {
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(colors);
         dataSet.setValueTextSize(16f);
         dataSet.setValueTextColor(Color.WHITE);
-    
+
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
-    
+
         pieChart.setUsePercentValues(false);
         pieChart.getDescription().setEnabled(false);
         pieChart.setCenterText("Budget Overview\n Used: $" + totalExpenses + "\nLeft: $" + remainingBudget);
         pieChart.setCenterTextSize(14f);
-        
+
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setHoleRadius(58f);
@@ -153,10 +166,10 @@ public class BudgetMainActivity extends AppCompatActivity {
         pieChart.setExtraOffsets(10f, 10f, 10f, 10f);
         pieChart.setMinimumHeight(500);
         pieChart.setMinimumWidth(500);
-        
+
         pieChart.setDrawEntryLabels(false);
         pieChart.setEntryLabelTextSize(12f);
-        
+
         // Set legend properties
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);
@@ -165,9 +178,8 @@ public class BudgetMainActivity extends AppCompatActivity {
         legend.setTextColor(Color.BLACK);
         legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-//        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setDrawInside(false);
-        
+
         pieChart.animateY(1000);
         pieChart.invalidate();
     }

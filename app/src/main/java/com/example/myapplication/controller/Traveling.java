@@ -7,7 +7,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +32,15 @@ public class Traveling extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ExpenseListAdapter adapter;
     private List<EXP> travelingExpenses;
-    private TextView addIncome, mainBalanceText;
+    private TextView addBudget;
     private PieChart pieChart;
-    private String currentUserId;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "TravelingActivity";
+
     private ProgressDialog progressDialog;
+    private String currentUserId;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,6 @@ public class Traveling extends AppCompatActivity {
         setContentView(R.layout.activity_traveling);
 
         recyclerView = findViewById(R.id.recyclerView);
-        ;
         pieChart = findViewById(R.id.pieTravelingChart);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -51,7 +55,7 @@ public class Traveling extends AppCompatActivity {
         adapter = new ExpenseListAdapter((ArrayList<EXP>) travelingExpenses, null);
         recyclerView.setAdapter(adapter);
 
-SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         currentUserId = prefs.getString("userId", null);
 
         if (currentUserId == null) {
@@ -60,22 +64,21 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
             return;
         }
 
-
-// Initialize the ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please Wait");
         progressDialog.setMessage("Loading Traveling Data...");
         progressDialog.setCancelable(false);
 
+        addBudget = findViewById(R.id.addIncome);
+        addBudget.setOnClickListener(v -> openSetBudget("traveling"));
+    }
 
-        addIncome = findViewById(R.id.addIncome);
-
-        addIncome.setOnClickListener(v -> openSetBudget("traveling"));
-
-
-
+    // Refresh data when user returns to screen
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progressDialog.show();
         loadTravelingExpenses();
-        showBudgetAndPieChart();
     }
 
     private void openSetBudget(String category) {
@@ -84,9 +87,7 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         startActivity(intent);
     }
 
-
     private void loadTravelingExpenses() {
-        progressDialog.show();
         db.collection("Jobs").whereEqualTo("userId", currentUserId)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -107,7 +108,6 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
 
                         Tasks.whenAllComplete(expenseFetchTasks)
                                 .addOnCompleteListener(allTask -> {
-                                    boolean hasExpenses = false;
                                     for (Task<QuerySnapshot> expenseTask : expenseFetchTasks) {
                                         if (expenseTask.isSuccessful()) {
                                             for (DocumentSnapshot expenseDocument : expenseTask.getResult()) {
@@ -115,40 +115,42 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
                                                 if (expense != null) {
                                                     travelingExpenses.add(expense);
                                                     totalTravelingExpenseAmount[0] += expense.calculateExpenseDetails().get(1);
-                                                    hasExpenses = true;
                                                 }
                                             }
                                         }
                                     }
 
-                                    // If no expenses were found, ensure totalExpenses is set to 0
-                                    if (!hasExpenses) {
-                                        totalTravelingExpenseAmount[0] = 0.0;
-                                    }
-
                                     adapter.notifyDataSetChanged();
                                     updateBudgetTotal(totalTravelingExpenseAmount[0]);
-
                                 });
+                    } else {
+                        Log.e(TAG, "Failed to get Jobs documents", task.getException());
+                        progressDialog.dismiss();
                     }
                 });
     }
 
-
     private void updateBudgetTotal(double totalExp) {
         DocumentReference docRef = db.collection("budget").document(currentUserId);
-
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Map<String, Object> budgetData = documentSnapshot.getData();
                 if (budgetData != null && budgetData.containsKey("traveling")) {
-                    Map<String, Object> travelingCategory = (Map<String, Object>) budgetData.get("traveling");
-                    travelingCategory.put("totalExpenses", totalExp);
+                    Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("traveling");
+                    foodCategory.put("totalExpenses", totalExp);
 
-                    docRef.update("traveling", travelingCategory)
-                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Traveling expenses updated successfully"))
-                            .addOnFailureListener(e -> Log.e(TAG, "Failed to update traveling expenses", e));
+                    docRef.update("food", foodCategory)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Food expenses updated successfully");
+                                showBudgetAndPieChart(); // Refresh chart after update
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to update traveling expenses", e);
+                                progressDialog.dismiss();
+                            });
                 }
+            } else {
+                progressDialog.dismiss();
             }
         });
     }
@@ -160,54 +162,55 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
                         Map<String, Object> budgetData = documentSnapshot.getData();
                         if (budgetData != null && budgetData.containsKey("traveling")) {
                             Map<String, Object> foodCategory = (Map<String, Object>) budgetData.get("traveling");
-                            Number budget = (Number) foodCategory.get("budgetAmount");
-                            Number totalExp = (Number) foodCategory.get("totalExpenses");
 
-                            if (budget != null && totalExp != null) {
-                                double remaining = budget.doubleValue() - totalExp.doubleValue();
-                                updatePieChart(totalExp.doubleValue(), remaining);
+                            Number budgetRaw = (Number) foodCategory.get("budgetAmount");
+                            Number totalExpRaw = (Number) foodCategory.get("totalExpenses");
+
+                            if (budgetRaw != null && totalExpRaw != null) {
+                                double budget = budgetRaw.doubleValue();
+                                double totalExp = totalExpRaw.doubleValue();
+                                double remaining = budget - totalExp;
+                                updatePieChart(totalExp, remaining);
                             } else {
                                 Log.e(TAG, "Budget or totalExpenses for traveling is null");
                             }
                         }
-                    } progressDialog.dismiss(); // Dismiss after data is fetched
+                    }
+                    progressDialog.dismiss();
                 })
-                .addOnFailureListener(e -> Log.e(TAG, "Error fetching traveling budget data", e));
-        progressDialog.dismiss(); // Dismiss after data is fetched
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching travel budget data", e);
+                    progressDialog.dismiss();
+                });
     }
 
     private void updatePieChart(double spent, double remaining) {
         List<PieEntry> entries = new ArrayList<>();
         entries.add(new PieEntry((float) spent, "Spent"));
         entries.add(new PieEntry((float) remaining, "Remaining"));
-    
+
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(Color.RED, Color.parseColor("#2E9797"));
         dataSet.setValueTextSize(16f);
         dataSet.setValueTextColor(Color.WHITE);
-    
+
         PieData pieData = new PieData(dataSet);
         pieChart.setData(pieData);
-        
-        // Match Financial Summary styling
+
         pieChart.getDescription().setEnabled(false);
         pieChart.setDrawEntryLabels(false);
         pieChart.setUsePercentValues(false);
-        
         pieChart.setCenterText("Traveling\nBudget\nBreakdown");
         pieChart.setCenterTextSize(14f);
         pieChart.setDrawCenterText(true);
-        
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setHoleRadius(58f);
         pieChart.setTransparentCircleRadius(61f);
-
-        // Consistent sizing parameters
         pieChart.setExtraOffsets(10f, 10f, 10f, 10f);
         pieChart.setMinimumHeight(500);
         pieChart.setMinimumWidth(500);
-    
+
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);
         legend.setTextSize(12f);
@@ -217,7 +220,7 @@ SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);
         legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setDrawInside(false);
-    
+
         pieChart.animateY(1000);
         pieChart.invalidate();
     }
