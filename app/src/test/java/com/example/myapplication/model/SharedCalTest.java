@@ -10,6 +10,7 @@ public class SharedCalTest {
     private SharedCal sharedCal;
     private String testName;
     private String testId;
+    private String testCode;
     private String testMember;
     private ArrayList<CalendarEvent> testEvents;
 
@@ -17,9 +18,10 @@ public class SharedCalTest {
     public void setUp() {
         testName = "Test Calendar";
         testId = "cal123";
+        testCode = "ABC123";
         testMember = "user123";
         testEvents = new ArrayList<>();
-        sharedCal = new SharedCal(testName, testId, testMember, testEvents);
+        sharedCal = new SharedCal(testName, testId, testCode, testMember, testEvents);
     }
 
     @Test
@@ -32,6 +34,7 @@ public class SharedCalTest {
     public void testParameterizedConstructor() {
         assertEquals(testName, sharedCal.getName());
         assertEquals(testId, sharedCal.getSharedId());
+        assertEquals(testCode, sharedCal.getCode());
         assertEquals(testEvents, sharedCal.getEvents());
         assertEquals(1, sharedCal.getMembers().size());
         assertTrue(sharedCal.getMembers().contains(testMember));
@@ -49,6 +52,11 @@ public class SharedCalTest {
         String newId = "newId123";
         sharedCal.setSharedId(newId);
         assertEquals(newId, sharedCal.getSharedId());
+    }
+
+    @Test
+    public void testGetCode() {
+        assertEquals(testCode, sharedCal.getCode());
     }
 
     @Test
