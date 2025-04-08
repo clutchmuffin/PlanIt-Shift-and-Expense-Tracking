@@ -201,4 +201,21 @@ public class CalendarEvent implements Serializable {
     public void setJobColor(int jobColor) {
         this.jobColor = jobColor;
     }
+
+    public int getBegin_tz() {
+        return begin_tz;
+    }
+
+    public void setBegin_tz(int i) {
+        this.begin_tz = i;
+    }
+
+    public int getEnd_tz() {
+        return end_tz;
+    }
+
+    public void setEnd_tz(int i) {
+        this.end_tz = i;
+    }
+
 }
