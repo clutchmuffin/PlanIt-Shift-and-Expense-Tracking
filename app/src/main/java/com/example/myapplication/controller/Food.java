@@ -34,7 +34,7 @@ public class Food extends AppCompatActivity {
     private List<EXP> foodExpenses;
     private TextView addBudget;
     private PieChart pieChart;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "FoodActivity";
 
     private ProgressDialog progressDialog;
@@ -52,7 +52,7 @@ public class Food extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         foodExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter((ArrayList<EXP>) foodExpenses, null);
+        adapter = new ExpenseListAdapter(foodExpenses, null);
         recyclerView.setAdapter(adapter);
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);

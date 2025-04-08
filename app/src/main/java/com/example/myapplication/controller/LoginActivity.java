@@ -5,23 +5,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Transaction;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText nameEditText, usernameEditText, emailEditText;
     private MaterialButton loginButton;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,17 +74,17 @@ public class LoginActivity extends AppCompatActivity {
             nameEditText.setError("Name is required");
             return;
         }
-        
+
         if (TextUtils.isEmpty(username)) {
             usernameEditText.setError("Username is required");
             return;
         }
-        
+
         if (TextUtils.isEmpty(email)) {
             emailEditText.setError("Email is required");
             return;
         }
-        
+
         // Disable login button to prevent multiple submissions
         loginButton.setEnabled(false);
 
@@ -179,28 +172,22 @@ public class LoginActivity extends AppCompatActivity {
             // Add user to Firestore
             db.collection("users").document(userIdStr)
                 .set(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // Save user data to SharedPreferences
-                            saveUserToPrefs(userIdStr, name, username, email);
-                            navigateToMainActivity();
-                        } else {
-                            // Re-enable login button
-                            loginButton.setEnabled(true);
-                            Log.e(TAG, "Error creating user", task.getException());
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Save user data to SharedPreferences
+                        saveUserToPrefs(userIdStr, name, username, email);
+                        navigateToMainActivity();
+                    } else {
+                        // Re-enable login button
+                        loginButton.setEnabled(true);
+                        Log.e(TAG, "Error creating user", task.getException());
                     }
                 });
 
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Re-enable login button
-                loginButton.setEnabled(true);
-                Log.e(TAG, "Error in transaction", e);
-            }
+        }).addOnFailureListener(e -> {
+            // Re-enable login button
+            loginButton.setEnabled(true);
+            Log.e(TAG, "Error in transaction", e);
         });
     }
     

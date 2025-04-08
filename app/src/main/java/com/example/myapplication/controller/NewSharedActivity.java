@@ -1,35 +1,27 @@
 package com.example.myapplication.controller;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
-import com.example.myapplication.model.Job;
 import com.example.myapplication.model.SharedCal;
-import com.example.myapplication.view.adapter.SharedAdapter;
 import com.example.myapplication.view.adapter.SharedEventAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -40,7 +32,6 @@ import java.util.Objects;
 public class NewSharedActivity extends AppCompatActivity {
     private static final String TAG = "NewSharedActivity";
 
-    private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNav;
     private TextInputEditText nameInput;
     private Button button;
@@ -58,7 +49,6 @@ public class NewSharedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_sharing);
 
         bottomNav = findViewById(R.id.bottomNav);
-        topAppBar = findViewById(R.id.topAppBar);
         nameInput = findViewById(R.id.nameInput);
         button = findViewById(R.id.button2);
         recycler = findViewById(R.id.sharedEventRecycle);
@@ -92,7 +82,7 @@ public class NewSharedActivity extends AppCompatActivity {
     private ArrayList<CalendarEvent> loadEventsFromFirestore() {
         // look through events for ones with our user ID
         db.collectionGroup("Events").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         events.clear();
@@ -164,11 +154,7 @@ public class NewSharedActivity extends AppCompatActivity {
                     }
 
                     return sharedId;
-                }).addOnSuccessListener(sharedId -> {
-                    Log.d(TAG, "Shared Calendar created successfully with ID: " + sharedId);
-                }).addOnFailureListener(e -> {
-                    Log.e(TAG, "Error creating shared calendar", e);
-                });
+                }).addOnSuccessListener(sharedId -> Log.d(TAG, "Shared Calendar created successfully with ID: " + sharedId)).addOnFailureListener(e -> Log.e(TAG, "Error creating shared calendar", e));
                 // calendar created, go to view it
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
                 intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, sharedCal);
@@ -215,11 +201,7 @@ public class NewSharedActivity extends AppCompatActivity {
                     }
 
                     return null;
-                }).addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Successfully updated shared calendar: " + cal.getSharedId());
-                }).addOnFailureListener(e -> {
-                    Log.e(TAG, "Error updating shared calendar", e);
-                });
+                }).addOnSuccessListener(aVoid -> Log.d(TAG, "Successfully updated shared calendar: " + cal.getSharedId())).addOnFailureListener(e -> Log.e(TAG, "Error updating shared calendar", e));
 
                 // go view the updated calendar
                 Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);

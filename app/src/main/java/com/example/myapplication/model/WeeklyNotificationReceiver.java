@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -66,7 +65,7 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
 
 
         if (nextSunday != 0) {
-            StringBuilder content = new StringBuilder("");
+            StringBuilder content = new StringBuilder();
             // Gets all events that fall within the next two Sundays
             db.collection("Jobs")
                     .whereEqualTo("userId", currentUserId) // Get only jobs owned by current user
@@ -148,11 +147,7 @@ public class WeeklyNotificationReceiver extends BroadcastReceiver {
         int minute = time.getMinute();
         long milliDate = getMilliDateTime(date,hour,minute);
 
-        if(firstWeek <= milliDate && secondWeek >= milliDate){
-            return true;
-        }
-        else
-            return false;
+        return firstWeek <= milliDate && secondWeek >= milliDate;
     }
 
 

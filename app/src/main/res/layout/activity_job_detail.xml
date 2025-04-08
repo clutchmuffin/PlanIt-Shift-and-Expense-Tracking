@@ -112,6 +112,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/eventRecyclerView"
+                    android:contentDescription="@string/job_events_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="8dp"
@@ -140,6 +141,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/expenseRecyclerView"
+                    android:contentDescription="@string/job_expenses_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="8dp"

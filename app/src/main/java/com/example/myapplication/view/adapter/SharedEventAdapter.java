@@ -1,30 +1,17 @@
 package com.example.myapplication.view.adapter;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.ContextWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.controller.LoginActivity;
-import com.example.myapplication.controller.SharedCalendarActivity;
 import com.example.myapplication.model.CalendarEvent;
-import com.example.myapplication.model.Job;
-import com.example.myapplication.model.SharedCal;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +19,8 @@ import java.util.List;
 public class SharedEventAdapter extends RecyclerView.Adapter<SharedEventAdapter.SharedEventViewHolder> {
     private static final String TAG = "SharedEventAdapter";
 
-    private List<CalendarEvent> events;
-    private List<CalendarEvent> selected;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final List<CalendarEvent> events;
+    private final List<CalendarEvent> selected;
 
     public SharedEventAdapter(ArrayList<CalendarEvent> events) {
         this.events = events != null ? events : new ArrayList<>();
@@ -85,7 +71,7 @@ public class SharedEventAdapter extends RecyclerView.Adapter<SharedEventAdapter.
         return selected;
     }
 
-    static class SharedEventViewHolder extends RecyclerView.ViewHolder {
+    public static class SharedEventViewHolder extends RecyclerView.ViewHolder {
         TextView tvDateRange, tvName, tvTimeRange, tvRepeatType, tvNetPay;
         CheckBox checkbox;
 

@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.content.SharedPreferences;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +26,6 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.view.adapter.JobListAdapter;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -42,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String DEFAULT_COLOR = "#6200EE";
 
-    private MaterialToolbar topAppBar;
     private RecyclerView jobRecyclerView;
     private JobListAdapter jobListAdapter;
     private BottomNavigationView bottomNav;
@@ -51,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private String currentUserId;
 
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         // Initialize views
-        topAppBar = findViewById(R.id.topAppBar);
         jobRecyclerView = findViewById(R.id.jobRecyclerView);
         bottomNav = findViewById(R.id.bottomNav);
         fabAddJob = findViewById(R.id.fabAddJob);
@@ -246,9 +242,7 @@ public class MainActivity extends AppCompatActivity {
             // Add the job to the local list
             jobs.add(newJob);
             jobListAdapter.notifyItemInserted(jobs.size() - 1);
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "Error adding job to Firestore", e);
-        });
+        }).addOnFailureListener(e -> Log.e(TAG, "Error adding job to Firestore", e));
     }
     private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

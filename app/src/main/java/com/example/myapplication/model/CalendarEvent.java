@@ -169,8 +169,7 @@ public class CalendarEvent implements Serializable {
 
         if (days == 1) {
             // Same day: just calculate hours between times
-            double hours = (endTime.toSecondOfDay() - startTime.toSecondOfDay()) / 3600.0;
-            totalHours = hours;
+            totalHours = (endTime.toSecondOfDay() - startTime.toSecondOfDay()) / 3600.0;
         } else {
             // Multiple days
             // First day: hours from start time to midnight

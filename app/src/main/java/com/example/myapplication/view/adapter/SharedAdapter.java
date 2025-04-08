@@ -9,14 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.controller.JobDetailActivity;
 import com.example.myapplication.controller.SharedCalendarActivity;
 import com.example.myapplication.model.SharedCal;
 
 import java.util.List;
 
 public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedViewHolder> {
-    private List<SharedCal> sharedList;
+    private final List<SharedCal> sharedList;
 
     public SharedAdapter(List<SharedCal> shared) {
         this.sharedList = shared;
@@ -50,9 +49,8 @@ public class SharedAdapter extends RecyclerView.Adapter<SharedAdapter.SharedView
         return sharedList.size();
     }
 
-    static class SharedViewHolder extends RecyclerView.ViewHolder {
+    public static class SharedViewHolder extends RecyclerView.ViewHolder {
         TextView sharedTitle, sharedPeople, sharedCode;
-        View colourAccent;
         public SharedViewHolder(@NonNull View itemView) {
             super(itemView);
 

@@ -19,10 +19,6 @@ import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.view.adapter.dailyEventListAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.kizitonwose.calendar.core.CalendarDay;
 import com.kizitonwose.calendar.core.DayPosition;
 import com.kizitonwose.calendar.view.CalendarView;
@@ -48,9 +44,9 @@ public class CalendarActivity extends AppCompatActivity {
     private YearMonth currentVisibleMonth;
     private RecyclerView dailyEventRecyclerView;
     private dailyEventListAdapter dailyEventListAdapter;
-    private List<CalendarEvent> allEvents = new ArrayList<>();
+    private final List<CalendarEvent> allEvents = new ArrayList<>();
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

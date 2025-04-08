@@ -1,22 +1,17 @@
 package com.example.myapplication.controller;
 
-import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.TextView;
-
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.AlarmReceiver;
-import com.example.myapplication.model.AlarmSounder;
+
 import com.example.myapplication.model.RingtoneHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

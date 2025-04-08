@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.CalendarEvent;
-import com.example.myapplication.model.Job;
 import com.example.myapplication.model.SharedCal;
 import com.example.myapplication.view.adapter.dailyEventListAdapter;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class SharedCalendarActivity extends AppCompatActivity {
     private static final String TAG = "CalendarActivity";
@@ -48,11 +46,11 @@ public class SharedCalendarActivity extends AppCompatActivity {
     private CalendarView calendarView;
     private RecyclerView dailyEventRecyclerView;
     private com.example.myapplication.view.adapter.dailyEventListAdapter dailyEventListAdapter;
-    private List<CalendarEvent> allEvents = new ArrayList<>();
+    private final List<CalendarEvent> allEvents = new ArrayList<>();
     private SharedCal cal;
     public static final String EXTRA_SHARED = "com.example.myapplication.SHARED";
     private Button editButton;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +81,10 @@ public class SharedCalendarActivity extends AppCompatActivity {
 
         editButton = findViewById(R.id.button3);
 
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), NewSharedActivity.class);
-                intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, cal);
-                v.getContext().startActivity(intent);
-            }
+        editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), NewSharedActivity.class);
+            intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, cal);
+            v.getContext().startActivity(intent);
         });
     }
 
@@ -200,7 +195,7 @@ public class SharedCalendarActivity extends AppCompatActivity {
                     if (sharedDoc.exists()) {
                         SharedCal sharedCal = sharedDoc.toObject(SharedCal.class);
                         if (sharedCal != null) {
-                            // Now fetch the correct "Events" subcollection
+                            // Now fetch the correct "Events" sub-collection
                             db.collection("Shared").document(currentSharedId).collection("Events")
                                     .get()
                                     .addOnSuccessListener(eventsSnapshot -> {

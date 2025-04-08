@@ -2,15 +2,12 @@ package com.example.myapplication.model;
 
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-
-import com.example.myapplication.controller.AlarmActivity;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -29,10 +26,10 @@ public class NotificationSender {
     public static String alarm_channel = "alarmChannel";
     public static String alarm_channel_desc = "a notification channel that gets used to send alarm notifications";
 
-    private long dailyInterval = 1000 * 60 * 60 * 24;
-    private long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
-    private long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
-    private long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
+    private final long dailyInterval = 1000 * 60 * 60 * 24;
+    private final long weeklyInterval = 1000 * 60 * 60 * 24 * 7;
+    private final long monthlyInterval = 1000L * 60 * 60 * 24 * 7 * 4;
+    private final long yearlyInterval = 1000L * 60 * 60 * 24 * 365;
 
     private static final String TAG = "NotificationSender";
 
@@ -207,7 +204,7 @@ public class NotificationSender {
      * @return --> an array which has the hour in place 0 and the minute in place 1
      */
     private int[] getTime(String time){
-        int hour = 0, minute = 0;
+        int hour, minute = 0;
         try{
             String[] times = time.split(":");
             hour = Integer.parseInt(times[0]);
@@ -267,8 +264,6 @@ public class NotificationSender {
             long startDate = getMilliDateTime(event.getBegin_date(),hour,minute);
             scheduleEvent(event, startDate, pendingIntent);
         }
-        else
-            return;
     }
 
     /**

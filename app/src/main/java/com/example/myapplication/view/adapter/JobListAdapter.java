@@ -1,5 +1,7 @@
 package com.example.myapplication.view.adapter;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,11 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
@@ -29,16 +29,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import org.checkerframework.checker.units.qual.N;
-
-import java.util.List;
-
 public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewHolder> {
 
     private static final String TAG = "MainActivity";
-    private List<Job> jobs;
-    private Context context;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final List<Job> jobs;
+    private final Context context;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public JobListAdapter(List<Job> jobs, Context context) {
         this.jobs = jobs;
@@ -114,14 +110,14 @@ public class JobListAdapter extends RecyclerView.Adapter<JobListAdapter.JobViewH
                                     // Remove the job from the local list and update RecyclerView
                                     jobs.remove(position);
                                     notifyItemRemoved(position);
-                                    Log.d(TAG, "Job and all subcollections successfully deleted");
+                                    Log.d(TAG, "Job and all sub-collections successfully deleted");
                                 })
                                 .addOnFailureListener(e ->
-                                        Log.e(TAG, "Error deleting job and subcollections", e)
+                                        Log.e(TAG, "Error deleting job and sub-collections", e)
                                 );
                     })
                     .addOnFailureListener(e ->
-                            Log.e(TAG, "Error fetching subcollections", e)
+                            Log.e(TAG, "Error fetching sub-collections", e)
                     );
         });
     }

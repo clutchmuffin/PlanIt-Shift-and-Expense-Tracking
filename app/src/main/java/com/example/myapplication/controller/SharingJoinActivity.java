@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.SharedCal;
@@ -43,30 +41,26 @@ public class SharingJoinActivity extends AppCompatActivity {
             return;
         }
 
-        joinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (input.getText() != null) {
-                    String code = input.getText().toString();
+        joinButton.setOnClickListener(v -> {
+            if (input.getText() != null) {
+                String code = input.getText().toString();
 
-                    db.collection("Shared").whereEqualTo("sharedId", code)
-                            .get().addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        SharedCal shared = document.toObject(SharedCal.class);
-                                        shared.addMember(currentUserId);
-                                        DocumentReference ref = db.collection("Shared").document(code);
-                                        ref.update("members", shared.getMembers());
-                                        Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
-                                        intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, shared);
-                                        v.getContext().startActivity(intent);
-                                    }
-                                } else {
-                                    Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
+                db.collection("Shared").whereEqualTo("sharedId", code)
+                        .get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    SharedCal shared = document.toObject(SharedCal.class);
+                                    shared.addMember(currentUserId);
+                                    DocumentReference ref = db.collection("Shared").document(code);
+                                    ref.update("members", shared.getMembers());
+                                    Intent intent = new Intent(v.getContext(), SharedCalendarActivity.class);
+                                    intent.putExtra(SharedCalendarActivity.EXTRA_SHARED, shared);
+                                    v.getContext().startActivity(intent);
                                 }
-                            });
-
-                }
+                            } else {
+                                Log.e("SharingMainActivity", "Error getting documents: ", task.getException());
+                            }
+                        });
             }
         });
     }

@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:hint="Description"
+                android:hint="@string/description"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:minHeight="48dp" />
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:hint="Amount"
+                android:hint="@string/amount"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:minHeight="48dp" />
@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Begin"
+            android:text="@string/begin"
             android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
@@ -80,41 +80,28 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="8dp">
 
-                <LinearLayout
+                <!-- Display Selected Date -->
+                <TextView
+                    android:id="@+id/tvBeginDate"
+                    android:layout_width="172dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_date_selected"
+                    android:textSize="16sp"
+                    android:textStyle="bold|italic"
+                    android:textAlignment="center"
+                    android:padding="8dp" />
+
+                <!-- Select Date Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectBeginDate"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <!-- Display Selected Date -->
-                    <TextView
-                        android:id="@+id/tvBeginDate"
-                        android:layout_width="172dp"
-                        android:layout_height="wrap_content"
-                        android:text="No date selected"
-                        android:textSize="16sp"
-                        android:textStyle="bold|italic"
-                        android:textAlignment="center"
-                        android:padding="8dp" />
-
-                    <!-- Select Date Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSelectBeginDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:text="Select Date"
-                        android:layout_marginBottom="8dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/select_date"
+                    android:layout_marginBottom="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -122,7 +109,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="End"
+            android:text="@string/end"
             android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
@@ -137,41 +124,28 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="8dp">
 
-                <LinearLayout
+                <!-- Display Selected Date -->
+                <TextView
+                    android:id="@+id/tvEndDate"
+                    android:layout_width="172dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_date_selected"
+                    android:textSize="16sp"
+                    android:textStyle="bold|italic"
+                    android:textAlignment="center"
+                    android:padding="8dp" />
+
+                <!-- Select Date Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectEndDate"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <!-- Display Selected Date -->
-                    <TextView
-                        android:id="@+id/tvEndDate"
-                        android:layout_width="172dp"
-                        android:layout_height="wrap_content"
-                        android:text="No date selected"
-                        android:textSize="16sp"
-                        android:textStyle="bold|italic"
-                        android:textAlignment="center"
-                        android:padding="8dp" />
-
-                    <!-- Select Date Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSelectEndDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:text="Select Date"
-                        android:layout_marginBottom="8dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/select_date"
+                    android:layout_marginBottom="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -191,7 +165,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Repeat"
+            android:text="@string/repeat"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
 
@@ -214,35 +188,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="No repeat"
+                    android:text="@string/no_repeat"
                     android:minHeight="35dp" />
 
                 <RadioButton
                     android:id="@+id/radioDaily"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Daily"
+                    android:text="@string/daily"
                     android:minHeight="35dp" />
 
                 <RadioButton
                     android:id="@+id/radioWeekly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Weekly"
+                    android:text="@string/weekly"
                     android:minHeight="35dp" />
 
                 <RadioButton
                     android:id="@+id/radioMonthly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Monthly"
+                    android:text="@string/monthly"
                     android:minHeight="35dp" />
 
                 <RadioButton
                     android:id="@+id/radioYearly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Yearly"
+                    android:text="@string/yearly"
                     android:minHeight="35dp" />
             </RadioGroup>
         </com.google.android.material.card.MaterialCardView>

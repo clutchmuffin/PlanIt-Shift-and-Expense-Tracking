@@ -34,7 +34,7 @@ public class Entertainment extends AppCompatActivity {
     private List<EXP> entertainmentExpenses;
     private TextView addBudget;
     private PieChart pieChart;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "EntertainmentActivity";
 
     private ProgressDialog progressDialog;
@@ -52,7 +52,7 @@ public class Entertainment extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         entertainmentExpenses = new ArrayList<>();
-        adapter = new ExpenseListAdapter((ArrayList<EXP>) entertainmentExpenses, null);
+        adapter = new ExpenseListAdapter(entertainmentExpenses, null);
         recyclerView.setAdapter(adapter);
 
         SharedPreferences prefs = getSharedPreferences("PlanITPrefs", MODE_PRIVATE);

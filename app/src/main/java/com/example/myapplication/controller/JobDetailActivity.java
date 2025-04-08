@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +21,6 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.AlarmType;
 import com.example.myapplication.model.CalendarEvent;
 import com.example.myapplication.model.EXP;
-import com.example.myapplication.model.Expense;
 import com.example.myapplication.model.Job;
 import com.example.myapplication.model.NotificationSender;
 import com.example.myapplication.model.RepeatType;
@@ -43,7 +41,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -61,7 +58,7 @@ public class JobDetailActivity extends AppCompatActivity {
     private ExpenseListAdapter expenseListAdapter;
     private ExtendedFloatingActionButton fabAddButton;
     private ExtendedFloatingActionButton fabAddExpense;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private LocalDate beginDate;
     private LocalDate endDate;
@@ -243,13 +240,11 @@ public class JobDetailActivity extends AppCompatActivity {
         btnSelectEndTime.setOnClickListener(v -> showTimePicker(tvSelectedEndTime, false));
 
         // Dialog Button Listeners
-        dialog.setOnShowListener(dialogInterface -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                if (validateEventInput(dialogView)) {
-                    createAndSaveEvent(dialogView, dialog);
-                }
-            });
-        });
+        dialog.setOnShowListener(dialogInterface -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if (validateEventInput(dialogView)) {
+                createAndSaveEvent(dialogView, dialog);
+            }
+        }));
 
         return dialog;
     }
@@ -320,8 +315,6 @@ public class JobDetailActivity extends AppCompatActivity {
     private AlarmType getAlarmType(Spinner alarmPicker) {
         String picked = alarmPicker.getSelectedItem().toString();
         switch (picked) {
-            case "NONE":
-                return AlarmType.NONE;
             case "1 hour before start":
                 return AlarmType.ONE_HOUR;
             case "2 hours before start":
@@ -496,7 +489,6 @@ public class JobDetailActivity extends AppCompatActivity {
         int alarmPosition = 0;
         switch (event.getAlarmType()) {
             case NONE:
-                alarmPosition = 0;
                 break;
             case ONE_HOUR:
                 alarmPosition = 1;

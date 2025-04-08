@@ -7,5 +7,5 @@
     android:gravity="center"
     android:textColor="@color/black"
     android:background="@color/blue_white_normal"
-    android:text="Day"
+    android:text="@string/day"
     android:textAppearance="?android:attr/textAppearanceMedium" />

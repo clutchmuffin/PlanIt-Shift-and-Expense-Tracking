@@ -8,7 +8,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/expenseDescription"
-            android:hint="Description"
+            android:hint="@string/description"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -21,7 +21,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/eventDateRange"
-                android:hint="Date Range"
+                android:hint="@string/date_range"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:textStyle="italic"
-                android:hint="Repeat"
+                android:hint="@string/repeat"
                 android:textSize="12sp"/>
 
             <ImageButton
@@ -46,7 +46,7 @@
                 android:layout_marginStart="60dp"
                 android:src="@android:drawable/ic_menu_delete"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Delete expense" />
+                android:contentDescription="@string/delete_expense" />
 
         </LinearLayout>
 

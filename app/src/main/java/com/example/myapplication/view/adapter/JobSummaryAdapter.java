@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class JobSummaryAdapter extends RecyclerView.Adapter<JobSummaryAdapter.JobSummaryViewHolder> {
     
-    private List<JobSummaryActivity.JobSummaryData> jobSummaries;
+    private final List<JobSummaryActivity.JobSummaryData> jobSummaries;
     
     public JobSummaryAdapter(List<JobSummaryActivity.JobSummaryData> jobSummaries) {
         this.jobSummaries = jobSummaries;
@@ -40,7 +40,7 @@ public class JobSummaryAdapter extends RecyclerView.Adapter<JobSummaryAdapter.Jo
         holder.jobTitleText.setText(summaryData.getJob().getTitle());
         holder.jobEmployerText.setText("at " + summaryData.getJob().getEmployer());
         
-        int jobColor = 0;
+        int jobColor;
         try {
             jobColor = summaryData.getJob().getColor();
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class JobSummaryAdapter extends RecyclerView.Adapter<JobSummaryAdapter.Jo
         
         holder.jobHoursText.setText(String.format(Locale.US, "%.1f", summaryData.getHoursWorked()));
         
-        double payRate = 0.0;
+        double payRate;
         try {
             payRate = Double.parseDouble(String.valueOf(summaryData.getJob().getPayRate()));
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class JobSummaryAdapter extends RecyclerView.Adapter<JobSummaryAdapter.Jo
         return jobSummaries.size();
     }
     
-    static class JobSummaryViewHolder extends RecyclerView.ViewHolder {
+    public static class JobSummaryViewHolder extends RecyclerView.ViewHolder {
         View jobColorIndicator;
         TextView jobTitleText, jobEmployerText, jobHoursText, jobRateText, jobEarningsText, jobExpensesText;
         LinearLayout expenseContainer;

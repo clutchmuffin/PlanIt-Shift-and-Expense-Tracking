@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
@@ -22,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder> {
-    private List<CalendarEvent> events;
-    private Job job;
-    private Context context;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final List<CalendarEvent> events;
+    private final Job job;
+    private final Context context;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     public EventListAdapter(List<CalendarEvent> events, Job job, Context context) {
@@ -80,16 +79,12 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                                                     notifyItemRemoved(position);
                                                     Log.d("JobDetailActivity", "Event successfully deleted from Firestore");
                                                 })
-                                                .addOnFailureListener(e -> {
-                                                    Log.e("JobDetailActivity", "Error deleting event from Firestore", e);
-                                                });
+                                                .addOnFailureListener(e -> Log.e("JobDetailActivity", "Error deleting event from Firestore", e));
                                     } else {
                                         Log.e("JobDetailActivity", "Could not find event document to delete");
                                     }
                                 })
-                                .addOnFailureListener(e -> {
-                                    Log.e("JobDetailActivity", "Error querying for event to delete", e);
-                                });
+                                .addOnFailureListener(e -> Log.e("JobDetailActivity", "Error querying for event to delete", e));
                     }
                 });
 

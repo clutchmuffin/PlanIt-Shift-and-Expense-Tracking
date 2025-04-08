@@ -85,18 +85,20 @@
         android:layout_height="wrap_content"
         android:text="@string/events"
         android:paddingTop="8dp"
-        android:paddingStart="24dp"
+        android:padding="16dp"
         android:textColor="@color/black"
         android:textSize="26sp"
         android:fontFamily="sans-serif-medium"
         android:background="@color/white"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        tools:ignore="RtlSymmetry">
     </com.google.android.material.textview.MaterialTextView>
 
     <!-- Recycler View: Using layout_weight to fill remaining space -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dailyEventsRecyclerView"
+        android:contentDescription="@string/calendar_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
