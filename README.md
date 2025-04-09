@@ -44,6 +44,30 @@ Before installing and running PlanIt, ensure you have the following:
 
 ## Installation
 
+### Step 1: Get the URL for the repository
+- Navigate to the main page of the repository
+- Above the list of files, click **'Code'**
+- Copy the link under **'Clone with HTTPS'**
+
+### Step 2: Open Android Studio
+- Click on the **'Clone Repository'**
+- Copy the link from earlier in the textfield with the label **'URL:'**
+- Choose a directory for the project
+- Press **'Clone'**
+
+### Step 3: Install Dependencies
+The project uses Gradle for dependency management. The necessary dependencies will be downloaded automatically when you sync the project in Android Studio.
+
+**To manually sync the project**:
+- Click on "File" > "Sync Project with Gradle Files"
+- Wait for the sync to complete (progress is shown in the bottom status bar)
+
+### Step 4: Running the application
+- Select `Run 'app'` (Play Button) on the toolbar
+- It will run on your default/chosen emulator.
+
+## Alternate Installation
+
 ### Step 1: Clone the Repository
 ```
 git clone https://git.cs.usask.ca/evz405/cmpt370team14.git
