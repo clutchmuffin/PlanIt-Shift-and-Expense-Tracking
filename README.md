@@ -94,39 +94,37 @@ The project uses Gradle for dependency management. The necessary dependencies wi
 
 
 ## Dependencies
+
 The application uses the following dependencies:
 
 #### Main Dependencies
+
 - **AndroidX Libraries**
-    - AppCompat
-    - ConstraintLayout
-    - RecyclerView
-    - Activity
-    - CardView
-    - Core KTX (v1.15.0)
-
+  - AppCompat - 1.7.0
+  - ConstraintLayout - 2.2.1
+  - RecyclerView 1.4.0
+  - Activity - 1.10.1
+  - CardView7 - 28.0.0
+  - Core KTX  - 1.15.0
 - **UI Components**
-    - Material Design Components
-    - Calendar View (com.kizitonwose.calendar:view:2.6.2)
-    - MPAndroidChart (v3.1.0)
-
+  - Material Design Components - 1.12.0
+  - Calendar View - 2.6.2
+  - MPAndroidChart - 3.1.0
 - **Firebase**
-    - Firebase BoM
-    - Firebase Authentication
-    - Firestore
+  - Firebase BoM - 33.12.0
+  - Firebase Authentication - Handled by BoM
+  - Firestore - Handled by BoM
 
 #### Testing Dependencies
 
 - **JUnit**
-    - JUnit
-    - AndroidX Test JUnit
-
+  - JUnit - 4.13.2
+  - AndroidX Test JUnit - 1.2.1
 - **Android Testing**
-    - UI Automator
-    - Test Rules
-    - Test Runner
-
+  - UI Automator - 2.3.0
+  - Test Rules - 1.6.1
+  - Test Runner - 1.6.2
 - **Espresso**
-    - Espresso Core (v3.5.1)
-    - Espresso Contrib
-    - Espresso Intents
+  - Espresso Core - 3.5.1
+  - Espresso Contrib - 3.5.1
+  - Espresso Intents - 3.5.1
