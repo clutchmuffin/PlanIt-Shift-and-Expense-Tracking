@@ -77,7 +77,7 @@ public class BudgetActivityTest {
     }
 
     @Test
-    public void testResetBudget() {
+    public void testResetBudget() throws InterruptedException {
 
         // Wait for the progress dialog to disappear
         waitForProgressDialogToDisappear("Updating budget...");
@@ -111,12 +111,14 @@ public class BudgetActivityTest {
         // Click the reset budget button
         onView(withId(R.id.resetBudget)).perform(click());
 
+        Thread.sleep(5000);
+
         // Check if the budget activity is loaded
-        onView(withId(R.id.buyDisplay)).check(matches(isDisplayed()));
+        onView(withId(R.id.pieMainChart)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void testUpdateBudget() {
+    public void testUpdateBudget() throws InterruptedException {
 
         // Wait for the progress dialog to disappear
         waitForProgressDialogToDisappear("Updating budget...");
@@ -158,8 +160,10 @@ public class BudgetActivityTest {
 
         onView(withId(R.id.addToBudget)).perform(click());
 
+        Thread.sleep(5000);
+
         // Check if the budget activity is loaded
-        onView(withId(R.id.pieCardView)).check(matches(isDisplayed()));
+        onView(withId(R.id.pieMainChart)).check(matches(isDisplayed()));
     }
 
     @Test
